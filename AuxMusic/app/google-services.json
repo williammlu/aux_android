@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "546180014725",
+    "firebase_url": "https://aux-live-music-sharing.firebaseio.com",
+    "project_id": "aux-live-music-sharing",
+    "storage_bucket": "aux-live-music-sharing.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:546180014725:android:b245b3dc80eff3da",
+        "android_client_info": {
+          "package_name": "org.mobiledevsberkeley.auxmusic"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "546180014725-1mouju328dum0haeclmujvhspkgudg3m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAWuaEIDG36D3ccYtfIsRoLZBjqYt8Zzfs"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
