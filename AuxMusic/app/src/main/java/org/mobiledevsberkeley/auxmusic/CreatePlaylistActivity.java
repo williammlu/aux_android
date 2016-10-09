@@ -44,6 +44,7 @@ public class CreatePlaylistActivity extends AppCompatActivity {
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                // test comment
                 DatabaseReference firebase = FirebaseDatabase.getInstance().getReference();
                 DatabaseReference nameRef = firebase.child(getString(R.string.playlistName));
                 DatabaseReference password = firebase.child(getString(R.string.playlistPassword));
