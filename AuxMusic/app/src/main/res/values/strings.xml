@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">AuxMusic</string>
+    <string name="playlistName">name</string>
+    <string name="playlistPasswordProtect">Password Needed</string>
+    <string name="playlistPassword">Password</string>
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
