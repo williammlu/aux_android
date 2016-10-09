@@ -1,5 +1,6 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -55,6 +56,8 @@ public class CreatePlaylistActivity extends AppCompatActivity {
                 if (publicPrivate.isChecked()) {
                     password.setValue(passwordEditText.getText().toString());
                 }
+                Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
+                startActivity(searchSongsIntent);
 
             }
         });
