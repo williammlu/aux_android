@@ -37,7 +37,7 @@
             tools:ignore="UselessParent">
 
             <Button
-                android:id="@+id/dummy_button"
+                android:id="@+id/dummyButton"
                 style="?metaButtonBarButtonStyle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
@@ -45,6 +45,12 @@
                 android:text="@string/dummy_button" />
 
         </LinearLayout>
+
+        <Button
+            android:text="Create Playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/createPlaylist" />
     </FrameLayout>
 
 </FrameLayout>

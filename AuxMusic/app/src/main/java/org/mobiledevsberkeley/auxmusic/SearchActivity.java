@@ -1,6 +1,7 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.annotation.SuppressLint;
+import android.content.Intent;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -105,8 +106,22 @@ public class SearchActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        findViewById(R.id.dummyButton).setOnTouchListener(mDelayHideTouchListener);
+
+        //Take us to the create-playlist screen
+        findViewById(R.id.createPlaylist).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent createPlaylistIntent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
+                startActivity(createPlaylistIntent);
+                //create dialog fragment
+            }
+        });
+
+
     }
+
+
 
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
