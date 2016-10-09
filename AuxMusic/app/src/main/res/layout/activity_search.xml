@@ -26,6 +26,21 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
+        <Button
+            android:text="Create Playlist"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/createPlaylist"
+            android:layout_below="@+id/auth_button"
+            android:layout_centerHorizontal="true" />
+
+        <Button
+            android:id="@+id/auth_button"
+            style="?metaButtonBarButtonStyle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/test_spotify_auth" />
+
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"
@@ -42,15 +57,10 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="@string/dummy_button" />
+                android:text="@string/test_spotify_auth" />
 
         </LinearLayout>
 
-        <Button
-            android:text="Create Playlist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/createPlaylist" />
     </FrameLayout>
 
 </FrameLayout>
