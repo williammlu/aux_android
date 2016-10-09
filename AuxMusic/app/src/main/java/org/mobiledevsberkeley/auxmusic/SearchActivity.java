@@ -110,7 +110,7 @@ public class SearchActivity extends AppCompatActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
-        mTestSpotifyAuth = (Button) findViewById(R.id.dummy_button);
+        mTestSpotifyAuth = (Button) findViewById(R.id.auth_button);
 
 
         // Set up the user interaction to manually show or hide the system UI.
