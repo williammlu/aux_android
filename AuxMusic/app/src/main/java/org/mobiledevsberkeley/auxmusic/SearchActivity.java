@@ -2,18 +2,35 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.app.Activity;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.Toast;
+
+import com.spotify.sdk.android.player.Spotify;
+
+import static android.R.attr.data;
+import static android.R.attr.value;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
 public class SearchActivity extends AppCompatActivity {
+
+    private Button mTestSpotifyAuth;
+    private int mRequestCode = 5;
+    private static final boolean mDisableHide = true;
+
+
+
     /**
      * Whether or not the system UI should be auto-hidden after
      * {@link #AUTO_HIDE_DELAY_MILLIS} milliseconds.
@@ -93,6 +110,7 @@ public class SearchActivity extends AppCompatActivity {
         mVisible = true;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
+        mTestSpotifyAuth = (Button) findViewById(R.id.dummy_button);
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -119,8 +137,53 @@ public class SearchActivity extends AppCompatActivity {
         });
 
 
+        mTestSpotifyAuth.setOnTouchListener(mDelayHideTouchListener);
+        mTestSpotifyAuth.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Snackbar snackbar = Snackbar
+                        .make(mContentView, "Starting Spotify Auth", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+
+                // Go to Spotify test Auth
+                Intent myIntent = new Intent(SearchActivity.this, SpotifyAuthTest.class);
+                myIntent.putExtra("key", value); //Optional parameters
+
+                // TODO change requestCode and put somewhere safer, currently matches
+                // request code in SpotifyAuthTest
+                SearchActivity.this.startActivityForResult(myIntent, mRequestCode);
+
+
+            }
+        });
     }
 
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        if (requestCode == mRequestCode) {
+            String result = "";
+            String accessToken = "";
+            if(resultCode == Activity.RESULT_OK){
+                result = data.getStringExtra("result");
+                accessToken = data.getStringExtra("access_token");
+            }
+            if (resultCode == Activity.RESULT_CANCELED) {
+                result=data.getStringExtra("result");
+            }
+
+            Snackbar snackbar = Snackbar
+                    .make(mContentView, result + "\naccess_token=" + accessToken, Snackbar.LENGTH_INDEFINITE)
+                    .setAction("Dismiss", new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            // Handle user action
+                            Log.d("SearchActivity", "Snack bar dismissed");
+                        }
+                    });
+            snackbar.show();
+        }
+    }
 
 
     @Override
@@ -142,6 +205,10 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void hide() {
+        if (mDisableHide) {
+            return;
+        }
+
         // Hide UI first
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
