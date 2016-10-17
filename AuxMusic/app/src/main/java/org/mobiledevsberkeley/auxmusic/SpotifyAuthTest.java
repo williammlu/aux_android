@@ -25,6 +25,7 @@ public class SpotifyAuthTest extends Activity implements
     // TODO: Replace with your redirect URI
     private static final String REDIRECT_URI = "AuxMusic://callback";
 
+
     // Request code that will be used to verify if the result comes from correct activity
 // Can be any integer
     private static final int REQUEST_CODE = 1337;
@@ -60,8 +61,19 @@ public class SpotifyAuthTest extends Activity implements
                 case TOKEN:
                     Log.e("onActivityResult", "successful auth token " + response.getAccessToken());
                     returnIntent = new Intent();
+
+
                     returnIntent.putExtra("result","Logged in successfully!");
                     returnIntent.putExtra("access_token", response.getAccessToken());
+
+
+//                    Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
+                    getSpotifyPlayer(response.getAccessToken());
+//                    getSpotifyPlayer(response.getAccessToken()); // run again so spotify player created
+
+//                    mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
+
+
 
                     setResult(Activity.RESULT_OK,returnIntent);
                     finish();
@@ -84,27 +96,26 @@ public class SpotifyAuthTest extends Activity implements
                     setResult(Activity.RESULT_CANCELED,returnIntent);
                     finish();
             }
-//            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-//            if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-//                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-//CLIENT_ID
-//                Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-//                    @Override
-//                    public void onInitialized(SpotifyPlayer spotifyPlayer) {
-//                        mPlayer = spotifyPlayer;
-//                        mPlayer.addConnectionStateCallback(SpotifyAuthTest.this);
-//                        mPlayer.addNotificationCallback(SpotifyAuthTest.this);
-//                        Log.e("SpotifyAT.OnActivityR", "on Initialized");
-//
-//                    }
-//
-//                    @Override
-//                    public void onError(Throwable throwable) {
-//                        Log.e("SpotifyAuthTest", "Could not initialize player: " + throwable.getMessage());
-//                    }
-//                });
-//            }
         }
+    }
+
+    public void getSpotifyPlayer(String token) {
+        Config playerConfig = new Config(this, token, CLIENT_ID);
+        SpotifyPlayer p = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                mPlayer.addConnectionStateCallback(SpotifyAuthTest.this);
+                mPlayer.addNotificationCallback(SpotifyAuthTest.this);
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.e("SpotifyAuth", "Could not initialize player: " + throwable.getMessage());
+            }
+        });
+
     }
 
     @Override
@@ -137,8 +148,6 @@ public class SpotifyAuthTest extends Activity implements
     @Override
     public void onLoggedIn() {
         Log.e("SpotifyAuthTest", "User logged in");
-
-        mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
     }
 
     @Override

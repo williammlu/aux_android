@@ -13,8 +13,17 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import com.spotify.sdk.android.player.Error;
 
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.PlaybackState;
+import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
+
+import java.util.Random;
 
 import static android.R.attr.data;
 import static android.R.attr.value;
@@ -23,12 +32,24 @@ import static android.R.attr.value;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private Button mTestSpotifyAuth;
+    private Button mPlayButton;
+    private Button mSkipButton;
+    private Button mQueueButton;
+    private boolean isPlaying = false;
+
     private int mRequestCode = 5;
     private static final boolean mDisableHide = true;
+    private static final String CLIENT_ID = "687e297cd52c436eb680444a7b0519f9";
 
+    /* List of Childish Gambino songs to be randomly played */
+    private static String mSongs[] = {"spotify:track:6olUplztLFFfU7fMYmFXOP", "spotify:track:3Z2sglqDj1rDRMF5x0Sz2R",
+            "spotify:track:4zGvb8hxGLB2jEPRFiRRqw", "spotify:track:3HooZZPp0evFShqaJ2Pwer"};
+
+    private SpotifyPlayer mPlayer;
 
 
     /**
@@ -111,6 +132,9 @@ public class SearchActivity extends AppCompatActivity {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
         mTestSpotifyAuth = (Button) findViewById(R.id.auth_button);
+        mPlayButton = (Button) findViewById(R.id.play_button);
+        mSkipButton = (Button) findViewById(R.id.skip_button);
+        mQueueButton = (Button) findViewById(R.id.queue_button);
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -120,6 +144,16 @@ public class SearchActivity extends AppCompatActivity {
                 toggle();
             }
         });
+
+
+        // Play button - play if player is not null
+        mContentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggle();
+            }
+        });
+
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -155,9 +189,99 @@ public class SearchActivity extends AppCompatActivity {
 
             }
         });
+
+
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String msg;
+
+                if (mPlayer == null) {
+                    msg = "Player not yet created";
+                } else {
+                    PlaybackState p = mPlayer.getPlaybackState();
+
+                    // Choose to Pause or Play
+
+                    if (!p.isPlaying) {
+                        msg = "Playing a song!";
+                        // TODO: fix so song not always queued
+                        if (p.isActiveDevice) {
+                            mPlayer.resume(null);
+                            msg += " Resuming...";
+                        } else {
+                            mPlayer.playUri(null, (mSongs[new Random().nextInt(mSongs.length)]),0,0);
+                            msg += " Starting new song";
+                        }
+                        mPlayButton.setText("Pause");
+
+                    } else {
+                        msg = "Paused!";
+                        mPlayer.pause(null);
+                        mPlayButton.setText("Play");
+                    }
+                    isPlaying = !isPlaying;
+                }
+
+                Snackbar snackbar = Snackbar
+                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        });
+
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String msg;
+                if (mPlayer == null) {
+                    msg = "Player not yet created";
+
+                } else {
+
+                    mPlayer.skipToNext(null);
+                    msg = "Skipped!";
+
+                    Player.OperationCallback oc = new Player.OperationCallback() {
+                        @Override
+                        public void onSuccess() {
+                            PlaybackState p = mPlayer.getPlaybackState();
+                            // TODO: set so playbutton says right thing...
+                            if (!p.isPlaying) { // no songs left if not playing after skip
+                                Log.e("SearchActivity", "Empty queue...");
+                                mPlayButton.setText("Play"); // stopped playing, don't say pause anymore
+                            }
+                            Log.d("SearchActivity", p.toString());
+                        }
+
+                        @Override
+                        public void onError(Error error) {
+                            Log.e("SearchActivity", "Callback error");
+                        }
+                    };
+
+                }
+
+                Snackbar snackbar = Snackbar
+                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        });
+
+        mQueueButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String msg;
+                if (mPlayer == null) {
+                    msg = "Player not yet created";
+
+                } else {
+                    mPlayer.queue(null, (mSongs[new Random().nextInt(mSongs.length)]));
+                    msg = "Queued New Song!";
+                }
+
+                Snackbar snackbar = Snackbar
+                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        });
     }
-
-
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -167,6 +291,10 @@ public class SearchActivity extends AppCompatActivity {
             if(resultCode == Activity.RESULT_OK){
                 result = data.getStringExtra("result");
                 accessToken = data.getStringExtra("access_token");
+
+                getSpotifyPlayer(accessToken);
+
+
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 result=data.getStringExtra("result");
@@ -242,4 +370,81 @@ public class SearchActivity extends AppCompatActivity {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
+
+    @Override
+    protected void onDestroy() {
+        // VERY IMPORTANT! This must always be called or else you will leak resources
+        Spotify.destroyPlayer(this);
+        super.onDestroy();
+    }
+
+//    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+        Log.d("SearchActivity", "Playback event received: " + playerEvent.name());
+        switch (playerEvent) {
+            // Handle event type as necessary
+            default:
+                break;
+        }
+    }
+
+//    @Override
+    public void onPlaybackError(Error error) {
+        Log.d("SearchActivity", "Playback error received: " + error.name());
+        switch (error) {
+            // Handle error type as necessary
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onLoggedIn() {
+        Log.d("SearchActivity", "User logged in");
+
+    }
+
+    @Override
+    public void onLoggedOut() {
+        Log.d("SearchActivity", "User logged out");
+    }
+
+    @Override
+    public void onLoginFailed(int i) {
+        Log.d("SearchActivity", "Login failed");
+    }
+
+    @Override
+    public void onTemporaryError() {
+        Log.d("SearchActivity", "Temporary error occurred");
+    }
+
+    @Override
+    public void onConnectionMessage(String message) {
+        Log.d("SearchActivity", "Received connection message: " + message);
+    }
+
+
+
+
+    public void getSpotifyPlayer(String token) {
+        Config playerConfig = new Config(this, token, CLIENT_ID);
+        SpotifyPlayer p = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+            @Override
+            public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                mPlayer = spotifyPlayer;
+                mPlayer.addConnectionStateCallback(SearchActivity.this);
+                mPlayer.addNotificationCallback(SearchActivity.this);
+
+            }
+
+            @Override
+            public void onError(Throwable throwable) {
+                Log.e("SpotifyAuth", "Could not initialize player: " + throwable.getMessage());
+            }
+        });
+
+    }
+
 }

@@ -26,21 +26,6 @@
         android:layout_height="match_parent"
         android:fitsSystemWindows="true">
 
-        <Button
-            android:text="Create Playlist"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/createPlaylist"
-            android:layout_below="@+id/auth_button"
-            android:layout_centerHorizontal="true" />
-
-        <Button
-            android:id="@+id/auth_button"
-            style="?metaButtonBarButtonStyle"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/test_spotify_auth" />
-
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"
             style="?metaButtonBarStyle"
@@ -60,6 +45,58 @@
                 android:text="@string/test_spotify_auth" />
 
         </LinearLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+
+            <Button
+                android:text="Create Playlist"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/createPlaylist"
+                style="?metaButtonBarButtonStyle"
+                android:layout_below="@+id/auth_button"
+                android:layout_centerHorizontal="true" />
+
+            <Button
+                android:id="@+id/auth_button"
+                style="?metaButtonBarButtonStyle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/test_spotify_auth" />
+
+            <Button
+                android:text="Play"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?metaButtonBarButtonStyle"
+                android:id="@+id/play_button"
+                android:layout_below="@+id/createPlaylist"
+                android:layout_centerHorizontal="true" />
+
+
+            <Button
+                android:text="Skip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?metaButtonBarButtonStyle"
+                android:id="@+id/skip_button"
+                android:layout_below="@+id/play_button"
+                android:layout_centerHorizontal="true" />
+
+            <Button
+                android:text="Queue new song"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                style="?metaButtonBarButtonStyle"
+                android:id="@+id/queue_button"
+                android:layout_below="@+id/skip_button"
+                android:layout_centerHorizontal="true" />
+
+        </RelativeLayout>
 
     </FrameLayout>
 
