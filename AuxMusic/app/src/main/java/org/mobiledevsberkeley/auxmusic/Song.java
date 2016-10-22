@@ -11,6 +11,9 @@ public class Song {
     private String artistName;
     private String albumName;
     private double trackLength;
+    // potentially have variables about explicitness for censorship. could also add any other
+    // necessary variables in the future, just create them here, create getters, and then
+    // initialize from Spotify API in queryAndInitialize()
 
     public Song(String spotifySongURI) {
         this.spotifySongURI = spotifySongURI;
