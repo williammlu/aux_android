@@ -5,27 +5,25 @@ package org.mobiledevsberkeley.auxmusic;
  */
 
 public class Song {
-    private String spotifySongURI;
-    private String imageUrl; // potentially save as different variable
+    // Generic song class that has the necessary extracted information from an API (Spotify for now, possibly Soundcloud, etc. in the future)
+    private String songURI;
+    private String imageUrl; // potentially save the image as a different variable
     private String songName;
     private String artistName;
     private String albumName;
-    private double trackLength;
-    // potentially have variables about explicitness for censorship. could also add any other
-    // necessary variables in the future, just create them here, create getters, and then
-    // initialize from Spotify API in queryAndInitialize()
+    private long trackLength;
 
-    public Song(String spotifySongURI) {
-        this.spotifySongURI = spotifySongURI;
-        queryAndInitialize();
+    public Song(String songURI, String imageUrl, String songName, String artistName, String albumName, long trackLength) {
+        this.songURI = songURI;
+        this.imageUrl = imageUrl;
+        this.songName = songName;
+        this.artistName = artistName;
+        this.albumName = albumName;
+        this.trackLength = trackLength;
     }
 
-    private void queryAndInitialize() {
-        // query from Spotify the information about the track given the spotifySongUri
-    }
-
-    public String getSpotifySongURI() {
-        return spotifySongURI;
+    public String getSongURI() {
+        return songURI;
     }
 
     public String getImageUrl() {
@@ -44,7 +42,7 @@ public class Song {
         return albumName;
     }
 
-    public double getTrackLength() {
+    public long getTrackLength() {
         return trackLength;
     }
 }
