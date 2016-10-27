@@ -125,20 +125,23 @@ public class CreatePlaylistActivity extends AppCompatActivity {
                 if (publicPrivate.isChecked()) {
                     password = passwordEditText.getText().toString();
                 }
-                ArrayList<String> useridstuff = new ArrayList<>();
-                ArrayList<String> songidstuff = new ArrayList<String>();
 
-                currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password);
-                playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
-                        } else {
-                            Log.d(TAG, "Data saved successfully.");
-                        }
-                    }
-                });
+                // TESTING STUFF. NOT WORKING YET...
+
+//                ArrayList<String> useridstuff = new ArrayList<>();
+//                ArrayList<String> songidstuff = new ArrayList<String>();
+//
+////                currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password);
+//                playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
+//                    @Override
+//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                        if (databaseError != null) {
+//                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+//                        } else {
+//                            Log.d(TAG, "Data saved successfully.");
+//                        }
+//                    }
+//                });
 //                DatabaseReference nameRef = firebase.child(getString(R.string.playlistName));
 //                DatabaseReference password = firebase.child(getString(R.string.playlistPassword));
 //                DatabaseReference passwordProtect = firebase.child(getString(R.string.playlistPasswordProtect));
