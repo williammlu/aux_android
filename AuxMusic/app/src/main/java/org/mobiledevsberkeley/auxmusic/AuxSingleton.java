@@ -47,7 +47,6 @@ public class AuxSingleton {
 
     public void addUser(User user) {
         // add to database using dbReference with the appropriate hashes, child, etc.
-        currentPlaylist.addUser(user);
     }
 
     public DatabaseReference getDataBaseReference() {
