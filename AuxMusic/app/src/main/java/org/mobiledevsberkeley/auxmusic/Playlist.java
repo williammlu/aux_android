@@ -14,6 +14,7 @@ public class Playlist {
     private String currentSongID;
     private Boolean isPlaying;
     private long currentSongTime;
+    // private List ourownsonglist - possible variable
 
     public Playlist() {
         // initialize lists so that they're not null. not sure if this is necessary though. this null constructor
