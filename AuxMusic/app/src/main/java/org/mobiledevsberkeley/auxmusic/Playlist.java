@@ -11,7 +11,7 @@ public class Playlist {
     private String playlistName;
     private String password;
     private String hostDeviceID;
-    private String currentSongID;
+    private String currentSongIndex;
     private Boolean isPlaying;
     private long currentSongTime;
     // private List ourownsonglist - possible variable
@@ -22,13 +22,13 @@ public class Playlist {
     }
 
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
-                    String password, String hostDeviceID, String currentSongID, Boolean isPlaying, long currentSongTime) {
+                    String password, String hostDeviceID, String currentSongIndex, Boolean isPlaying, long currentSongTime) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
         this.playlistName = playlistName;
         this.password = password;
         this.hostDeviceID = hostDeviceID;
-        this.currentSongID = currentSongID;
+        this.currentSongIndex = currentSongIndex;
         this.isPlaying = isPlaying;
         this.currentSongTime = currentSongTime;
     }
@@ -49,8 +49,8 @@ public class Playlist {
         return hostDeviceID;
     }
 
-    public String getCurrentSongID() {
-        return currentSongID;
+    public String getcurrentSongIndex() {
+        return currentSongIndex;
     }
 
     public Boolean getPlaying() {

@@ -116,15 +116,15 @@ public class CreatePlaylistActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // test comment
-                Log.d(TAG, "work please");
-                DatabaseReference playlistRef = mDatabase.child("playlists").push();
-                String playlistKey = playlistRef.getKey(); // store this somewhere?
-
-                String partyName = nameText.getText().toString();
-                String password = "";
-                if (publicPrivate.isChecked()) {
-                    password = passwordEditText.getText().toString();
-                }
+//                Log.d(TAG, "work please");
+//                DatabaseReference playlistRef = mDatabase.child("playlists").push();
+//                String playlistKey = playlistRef.getKey(); // store this somewhere?
+//
+//                String partyName = nameText.getText().toString();
+//                String password = "";
+//                if (publicPrivate.isChecked()) {
+//                    password = passwordEditText.getText().toString();
+//                }
 
                 // TESTING STUFF. NOT WORKING YET...
 
