@@ -21,6 +21,8 @@ public class Playlist {
         // might be necessary when converting from Firebase stuff to a Java object
     }
 
+
+
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
                     String password, String hostDeviceID, String currentSongID, Boolean isPlaying, long currentSongTime) {
         this.userDeviceIDList = userDeviceIDList;
@@ -31,6 +33,9 @@ public class Playlist {
         this.currentSongID = currentSongID;
         this.isPlaying = isPlaying;
         this.currentSongTime = currentSongTime;
+    }
+    public void setCurrentSongID(String currentSongID) {
+        this.currentSongID = currentSongID;
     }
 
     public void addSong(Song song) {
@@ -57,8 +62,16 @@ public class Playlist {
         return isPlaying;
     }
 
+    public void setPlaying(boolean isPlaying ) {
+        this.isPlaying = isPlaying;
+    }
+
     public long getCurrentSongTime() {
         return currentSongTime;
+    }
+
+    public void setCurrentSongTime(long currentSongTime) {
+        currentSongTime = currentSongTime;
     }
 
     public List<String> getSpotifySongIDList() {
