@@ -88,16 +88,6 @@
                 android:layout_centerHorizontal="true" />
 
             <Button
-                android:text="Queue new song"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                style="?metaButtonBarButtonStyle"
-                android:id="@+id/queue_button"
-                android:layout_below="@+id/skip_button"
-                android:layout_centerHorizontal="true" />
-
-
-            <Button
                 android:text="Play a song"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -114,7 +104,7 @@
                 android:id="@+id/search_song_name_text"
                 android:hint="Song name"
                 android:textAlignment="center"
-                android:layout_below="@+id/queue_button"
+                android:layout_below="@+id/skip_button"
                 android:layout_centerHorizontal="true" />
 
         </RelativeLayout>

@@ -18,21 +18,15 @@ import com.spotify.sdk.android.player.Error;
 
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.PlaybackState;
-import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
-import kaaes.spotify.webapi.android.models.Album;
 import kaaes.spotify.webapi.android.models.Track;
-import kaaes.spotify.webapi.android.models.Tracks;
 import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
@@ -50,9 +44,11 @@ public class SearchActivity extends AppCompatActivity implements
     private Button mTestSpotifyAuth;
     private Button mPlayButton;
     private Button mSkipButton;
-    private Button mQueueButton;
-    private Button mPlaySongButton;
+    private Button mQueueSearchButton;
     private EditText mSongNameTextView;
+    private Playlist mPlaylist = new Playlist();
+
+    private AuxSpotifyPlayer auxSpotifyPlayer;
 
     private boolean mIsPlaying = false;
     String mAccessToken = "";
@@ -150,8 +146,7 @@ public class SearchActivity extends AppCompatActivity implements
         mTestSpotifyAuth = (Button) findViewById(R.id.auth_button);
         mPlayButton = (Button) findViewById(R.id.play_button);
         mSkipButton = (Button) findViewById(R.id.skip_button);
-        mQueueButton = (Button) findViewById(R.id.queue_button);
-        mPlaySongButton = (Button) findViewById(R.id.play_songs_button);
+        mQueueSearchButton = (Button) findViewById(R.id.play_songs_button);
         mSongNameTextView = (EditText) findViewById(R.id.search_song_name_text);
 
 
@@ -213,31 +208,12 @@ public class SearchActivity extends AppCompatActivity implements
             public void onClick(View v) {
                 String msg;
 
-                if (mPlayer == null) {
-                    msg = "Player not yet created";
+                if(auxSpotifyPlayer == null)
+                {
+                    msg = "AuxSpotifyPlayer not yet created";
                 } else {
-                    PlaybackState p = mPlayer.getPlaybackState();
-
                     // Choose to Pause or Play
-
-                    if (!p.isPlaying) {
-                        msg = "Playing a song!";
-                        // TODO: fix so song not always queued
-                        if (p.isActiveDevice) {
-                            mPlayer.resume(null);
-                            msg += " Resuming...";
-                        } else {
-                            mPlayer.playUri(null, (mSongs[new Random().nextInt(mSongs.length)]),0,0);
-                            msg += " Starting new song";
-                        }
-                        mPlayButton.setText("Pause");
-
-                    } else {
-                        msg = "Paused!";
-                        mPlayer.pause(null);
-                        mPlayButton.setText("Play");
-                    }
-                    mIsPlaying = !mIsPlaying;
+                    msg = auxSpotifyPlayer.togglePlay();
                 }
 
                 Snackbar snackbar = Snackbar
@@ -249,59 +225,20 @@ public class SearchActivity extends AppCompatActivity implements
         mSkipButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 String msg;
-                if (mPlayer == null) {
-                    msg = "Player not yet created";
-
+                if (auxSpotifyPlayer == null) {
+                    msg = "AuxSpotifyPlayer not yet created";
+                    Snackbar snackbar = Snackbar
+                            .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                    snackbar.show();
                 } else {
-
-                    mPlayer.skipToNext(null);
-                    msg = "Skipped!";
-
-                    Player.OperationCallback oc = new Player.OperationCallback() {
-                        @Override
-                        public void onSuccess() {
-                            PlaybackState p = mPlayer.getPlaybackState();
-                            // TODO: set so playbutton says right thing...
-                            if (!p.isPlaying) { // no songs left if not playing after skip
-                                Log.e("SearchActivity", "Empty queue...");
-                                mPlayButton.setText("Play"); // stopped playing, don't say pause anymore
-                            }
-                            Log.d("SearchActivity", p.toString());
-                        }
-
-                        @Override
-                        public void onError(Error error) {
-                            Log.e("SearchActivity", "Callback error");
-                        }
-                    };
-
+                    long index = auxSpotifyPlayer.skip();
                 }
-
-                Snackbar snackbar = Snackbar
-                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
-                snackbar.show();
-            }
-        });
-
-        mQueueButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String msg;
-                if (mPlayer == null) {
-                    msg = "Player not yet created";
-
-                } else {
-                    mPlayer.queue(null, (mSongs[new Random().nextInt(mSongs.length)]));
-                    msg = "Queued New Song!";
-                }
-
-                Snackbar snackbar = Snackbar
-                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
-                snackbar.show();
             }
         });
 
 
-        mPlaySongButton.setOnClickListener(new View.OnClickListener() {
+
+        mQueueSearchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 SpotifyApi api = new SpotifyApi();
 
@@ -311,39 +248,34 @@ public class SearchActivity extends AppCompatActivity implements
 
                 SpotifyService spotify = api.getService();
                 String searchQuery = mSongNameTextView.getText().toString();
-                spotify.searchTracks(searchQuery, new Callback<TracksPager>(){
-                    @Override
-                    public void success(TracksPager tPager, Response response) {
-                        Log.d("SearchActivity", "Successfully playing " + tPager.toString());
-
-                        List<Track> tracks = tPager.tracks.items;
-                        if (tracks.size() > 0) {
-                            Track track = tracks.get(0);
+                Log.d("SearchActivity", "Search box said: " + searchQuery);
+                if (searchQuery.length() > 0) {
+                    spotify.searchTracks(searchQuery, new Callback<TracksPager>(){
+                        @Override
+                        public void success(TracksPager tPager, Response response) {
                             String msg;
-                            if (mPlayer == null) {
-                                msg = "Player not yet created";
-                            } else {
-                                PlaybackState p = mPlayer.getPlaybackState();
-                                msg = "Force playing search result: " + track.name;
-                                mPlayer.playUri(null, track.uri, 0, 0);
-                            }
+                            List<Track> tracks = tPager.tracks.items;
+                            if (tracks.size() > 0) {
+                                Track track = tracks.get(0);
+                                Song song = new Song(track);
+                                Log.e("SearchActivity", "Added song is " + song.getTrackLength() + "ms");
+                                mPlaylist.addSong(song);
+                                msg = "Queued " + song.getSongName();
 
+                            } else {
+                                msg = "No Songs matched this search!";
+                            }
                             Snackbar snackbar = Snackbar
                                     .make(mContentView, msg, Snackbar.LENGTH_SHORT);
                             snackbar.show();
                         }
-                    }
 
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e("Track Playing failure", error.toString());
-                    }
-                });
-
-
-//                Snackbar snackbar = Snackbar
-//                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
-//                snackbar.show();
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.e("Track Playing failure", error.toString());
+                        }
+                    });
+                }
             }
         });
 
@@ -358,7 +290,7 @@ public class SearchActivity extends AppCompatActivity implements
                 result = data.getStringExtra("result");
                 mAccessToken = data.getStringExtra("access_token");
 
-                getSpotifyPlayer(mAccessToken);
+                createSpotifyPlayer(mAccessToken);
 
 
             }
@@ -494,7 +426,7 @@ public class SearchActivity extends AppCompatActivity implements
 
 
 
-    public void getSpotifyPlayer(String token) {
+    public void createSpotifyPlayer(String token) {
         Config playerConfig = new Config(this, token, CLIENT_ID);
         SpotifyPlayer p = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
@@ -510,6 +442,7 @@ public class SearchActivity extends AppCompatActivity implements
                 Log.e("SpotifyAuth", "Could not initialize player: " + throwable.getMessage());
             }
         });
+        auxSpotifyPlayer = new AuxSpotifyPlayer(p, mPlaylist);
 
     }
 

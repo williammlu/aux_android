@@ -10,10 +10,10 @@ package org.mobiledevsberkeley.auxmusic;
  */
 public interface PlayerInterface {
 
-    void togglePlay();
+    String togglePlay();
     int skip();
     int skipBack();
-    void skipToTrack(int targetTrack);
+    boolean skipToTrack(int targetTrack);
     void skipToTime(long ms);
 
 

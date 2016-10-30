@@ -69,7 +69,7 @@ public class SpotifyAuthTest extends Activity implements
 
 //                    Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
                     getSpotifyPlayer(response.getAccessToken());
-//                    getSpotifyPlayer(response.getAccessToken()); // run again so spotify player created
+//                    createSpotifyPlayer(response.getAccessToken()); // run again so spotify player created
 
 //                    mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
 

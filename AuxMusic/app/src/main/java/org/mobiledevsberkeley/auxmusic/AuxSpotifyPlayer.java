@@ -18,12 +18,12 @@ import java.util.Random;
  * Created by wml on 10/29/16.
  */
 
+// TODO: refine how the playlist current song time works....
+
 public class AuxSpotifyPlayer implements PlayerInterface{
 
     private SpotifyPlayer mPlayer;
     private Playlist mPlaylist;
-//    private static final String CLIENT_ID = "687e297cd52c436eb680444a7b0519f9";
-    private PlaybackState mPlaybackState;
 
     public AuxSpotifyPlayer(SpotifyPlayer sp, Playlist p){
         mPlayer = sp;
@@ -34,6 +34,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
                 Log.d("AuxSpotifyPlayer", playerEvent.name());
                 if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
                     // reached the end of Spotify playing queue
+                    Log.e("AuxSpotifyPlayer", "Finshed the end of a song, will be playing next..");
                     playNext();
                 }
             }
@@ -43,27 +44,39 @@ public class AuxSpotifyPlayer implements PlayerInterface{
                 Log.e("AuxSpotifyPlayer", error.toString());
             }
         });
-
     }
 
 
-    public void togglePlay() {
-
-        if (!mPlaybackState.isPlaying) {
-            if (mPlaybackState.isActiveDevice) {
-                Log.d("AuxSpotifyPlayer", "Resuming");
-                mPlayer.resume(null);
-            } else {
-                Log.d("AuxSpotifyPlayer", "Playing new song");
-                mPlayer.playUri(null, mPlaylist.getCurrentSongID(), 0, (int) mPlaylist.getCurrentSongTime());
-            }
-
-        } else {
-            Log.d("AuxSpotifyPlayer", "Pausing song");
-
-            mPlayer.pause(null);
+    public String togglePlay() {
+        String returnMessage = "";
+        if (getPlaybackState() == null) {
+            Log.e("AuxSpotifyPlayer", "playback state is null");
+            return "Playback state is null....";
         }
-        mPlaylist.setPlaying(!mPlaylist.getPlaying());
+        if (!getPlaybackState().isPlaying) {
+            if (mPlaylist.getCurrentSongTime() != 0) {
+                Log.d("AuxSpotifyPlayer", "Resuming at " + mPlaylist.getCurrentSongTime());
+                mPlayer.resume(null);
+                returnMessage = "Resuming song at time " + mPlaylist.getCurrentSongTime();
+            } else {
+                if (mPlaylist.getSpotifySongIDList().size() == 0) {
+                    Log.d("AuxSpotifyPlayer", "No Songs in queue");
+                    returnMessage = "No Songs in queue";
+                } else {
+                    Log.e("AuxSpotifyPlayer", "Playing new song");
+                    mPlayer.playUri(null, mPlaylist.getCurrentSongID(), 0, (int) mPlaylist.getCurrentSongTime());
+                    returnMessage = "Playing new song";
+                };
+            }
+        } else {
+            long curTime = getCurrentSongTime();
+            Log.d("AuxSpotifyPlayer", "Pausing song at " + getCurrentSongTime());
+            mPlaylist.setCurrentSongTime(curTime);
+            mPlayer.pause(null);
+            Log.d("AuxSpotifyPlayer", "Paused at " + curTime);
+            returnMessage = "Pausing";
+        }
+        return returnMessage;
     }
 
     /**
@@ -72,7 +85,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
      */
     public boolean playNext() {
         List<String> songs = mPlaylist.getSpotifySongIDList();
-        int nextSongIndex = songs.indexOf(mPlaylist.getCurrentSongID());
+        int nextSongIndex = mPlaylist.getCurrentSongIndex() + 1;
 
         if (nextSongIndex >= songs.size()) {
             Log.e("AuxSpotifyPlayer", "No songs left in queue.");
@@ -84,27 +97,35 @@ public class AuxSpotifyPlayer implements PlayerInterface{
     }
 
     public int skip() {
-        return 0;
-    }// TODO
+        int trackIndex = mPlaylist.getCurrentSongIndex();
+        skipToTrack(trackIndex + 1);
+
+        return trackIndex + 1;
+    }
 
     public int skipBack() {
-        return 0;
-    } // TODO
 
-    public void skipToTrack(int targetTrack) {
-        if (targetTrack > mPlaylist.getSpotifySongIDList().size() || targetTrack < 0) {
-            throw new IndexOutOfBoundsException("Playlist does not have a " + targetTrack + "th song!");
+        // TODO: implement way to skip to beginning of song.
+        int trackIndex = mPlaylist.getCurrentSongIndex();
+        skipToTrack(trackIndex + 1);
+        return trackIndex + 1;
+    }
+
+    public boolean skipToTrack(int targetTrack) {
+        if (targetTrack >= mPlaylist.getSpotifySongIDList().size() || targetTrack < 0) {
+            Log.e("AuxSpotifyPlayer", "Playlist does not have a " + targetTrack + "th song!");
+            return false;
         }
         else {
             List<String> songs = mPlaylist.getSpotifySongIDList();
-            int nextSongIndex = songs.indexOf(mPlaylist.getCurrentSongID());
             mPlaylist.setCurrentSongTime(0);
             mPlaylist.setPlaying(true);
-            mPlaylist.setCurrentSongID(songs.get(nextSongIndex));
+            mPlaylist.setCurrentSongIndex(targetTrack);
+            mPlaylist.setCurrentSongID(songs.get(targetTrack));
 
             mPlayer.playUri(null, mPlaylist.getCurrentSongID(), 0, (int) mPlaylist.getCurrentSongTime());
+            return true;
         }
-
     }
 
     public void skipToTime(long ms) {
@@ -116,9 +137,11 @@ public class AuxSpotifyPlayer implements PlayerInterface{
     }
 
     public long getCurrentSongTime() {
-        if (mPlaybackState != null) {
-            return mPlaybackState.positionMs;
-        }
-        return -1; // error
+        return getPlaybackState().positionMs;
     }
+
+    public PlaybackState getPlaybackState() {
+        return mPlayer.getPlaybackState();
+    }
+
 }
