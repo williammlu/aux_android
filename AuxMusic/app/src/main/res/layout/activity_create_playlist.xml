@@ -54,7 +54,7 @@
         android:text="Suggestions Require Host Approval"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/checkBox" />
+        android:id="@+id/hostApprovalChecker" />
 
     <Button
         android:text="Create Playlist"

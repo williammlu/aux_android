@@ -1,7 +1,14 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.media.MediaBrowserCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,6 +20,14 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.FusedLocationProviderApi;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -23,8 +38,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import com.google.android.gms.location.LocationListener;
 
-public class CreatePlaylistActivity extends AppCompatActivity {
+public class CreatePlaylistActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
     private String TAG = "debug";
     private String uid = "";
 
@@ -35,14 +51,25 @@ public class CreatePlaylistActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-    private DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    public static final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
 
     public Playlist currentPlaylist; // PROBABLY STORE THIS IN A DATAHOLDER, SINGLETON CLASS.
+    public String playlistKey;
+    GoogleApiClient mGoogleApiClient;
+    GeoLocation mGeoLocation;
+    Activity thisActivity;
+
+    LocationRequest locationRequest;
+
+    public static final int MY_PERMISSIONS_REQUEST_ACCESS_LOCATION = 69;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (mGoogleApiClient == null) createGoogleApiClient();
         setContentView(R.layout.activity_create_playlist);
+        thisActivity = this;
 
         publicPrivate = (CheckBox) findViewById(R.id.publicPrivate);
         passwordText = (TextView) findViewById(R.id.passwordTextView);
@@ -74,6 +101,21 @@ public class CreatePlaylistActivity extends AppCompatActivity {
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        mGoogleApiClient.connect();
+
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
         if (mAuthListener != null) {
@@ -89,11 +131,12 @@ public class CreatePlaylistActivity extends AppCompatActivity {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
                     uid = user.getUid();
+                    mDatabase.child("users").child(uid).setValue("recent playlists or something like dat");
                     Log.d(TAG, "user signed in anon " + user.getUid());
                 } else {
                     Log.d(TAG, "user not signed in ");
                     signInAnon();
-                    uid = user.getUid();
+//                    uid = user.getUid();
                     mDatabase.child("users").child(uid).setValue("recent playlists or something like dat");
                 }
             }
@@ -111,47 +154,133 @@ public class CreatePlaylistActivity extends AppCompatActivity {
                 });
     }
 
-    private void testingFirebaseStuff() {
+    private void testingFirebaseStuff(){
+
         findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // test comment
-                Log.d(TAG, "work please");
-                DatabaseReference playlistRef = mDatabase.child("playlists").push();
-                String playlistKey = playlistRef.getKey(); // store this somewhere?
+                DatabaseReference playlistRef = mDatabase.child(getString(R.string.playlistFirebase)).push();
+                playlistKey = playlistRef.getKey(); // store this somewhere?
 
                 String partyName = nameText.getText().toString();
-                String password = "";
+                String password = null;
                 if (publicPrivate.isChecked()) {
                     password = passwordEditText.getText().toString();
                 }
                 ArrayList<String> useridstuff = new ArrayList<>();
+                //^i think that should prolly be an arraylist of users, depending on what we want on participants page
+//                useridstuff.add()
                 ArrayList<String> songidstuff = new ArrayList<String>();
+                mGeoLocation = null;
+                boolean locationTrack = ((CheckBox) findViewById(R.id.locationChecker)).isChecked();
 
-                currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password);
-                playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
-                        } else {
-                            Log.d(TAG, "Data saved successfully.");
-                        }
+                if (locationTrack) {
+                    PackageManager pm = thisActivity.getPackageManager();
+                    int hasPerm = pm.checkPermission(
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            thisActivity.getPackageName());
+                    if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+//                        getLastLocation();
+                    } else {
+                        ActivityCompat.requestPermissions(thisActivity,
+                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                                MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
                     }
-                });
-//                DatabaseReference nameRef = firebase.child(getString(R.string.playlistName));
-//                DatabaseReference password = firebase.child(getString(R.string.playlistPassword));
-//                DatabaseReference passwordProtect = firebase.child(getString(R.string.playlistPasswordProtect));
-//                String name = nameText.getText().toString();
-//                nameRef.setValue(name);
-//                passwordProtect.setValue(publicPrivate.isChecked());
-//                if (publicPrivate.isChecked()) {
-//                    password.setValue(passwordEditText.getText().toString());
-//                }
-//                Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
-//                startActivity(searchSongsIntent);
 
+                    boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
+
+                    currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password, mGeoLocation, hostApproval);
+
+                    playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if (databaseError != null) {
+                                Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+                            } else {
+                                Log.d(TAG, "Data saved successfully.");
+                            }
+                        }
+                    });
+                    if (locationTrack && mGeoLocation != null) {
+                        GeoFire geoFire = new GeoFire(playlistRef);
+                        geoFire.setLocation(getString(R.string.locationPlaylistFirebase), mGeoLocation);
+
+                        DatabaseReference locationsRef = mDatabase.child(getString(R.string.locationsFirebase));
+                        GeoFire geoFire1 = new GeoFire(locationsRef);
+                        geoFire1.setLocation(playlistKey, mGeoLocation);
+                    }
+                    Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
+//                    searchSongsIntent.putExtra("")
+                    startActivity(searchSongsIntent);
+
+                }
             }
         });
+    }
+
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d("debug", "bitch you're connected");
+        getLastLocation();
+    }
+
+
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d("debug", "connection suspended");
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("debug", "connection failed :(");
+
+    }
+
+    public void createGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    getLastLocation();
+
+                } else {
+
+                    Toast.makeText(thisActivity, "Unable to track location without permission", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
+    }
+
+    public void getLastLocation() throws SecurityException{
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,locationRequest,this);
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+//        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        if (location != null) {
+            mGeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+        }
+
     }
 }
