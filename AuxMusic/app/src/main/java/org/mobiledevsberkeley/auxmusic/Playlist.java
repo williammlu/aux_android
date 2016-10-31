@@ -8,26 +8,64 @@ import java.util.*;
  */
 
 public class Playlist {
-    private List<String> userIDList;            // contains UIDs from users. we could then convert this to a List<User>, but this may be slow
+    private List<String> userDeviceIDList;            // contains UIDs from users. we could then convert this to a List<User>, but this may be slow
     private List<String> spotifySongIDList;     // contains spotify track URIs, we could then convert this to a List<Song>, but ^^
     private String playlistName;
     private String password;
     private GeoLocation location;
     private boolean hostApproval;
-    // WE NEED MORE STUFF HERE BUT I'M TIRED AF SO YEAH
+    private String hostDeviceID;
+    private String currentSongIndex;
+    private Boolean isPlaying;
+    private long currentSongTime;
+    // private List ourownsonglist - possible variable
 
     public Playlist() {
-        // yolo
+        // initialize lists so that they're not null. not sure if this is necessary though. this null constructor
+        // might be necessary when converting from Firebase stuff to a Java object
     }
 
-    public Playlist(List<String> userIDList, List<String> spotifySongIDList, String playlistName, String password, GeoLocation location,
+    public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
+                    String password, String hostDeviceID, String currentSongIndex, Boolean isPlaying, long currentSongTime, GeoLocation location,
                     boolean hostApproval) {
-        this.userIDList = userIDList;
+        this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
         this.playlistName = playlistName;
         this.password = password;
+        this.hostDeviceID = hostDeviceID;
+        this.currentSongIndex = currentSongIndex;
+        this.isPlaying = isPlaying;
+        this.currentSongTime = currentSongTime;
         this.location = location;
         this.hostApproval = hostApproval;
+    }
+
+    public void addSong(Song song) {
+        spotifySongIDList.add(song.getSongURI());
+    }
+
+    public void addUser(User user) {
+        userDeviceIDList.add(user.getUID());
+    }
+
+    public List<String> getUserDeviceIDList() {
+        return userDeviceIDList;
+    }
+
+    public String getHostDeviceID() {
+        return hostDeviceID;
+    }
+
+    public String getcurrentSongIndex() {
+        return currentSongIndex;
+    }
+
+    public Boolean getPlaying() {
+        return isPlaying;
+    }
+
+    public long getCurrentSongTime() {
+        return currentSongTime;
     }
 
     public List<String> getSpotifySongIDList() {
@@ -38,8 +76,8 @@ public class Playlist {
         return password;
     }
 
-    public List<String> getUserIDList() {
-        return userIDList;
+    public List<String> getuserDeviceIDList() {
+        return userDeviceIDList;
     }
 
     public String getPlaylistName() {

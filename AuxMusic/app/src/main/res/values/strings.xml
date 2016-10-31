@@ -12,6 +12,5 @@
     <string name="playlistFirebase">playlists</string>
     <string name="locationPlaylistFirebase">location</string>
     <string name="locationsFirebase">locations</string>
-
-
+    <string name="defaultParticipantName">Anon</string>
 </resources>
