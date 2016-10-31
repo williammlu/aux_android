@@ -38,8 +38,12 @@ dependencies {
     compile 'com.google.firebase:firebase-invites:9.6.1'
     compile 'com.google.firebase:firebase-crash:9.6.1'
     compile 'com.android.support:design:23.4.0'
+    compile 'com.firebase:geofire-android:2.1.0'
     testCompile 'junit:junit:4.12'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
+    compile 'com.google.android.gms:play-services-appindexing:9.6.1'
+    compile 'com.google.android.gms:play-services:9.6.1'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

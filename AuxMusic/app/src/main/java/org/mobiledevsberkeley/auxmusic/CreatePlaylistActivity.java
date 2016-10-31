@@ -188,20 +188,20 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                                 MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
                     }
 
-                    boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
-
-                    currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password, mGeoLocation, hostApproval);
-
-                    playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
-                        @Override
-                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                            if (databaseError != null) {
-                                Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
-                            } else {
-                                Log.d(TAG, "Data saved successfully.");
-                            }
-                        }
-                    });
+//                    boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
+//
+////                    currentPlaylist = new Playlist(useridstuff, songidstuff, partyNam/e, password, mGeoLocation, hostApproval);
+//
+//                    playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
+//                        @Override
+//                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                            if (databaseError != null) {
+//                                Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+//                            } else {
+//                                Log.d(TAG, "Data saved successfully.");
+//                            }
+//                        }
+//                    });
                     if (locationTrack && mGeoLocation != null) {
                         GeoFire geoFire = new GeoFire(playlistRef);
                         geoFire.setLocation(getString(R.string.locationPlaylistFirebase), mGeoLocation);
@@ -210,11 +210,10 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                         GeoFire geoFire1 = new GeoFire(locationsRef);
                         geoFire1.setLocation(playlistKey, mGeoLocation);
                     }
-                    Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
-//                    searchSongsIntent.putExtra("")
-                    startActivity(searchSongsIntent);
-
                 }
+                Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
+//                    searchSongsIntent.putExtra("")
+                startActivity(searchSongsIntent);
             }
         });
     }
@@ -223,7 +222,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
     @Override
     public void onConnected(@Nullable Bundle bundle) {
         Log.d("debug", "bitch you're connected");
-        getLastLocation();
+//        getLastLocation();
     }
 
 
@@ -259,7 +258,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    getLastLocation();
+//                    getLastLocation();
 
                 } else {
 

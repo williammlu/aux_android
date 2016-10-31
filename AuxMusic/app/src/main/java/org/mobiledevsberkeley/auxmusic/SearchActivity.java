@@ -161,39 +161,39 @@ public class SearchActivity extends AppCompatActivity {
         findViewById(R.id.queryButton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatabaseReference newRef = CreatePlaylistActivity.mDatabase.child(getString(R.string.locationsFirebase));
-                // change this once location works
-                GeoFire geoFireSearch = new GeoFire(newRef);
-                GeoQuery geoQuery = geoFireSearch.queryAtLocation(new GeoLocation(37.7853889, -122.4056973), 0.6);
-                //set this to like 4 closest keys
-                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-                    @Override
-                    public void onKeyEntered(String key, GeoLocation location) {
-                        Log.d(debugTag, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-                        // once spotify works figure out what wanna do with this playlist
-                        getPlaylist(key);
-                    }
-
-                    @Override
-                    public void onKeyExited(String key) {
-                        Log.d(debugTag, String.format("Key %s is no longer in the search area", key));
-                    }
-
-                    @Override
-                    public void onKeyMoved(String key, GeoLocation location) {
-                        Log.d(debugTag, String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
-                    }
-
-                    @Override
-                    public void onGeoQueryReady() {
-                        Log.d(debugTag, "All initial data has been loaded and events have been fired!");
-                    }
-
-                    @Override
-                    public void onGeoQueryError(DatabaseError error) {
-                        Log.d(debugTag, "There was an error with this query: " + error);
-                    }
-                });
+//                DatabaseReference newRef = CreatePlaylistActivity.mDatabase.child(getString(R.string.locationsFirebase));
+//                // change this once location works
+//                GeoFire geoFireSearch = new GeoFire(newRef);
+//                GeoQuery geoQuery = geoFireSearch.queryAtLocation(new GeoLocation(37.7853889, -122.4056973), 0.6);
+//                //set this to like 4 closest keys
+//                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+//                    @Override
+//                    public void onKeyEntered(String key, GeoLocation location) {
+//                        Log.d(debugTag, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+//                        // once spotify works figure out what wanna do with this playlist
+//                        getPlaylist(key);
+//                    }
+//
+//                    @Override
+//                    public void onKeyExited(String key) {
+//                        Log.d(debugTag, String.format("Key %s is no longer in the search area", key));
+//                    }
+//
+//                    @Override
+//                    public void onKeyMoved(String key, GeoLocation location) {
+//                        Log.d(debugTag, String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryReady() {
+//                        Log.d(debugTag, "All initial data has been loaded and events have been fired!");
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryError(DatabaseError error) {
+//                        Log.d(debugTag, "There was an error with this query: " + error);
+//                    }
+//                });
             }
         });
 
