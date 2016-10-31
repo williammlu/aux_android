@@ -188,20 +188,6 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                                 MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
                     }
 
-//                    boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
-//
-////                    currentPlaylist = new Playlist(useridstuff, songidstuff, partyNam/e, password, mGeoLocation, hostApproval);
-//
-//                    playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
-//                        @Override
-//                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                            if (databaseError != null) {
-//                                Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
-//                            } else {
-//                                Log.d(TAG, "Data saved successfully.");
-//                            }
-//                        }
-//                    });
                     if (locationTrack && mGeoLocation != null) {
                         GeoFire geoFire = new GeoFire(playlistRef);
                         geoFire.setLocation(getString(R.string.locationPlaylistFirebase), mGeoLocation);
@@ -211,6 +197,21 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                         geoFire1.setLocation(playlistKey, mGeoLocation);
                     }
                 }
+                boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
+
+                currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password, "random", 0, true, 0, mGeoLocation, hostApproval);
+//                    currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password, mGeoLocation, hostApproval);
+
+                playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+                        } else {
+                            Log.d(TAG, "Data saved successfully.");
+                        }
+                    }
+                });
                 Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
 //                    searchSongsIntent.putExtra("")
                 startActivity(searchSongsIntent);

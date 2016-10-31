@@ -15,7 +15,7 @@ public class Playlist {
     private GeoLocation location;
     private boolean hostApproval;
     private String hostDeviceID;
-    private String currentSongIndex;
+    private int currentSongIndex;
     private Boolean isPlaying;
     private long currentSongTime;
     // private List ourownsonglist - possible variable
@@ -26,7 +26,7 @@ public class Playlist {
     }
 
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
-                    String password, String hostDeviceID, String currentSongIndex, Boolean isPlaying, long currentSongTime, GeoLocation location,
+                    String password, String hostDeviceID, int currentSongIndex, Boolean isPlaying, long currentSongTime, GeoLocation location,
                     boolean hostApproval) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
@@ -48,15 +48,11 @@ public class Playlist {
         userDeviceIDList.add(user.getUID());
     }
 
-    public List<String> getUserDeviceIDList() {
-        return userDeviceIDList;
-    }
-
     public String getHostDeviceID() {
         return hostDeviceID;
     }
 
-    public String getcurrentSongIndex() {
+    public int getCurrentSongIndex() {
         return currentSongIndex;
     }
 
@@ -76,7 +72,7 @@ public class Playlist {
         return password;
     }
 
-    public List<String> getuserDeviceIDList() {
+    public List<String> getUserDeviceIDList() {
         return userDeviceIDList;
     }
 
