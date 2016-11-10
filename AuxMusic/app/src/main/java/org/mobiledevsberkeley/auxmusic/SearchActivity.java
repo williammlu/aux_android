@@ -65,7 +65,8 @@ public class SearchActivity extends AppCompatActivity implements
     private int mRequestCode = 5;
     private static final boolean mDisableHide = true;
     public static final String debugTag = "debug";
-
+    Button[] buttonHolder = new Button[4];
+    int buttonCount = 0;
 
     /**
      * Whether or not the system UI should be auto-hidden after
@@ -192,46 +193,7 @@ public class SearchActivity extends AppCompatActivity implements
                 //create dialog fragment
             }
         });
-
-        findViewById(R.id.queryButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-//                DatabaseReference newRef = CreatePlaylistActivity.mDatabase.child(getString(R.string.locationsFirebase));
-//                // change this once location works
-//                GeoFire geoFireSearch = new GeoFire(newRef);
-//                GeoQuery geoQuery = geoFireSearch.queryAtLocation(new GeoLocation(37.7853889, -122.4056973), 0.6);
-//                //set this to like 4 closest keys
-//                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
-//                    @Override
-//                    public void onKeyEntered(String key, GeoLocation location) {
-//                        Log.d(debugTag, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
-//                        // once spotify works figure out what wanna do with this playlist
-//                        getPlaylist(key);
-//                    }
-//
-//                    @Override
-//                    public void onKeyExited(String key) {
-//                        Log.d(debugTag, String.format("Key %s is no longer in the search area", key));
-//                    }
-//
-//                    @Override
-//                    public void onKeyMoved(String key, GeoLocation location) {
-//                        Log.d(debugTag, String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
-//                    }
-//
-//                    @Override
-//                    public void onGeoQueryReady() {
-//                        Log.d(debugTag, "All initial data has been loaded and events have been fired!");
-//                    }
-//
-//                    @Override
-//                    public void onGeoQueryError(DatabaseError error) {
-//                        Log.d(debugTag, "There was an error with this query: " + error);
-//                    }
-//                });
-            }
-        });
-
+        geoFireQuery();
 
         mTestSpotifyAuth.setOnTouchListener(mDelayHideTouchListener);
         mTestSpotifyAuth.setOnClickListener(new View.OnClickListener() {
@@ -254,6 +216,54 @@ public class SearchActivity extends AppCompatActivity implements
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void geoFireQuery() {
+        buttonHolder[0] = (Button) findViewById(R.id.query0);
+        buttonHolder[1] =(Button) findViewById(R.id.query1);
+        buttonHolder[2] =(Button) findViewById(R.id.query2);
+        buttonHolder[3] =(Button) findViewById(R.id.query3);
+
+        findViewById(R.id.queryButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference newRef = CreatePlaylistActivity.mDatabase.child(getString(R.string.locationsFirebase));
+                // change this once location works
+                GeoFire geoFireSearch = new GeoFire(newRef);
+                GeoQuery geoQuery = geoFireSearch.queryAtLocation(new GeoLocation(37.7853889, -122.4056973), 0.6);
+                //set this to like 4 closest keys
+                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+                    @Override
+                    public void onKeyEntered(String key, GeoLocation location) {
+                        Toast.makeText(getApplicationContext(), String.format("Key %s entered the search area at [%f,%f]",
+                                key, location.latitude, location.longitude), Toast.LENGTH_SHORT).show();
+                        // once spotify works figure out what wanna do with this playlist
+                        getPlaylist(key);
+                    }
+
+                    @Override
+                    public void onKeyExited(String key) {
+                        Log.d(debugTag, String.format("Key %s is no longer in the search area", key));
+                    }
+
+                    @Override
+                    public void onKeyMoved(String key, GeoLocation location) {
+                        Log.d(debugTag, String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+                    }
+
+                    @Override
+                    public void onGeoQueryReady() {
+                        Log.d(debugTag, "All initial data has been loaded and events have been fired!");
+                    }
+
+                    @Override
+                    public void onGeoQueryError(DatabaseError error) {
+                        Log.d(debugTag, "There was an error with this query: " + error);
+                    }
+                });
+            }
+        });
+
     }
 
     private void setSearchView() {
@@ -282,7 +292,19 @@ public class SearchActivity extends AppCompatActivity implements
         playlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Playlist myPlaylist = dataSnapshot.getValue(Playlist.class);
+                final Playlist myPlaylist = dataSnapshot.getValue(Playlist.class);
+                final Button currButton =  buttonHolder[buttonCount];
+                currButton.setText(myPlaylist.getPlaylistName());
+                currButton.setVisibility(View.VISIBLE);
+                currButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        AuxSingleton.getInstance().setCurrentPlaylist(myPlaylist);
+                        Toast.makeText(SearchActivity.this, "Curr Playlist is now" +
+                                currButton.getText(), Toast.LENGTH_SHORT).show();
+                    }
+                });
+                buttonCount = (buttonCount + 1) % 4;
             }
 
             @Override

@@ -11,8 +11,11 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.media.MediaBrowserCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
@@ -48,6 +51,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
     private TextView passwordText;
     private EditText passwordEditText;
     private EditText nameText;
+    private Button createPlaylistButton;
 
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -72,19 +76,64 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
         thisActivity = this;
 
         publicPrivate = (CheckBox) findViewById(R.id.publicPrivate);
+        createPlaylistButton = (Button) findViewById(R.id.button);
+
         passwordText = (TextView) findViewById(R.id.passwordTextView);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
-        nameText = (EditText) findViewById(R.id.nameTextView);
 
+        nameText = (EditText) findViewById(R.id.nameTextView);
+        nameTextListener();
+        checkedChangeListener();
         firebaseSignIn();
         testingFirebaseStuff();
+    }
 
+    private void nameTextListener() {
+        nameText.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+                if (s.length() == 0) createPlaylistButton.setEnabled(false);
+                else createPlaylistButton.setEnabled(true);
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+
+            }
+        });
+    }
+
+    private void checkedChangeListener() {
         publicPrivate.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
                     passwordText.setVisibility(View.VISIBLE);
                     passwordEditText.setVisibility(View.VISIBLE);
+                    createPlaylistButton.setEnabled(false);
+                    passwordEditText.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                        }
+
+                        @Override
+                        public void onTextChanged(CharSequence s, int start, int before, int count) {
+                            if (s.length() == 0) createPlaylistButton.setEnabled(false);
+                            else createPlaylistButton.setEnabled(true);
+                        }
+
+                        @Override
+                        public void afterTextChanged(Editable s) {
+
+                        }
+                    });
                 }
                 else {
                     passwordText.setVisibility(View.GONE);
@@ -92,6 +141,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                 }
             }
         });
+
     }
 
     @Override
@@ -156,7 +206,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
 
     private void testingFirebaseStuff(){
 
-        findViewById(R.id.button).setOnClickListener(new View.OnClickListener() {
+        createPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // test comment
@@ -164,6 +214,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                 playlistKey = playlistRef.getKey(); // store this somewhere?
 
                 String partyName = nameText.getText().toString();
+                //add check if string is ""
                 String password = null;
                 if (publicPrivate.isChecked()) {
                     password = passwordEditText.getText().toString();
@@ -176,16 +227,17 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                 boolean locationTrack = ((CheckBox) findViewById(R.id.locationChecker)).isChecked();
 
                 if (locationTrack) {
-                    PackageManager pm = thisActivity.getPackageManager();
-                    int hasPerm = pm.checkPermission(
-                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                            thisActivity.getPackageName());
-                    if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-//                        getLastLocation();
-                    } else {
-                        ActivityCompat.requestPermissions(thisActivity,
-                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                                MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+//                    PackageManager pm = thisActivity.getPackageManager();
+//                    int hasPerm = pm.checkPermission(
+//                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+//                            thisActivity.getPackageName());
+//                    if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+////                        getLastLocation();
+//                    } else {
+//                        ActivityCompat.requestPermissions(thisActivity,
+//                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+//                                MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+                    mGeoLocation = new GeoLocation(37.7853889, -122.4056973);
                     }
 
                     if (locationTrack && mGeoLocation != null) {
@@ -196,7 +248,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements GoogleA
                         GeoFire geoFire1 = new GeoFire(locationsRef);
                         geoFire1.setLocation(playlistKey, mGeoLocation);
                     }
-                }
+
                 boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
 
                 currentPlaylist = new Playlist(useridstuff, songidstuff, partyName, password, "random", 0, true, 0, mGeoLocation, hostApproval);

@@ -55,6 +55,34 @@
             android:layout_marginLeft="50dp"
             android:layout_marginTop="50dp"
             android:id="@+id/queryButton" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="50dp"
+            android:visibility="gone"
+            android:id="@+id/query0" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="50dp"
+            android:visibility="gone"
+            android:id="@+id/query1" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="50dp"
+            android:layout_marginTop="200dp"
+            android:visibility="gone"
+            android:id="@+id/query2" />
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="100dp"
+            android:layout_marginTop="200dp"
+            android:visibility="gone"
+            android:id="@+id/query3" />
 
         <LinearLayout
             android:id="@+id/fullscreen_content_controls"

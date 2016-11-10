@@ -8,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 
 /**
@@ -15,10 +17,10 @@ import java.util.ArrayList;
  */
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHolder>{
-    ArrayList<String> list;
+    ArrayList<Song> list;
     Context context;
 
-    public MusicAdapter(Context applicationContext, ArrayList<String> list) {
+    public MusicAdapter(Context applicationContext, ArrayList<Song> list) {
         context = applicationContext;
         this.list = list;
     }
@@ -31,9 +33,10 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
-        Object object = list.get(position);
-//        holder.name.setText(pokemon.name);
-
+        Song song = list.get(position);
+        holder.songTitle.setText(song.getSongName());
+        holder.artistTitle.setText(song.getArtistName());
+        holder.albumTitle.setText(song.getAlbumName());
     }
 
     @Override
@@ -43,12 +46,16 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
         ImageView img;
-        TextView name;
+        TextView songTitle;
+        TextView artistTitle;
+        TextView albumTitle;
 
         public CustomViewHolder(View v) {
             super(v);
 //            img = (ImageView) v.findViewById(R.id.imageView);
-//            name = (TextView) v.findViewById(R.id.name);
+            songTitle = (TextView) v.findViewById(R.id.songName);
+            artistTitle = (TextView) v.findViewById(R.id.artistName);
+            albumTitle = (TextView) v.findViewById(R.id.albumName);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
