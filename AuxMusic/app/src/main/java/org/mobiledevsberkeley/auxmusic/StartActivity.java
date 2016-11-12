@@ -19,6 +19,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 public class StartActivity extends AppCompatActivity {
     private String TAG = "debug";
@@ -118,16 +122,17 @@ public class StartActivity extends AppCompatActivity {
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser= firebaseAuth.getCurrentUser();
+                final FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
                 User currentUser = aux.getCurrentUser();
-                if (firebaseUser == null && currentUser == null) {
+                if (firebaseUser == null) {
                     Log.d(TAG, "user not signed in");
                     signInAnon();
                 } else if (currentUser == null) {
+                    Log.d(TAG, "current user was null");
                     User user = new User();
                     user.setUID(firebaseUser.getUid());
                     aux.setCurrentUser(user);
-                } else if (firebaseUser != null && aux.getCurrentUser() != null && aux.getCurrentPlaylist() != null) {
+                } else if (aux.getCurrentPlaylist() != null) {
                     Log.d(TAG, "user signed in anon " + aux.getCurrentUser().getUID());
                     // jump straight to playlist activity, while getting playlist things from Firebase
                 } else {
