@@ -44,6 +44,8 @@ public class User {
         this.spotifyAuthKey = spotifyAuthKey;
     }
 
+    public void setPlaylistKey(String playlistKey) { this.playlistKey = playlistKey; }
+
     public void setParticipantName(String participantName) {
         this.participantName = participantName;
     }

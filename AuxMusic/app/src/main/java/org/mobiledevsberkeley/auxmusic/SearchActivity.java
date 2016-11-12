@@ -285,30 +285,30 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void getPlaylist(String key) {
-        DatabaseReference playlistRef = CreatePlaylistActivity.mDatabase.child("playlists").child(key);
-        playlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                final Playlist myPlaylist = dataSnapshot.getValue(Playlist.class);
-                final Button currButton =  buttonHolder[buttonCount];
-                currButton.setText(myPlaylist.getPlaylistName());
-                currButton.setVisibility(View.VISIBLE);
-                currButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        AuxSingleton.getInstance().setCurrentPlaylist(myPlaylist);
-                        Toast.makeText(SearchActivity.this, "Curr Playlist is now" +
-                                currButton.getText(), Toast.LENGTH_SHORT).show();
-                    }
-                });
-                buttonCount = (buttonCount + 1) % 4;
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // ...
-            }
-        });
+//        DatabaseReference playlistRef = CreatePlaylistActivity.mDatabase.child("playlists").child(key);
+//        playlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                final Playlist myPlaylist = dataSnapshot.getValue(Playlist.class);
+//                final Button currButton =  buttonHolder[buttonCount];
+//                currButton.setText(myPlaylist.getPlaylistName());
+//                currButton.setVisibility(View.VISIBLE);
+//                currButton.setOnClickListener(new View.OnClickListener() {
+//                    @Override
+//                    public void onClick(View v) {
+//                        AuxSingleton.getInstance().setCurrentPlaylist(myPlaylist);
+//                        Toast.makeText(SearchActivity.this, "Curr Playlist is now" +
+//                                currButton.getText(), Toast.LENGTH_SHORT).show();
+//                    }
+//                });
+//                buttonCount = (buttonCount + 1) % 4;
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // ...
+//            }
+//        });
     }
 
 
