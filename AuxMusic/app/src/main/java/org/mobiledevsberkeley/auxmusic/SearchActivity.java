@@ -3,22 +3,32 @@ package org.mobiledevsberkeley.auxmusic;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.app.Activity;
+import android.net.Uri;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.spotify.sdk.android.player.Error;
-
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.PlayerEvent;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.firebase.geofire.GeoQuery;
+import com.firebase.geofire.GeoQueryEventListener;
+import com.google.android.gms.appindexing.Action;
+import com.google.android.gms.appindexing.AppIndex;
+import com.google.android.gms.appindexing.Thing;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
@@ -54,9 +64,7 @@ public class SearchActivity extends AppCompatActivity implements
 
     private int mRequestCode = 5;
     private static final boolean mDisableHide = true;
-    private static final String CLIENT_ID = "687e297cd52c436eb680444a7b0519f9";
-
-    private SpotifyPlayer mPlayer;
+    public static final String debugTag = "debug";
 
 
     /**
@@ -128,6 +136,11 @@ public class SearchActivity extends AppCompatActivity implements
             return false;
         }
     };
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    private GoogleApiClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,6 +156,8 @@ public class SearchActivity extends AppCompatActivity implements
         mSkipButton = (Button) findViewById(R.id.skip_button);
         mQueueSearchButton = (Button) findViewById(R.id.play_songs_button);
         mSongNameTextView = (EditText) findViewById(R.id.search_song_name_text);
+
+        setSearchView();
 
 
         // Set up the user interaction to manually show or hide the system UI.
@@ -178,6 +193,45 @@ public class SearchActivity extends AppCompatActivity implements
             }
         });
 
+        findViewById(R.id.queryButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                DatabaseReference newRef = CreatePlaylistActivity.mDatabase.child(getString(R.string.locationsFirebase));
+//                // change this once location works
+//                GeoFire geoFireSearch = new GeoFire(newRef);
+//                GeoQuery geoQuery = geoFireSearch.queryAtLocation(new GeoLocation(37.7853889, -122.4056973), 0.6);
+//                //set this to like 4 closest keys
+//                geoQuery.addGeoQueryEventListener(new GeoQueryEventListener() {
+//                    @Override
+//                    public void onKeyEntered(String key, GeoLocation location) {
+//                        Log.d(debugTag, String.format("Key %s entered the search area at [%f,%f]", key, location.latitude, location.longitude));
+//                        // once spotify works figure out what wanna do with this playlist
+//                        getPlaylist(key);
+//                    }
+//
+//                    @Override
+//                    public void onKeyExited(String key) {
+//                        Log.d(debugTag, String.format("Key %s is no longer in the search area", key));
+//                    }
+//
+//                    @Override
+//                    public void onKeyMoved(String key, GeoLocation location) {
+//                        Log.d(debugTag, String.format("Key %s moved within the search area to [%f,%f]", key, location.latitude, location.longitude));
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryReady() {
+//                        Log.d(debugTag, "All initial data has been loaded and events have been fired!");
+//                    }
+//
+//                    @Override
+//                    public void onGeoQueryError(DatabaseError error) {
+//                        Log.d(debugTag, "There was an error with this query: " + error);
+//                    }
+//                });
+            }
+        });
+
 
         mTestSpotifyAuth.setOnTouchListener(mDelayHideTouchListener);
         mTestSpotifyAuth.setOnClickListener(new View.OnClickListener() {
@@ -197,6 +251,46 @@ public class SearchActivity extends AppCompatActivity implements
 
             }
         });
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+    }
+
+    private void setSearchView() {
+        android.support.v7.widget.SearchView searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
+        searchView.setQueryHint("Search for s");
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                // do something with spotify api
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                // do something with spotify api
+                return false;
+            }
+        });
+
+    }
+
+    private void getPlaylist(String key) {
+        DatabaseReference playlistRef = CreatePlaylistActivity.mDatabase.child("playlists").child(key);
+        playlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Playlist myPlaylist = dataSnapshot.getValue(Playlist.class);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
+    }
 
 
         mPlayButton.setOnClickListener(new View.OnClickListener() {
@@ -280,14 +374,14 @@ public class SearchActivity extends AppCompatActivity implements
 
         if (requestCode == mRequestCode) {
             String result = "";
-
-            if(resultCode == Activity.RESULT_OK){
+            String accessToken = "";
+            if (resultCode == Activity.RESULT_OK) {
                 result = data.getStringExtra("result");
                 mAccessToken = data.getStringExtra("access_token");
                 createSpotifyPlayer(mAccessToken);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
-                result=data.getStringExtra("result");
+                result = data.getStringExtra("result");
             }
 
             Snackbar snackbar = Snackbar
@@ -361,81 +455,39 @@ public class SearchActivity extends AppCompatActivity implements
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
-
-    @Override
-    protected void onDestroy() {
-        // VERY IMPORTANT! This must always be called or else you will leak resources
-        Spotify.destroyPlayer(this);
-        super.onDestroy();
-    }
-
-//    @Override
-    public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("SearchActivity", "Playback event received: " + playerEvent.name());
-        switch (playerEvent) {
-            // Handle event type as necessary
-            default:
-                break;
-        }
-    }
-
-//    @Override
-    public void onPlaybackError(Error error) {
-        Log.d("SearchActivity", "Playback error received: " + error.name());
-        switch (error) {
-            // Handle error type as necessary
-            default:
-                break;
-        }
+    /**
+     * ATTENTION: This was auto-generated to implement the App Indexing API.
+     * See https://g.co/AppIndexing/AndroidStudio for more information.
+     */
+    public Action getIndexApiAction() {
+        Thing object = new Thing.Builder()
+                .setName("Search Page") // TODO: Define a title for the content shown.
+                // TODO: Make sure this auto-generated URL is correct.
+                .setUrl(Uri.parse("http://[ENTER-YOUR-URL-HERE]"))
+                .build();
+        return new Action.Builder(Action.TYPE_VIEW)
+                .setObject(object)
+                .setActionStatus(Action.STATUS_TYPE_COMPLETED)
+                .build();
     }
 
     @Override
-    public void onLoggedIn() {
-        Log.d("SearchActivity", "User logged in");
+    public void onStart() {
+        super.onStart();
 
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        client.connect();
+        AppIndex.AppIndexApi.start(client, getIndexApiAction());
     }
 
     @Override
-    public void onLoggedOut() {
-        Log.d("SearchActivity", "User logged out");
+    public void onStop() {
+        super.onStop();
+
+        // ATTENTION: This was auto-generated to implement the App Indexing API.
+        // See https://g.co/AppIndexing/AndroidStudio for more information.
+        AppIndex.AppIndexApi.end(client, getIndexApiAction());
+        client.disconnect();
     }
-
-    @Override
-    public void onLoginFailed(int i) {
-        Log.d("SearchActivity", "Login failed");
-    }
-
-    @Override
-    public void onTemporaryError() {
-        Log.d("SearchActivity", "Temporary error occurred");
-    }
-
-    @Override
-    public void onConnectionMessage(String message) {
-        Log.d("SearchActivity", "Received connection message: " + message);
-    }
-
-
-
-
-    public void createSpotifyPlayer(String token) {
-        Config playerConfig = new Config(this, token, CLIENT_ID);
-        SpotifyPlayer p = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
-            @Override
-            public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                mPlayer = spotifyPlayer;
-                mPlayer.addConnectionStateCallback(SearchActivity.this);
-                mPlayer.addNotificationCallback(SearchActivity.this);
-
-            }
-
-            @Override
-            public void onError(Throwable throwable) {
-                Log.e("SpotifyAuth", "Could not initialize player: " + throwable.getMessage());
-            }
-        });
-        auxSpotifyPlayer = new AuxSpotifyPlayer(p, mPlaylist);
-
-    }
-
 }

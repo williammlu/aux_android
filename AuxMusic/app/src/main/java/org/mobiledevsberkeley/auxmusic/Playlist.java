@@ -1,7 +1,7 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import com.google.firebase.database.Exclude;
-
+import com.firebase.geofire.GeoLocation;
 import java.util.*;
 /**
  * Created by wilbu on 10/15/2016.
@@ -12,8 +12,10 @@ public class Playlist {
     private List<String> spotifySongIDList;     // contains spotify track URIs, we could then convert this to a List<Song>, but ^^
     private String playlistName;
     private String password;
+    private GeoLocation location;
+    private boolean hostApproval;
     private String hostDeviceID;
-    private String currentSongID;
+    private int currentSongIndex;
     private Boolean isPlaying;
     private long currentSongTime;
 
@@ -36,19 +38,21 @@ public class Playlist {
 
 
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
-                    String password, String hostDeviceID, String currentSongID, Boolean isPlaying, long currentSongTime) {
+                    String password, String hostDeviceID, int currentSongIndex, Boolean isPlaying, long currentSongTime, GeoLocation location,
+                    boolean hostApproval) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
         this.playlistName = playlistName;
         this.password = password;
         this.hostDeviceID = hostDeviceID;
-        this.currentSongID = currentSongID;
+        this.currentSongIndex = currentSongIndex;
         this.isPlaying = isPlaying;
         this.currentSongTime = currentSongTime;
-        this.currentSongIndex = 0;
     }
     public void setCurrentSongID(String currentSongID) {
         this.currentSongID = currentSongID;
+        this.location = location;
+        this.hostApproval = hostApproval;
     }
 
     public void addSong(Song song) {
@@ -59,16 +63,15 @@ public class Playlist {
         userDeviceIDList.add(user.getUID());
     }
 
-    public List<String> getUserDeviceIDList() {
-        return userDeviceIDList;
-    }
-
     public String getHostDeviceID() {
         return hostDeviceID;
     }
 
     public String getCurrentSongID() {
         return spotifySongIDList.get(currentSongIndex);
+    }
+    public int getCurrentSongIndex() {
+        return currentSongIndex;
     }
 
     public Boolean getPlaying() {
@@ -95,7 +98,7 @@ public class Playlist {
         return password;
     }
 
-    public List<String> getuserDeviceIDList() {
+    public List<String> getUserDeviceIDList() {
         return userDeviceIDList;
     }
 

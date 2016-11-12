@@ -2,8 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="org.mobiledevsberkeley.auxmusic">
 
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 
+    <!-- can do fine location if we need better accuracy than +- a block -->
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -21,36 +23,39 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".SpotifyAuthTest"
-            android:label="@string/app_name" >
+            android:label="@string/app_name">
             // An intent filter that will receive the response
             // from the authentication service
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="android.intent.action.VIEW" />
 
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-
-                // this needs to match the scheme and host of the redirect URI as defined in My applications page
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                // this needs to match the scheme and host of the redirect URI as defined in My
+                applications page
                 <data
                     android:host="callback"
-                    android:scheme="AuxMusic"/>
+                    android:scheme="AuxMusic" />
             </intent-filter>
-
         </activity>
 
         <!-- Needed for SpotifyAuthTest to work -->
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"/>
-        <activity
-            android:name=".CreatePlaylistActivity"/>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".CreatePlaylistActivity" />
+        <activity android:name=".SearchSongsActivity" />
+        <!--
+ ATTENTION: This was auto-generated to add Google Play services to your project for
+     App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
+        -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".SearchSongsActivity"/>
-
+        <activity android:name=".ParticipantsActivity"></activity>
     </application>
 
 </manifest>

@@ -9,5 +9,8 @@
     <string name="test_spotify_auth">Test Spotify Authentication</string>
     <string name="title_activity_spotify_auth_test">SpotifyAuthTest</string>
 
+    <string name="playlistFirebase">playlists</string>
+    <string name="locationPlaylistFirebase">location</string>
+    <string name="locationsFirebase">locations</string>
     <string name="defaultParticipantName">Anon</string>
 </resources>
