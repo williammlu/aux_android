@@ -50,16 +50,11 @@ public class SearchActivity extends AppCompatActivity implements
 
     private AuxSpotifyPlayer auxSpotifyPlayer;
 
-    private boolean mIsPlaying = false;
     String mAccessToken = "";
 
     private int mRequestCode = 5;
     private static final boolean mDisableHide = true;
     private static final String CLIENT_ID = "687e297cd52c436eb680444a7b0519f9";
-
-    /* List of Childish Gambino songs to be randomly played */
-    private static String mSongs[] = {"spotify:track:6olUplztLFFfU7fMYmFXOP", "spotify:track:3Z2sglqDj1rDRMF5x0Sz2R",
-            "spotify:track:4zGvb8hxGLB2jEPRFiRRqw", "spotify:track:3HooZZPp0evFShqaJ2Pwer"};
 
     private SpotifyPlayer mPlayer;
 
@@ -240,42 +235,42 @@ public class SearchActivity extends AppCompatActivity implements
 
         mQueueSearchButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                SpotifyApi api = new SpotifyApi();
+            SpotifyApi api = new SpotifyApi();
 
-                // Most (but not all) of the Spotify Web API endpoints require authorisation.
-                // If you know you'll only use the ones that don't require authorisation you can skip this step
-                api.setAccessToken(mAccessToken);
+            // Most (but not all) of the Spotify Web API endpoints require authorisation.
+            // If you know you'll only use the ones that don't require authorisation you can skip this step
+            api.setAccessToken(mAccessToken);
 
-                SpotifyService spotify = api.getService();
-                String searchQuery = mSongNameTextView.getText().toString();
-                Log.d("SearchActivity", "Search box said: " + searchQuery);
-                if (searchQuery.length() > 0) {
-                    spotify.searchTracks(searchQuery, new Callback<TracksPager>(){
-                        @Override
-                        public void success(TracksPager tPager, Response response) {
-                            String msg;
-                            List<Track> tracks = tPager.tracks.items;
-                            if (tracks.size() > 0) {
-                                Track track = tracks.get(0);
-                                Song song = new Song(track);
-                                Log.e("SearchActivity", "Added song is " + song.getTrackLength() + "ms");
-                                mPlaylist.addSong(song);
-                                msg = "Queued " + song.getSongName();
+            SpotifyService spotify = api.getService();
+            String searchQuery = mSongNameTextView.getText().toString();
+            Log.d("SearchActivity", "Search box said: " + searchQuery);
+            if (searchQuery.length() > 0) {
+                spotify.searchTracks(searchQuery, new Callback<TracksPager>(){
+                    @Override
+                    public void success(TracksPager tPager, Response response) {
+                        String msg;
+                        List<Track> tracks = tPager.tracks.items;
+                        if (tracks.size() > 0) {
+                            Track track = tracks.get(0);
+                            Song song = new Song(track);
+                            Log.e("SearchActivity", "Added song is " + song.getTrackLength() + "ms");
+                            mPlaylist.addSong(song);
+                            msg = "Queued " + song.getSongName();
 
-                            } else {
-                                msg = "No Songs matched this search!";
-                            }
-                            Snackbar snackbar = Snackbar
-                                    .make(mContentView, msg, Snackbar.LENGTH_SHORT);
-                            snackbar.show();
+                        } else {
+                            msg = "No Songs matched this search!";
                         }
+                        Snackbar snackbar = Snackbar
+                                .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
 
-                        @Override
-                        public void failure(RetrofitError error) {
-                            Log.e("Track Playing failure", error.toString());
-                        }
-                    });
-                }
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e("Track Playing failure", error.toString());
+                    }
+                });
+            }
             }
         });
 
@@ -289,10 +284,7 @@ public class SearchActivity extends AppCompatActivity implements
             if(resultCode == Activity.RESULT_OK){
                 result = data.getStringExtra("result");
                 mAccessToken = data.getStringExtra("access_token");
-
                 createSpotifyPlayer(mAccessToken);
-
-
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 result=data.getStringExtra("result");

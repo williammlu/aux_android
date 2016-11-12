@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:gravity="center"
         android:keepScreenOn="true"
-        android:text="@string/dummy_content"
+        android:text="AUX"
         android:textColor="#33b5e5"
         android:textSize="50sp"
         android:textStyle="bold" />
@@ -88,7 +88,7 @@
                 android:layout_centerHorizontal="true" />
 
             <Button
-                android:text="Play a song"
+                android:text="Queue a song"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 style="?metaButtonBarButtonStyle"
