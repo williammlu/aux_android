@@ -10,4 +10,28 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.mobiledevsberkeley.auxmusic.StartActivity">
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CreatePlaylistActivity"
+        android:id="@+id/createPlaylistActivityBtn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="playlistactivity"
+        android:id="@+id/playlistActivityBtn"
+        android:layout_below="@+id/createPlaylistActivityBtn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Will's Spotify stuff"
+        android:id="@+id/willstuffBtn"
+        android:layout_below="@+id/playlistActivityBtn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="AddSong activity"
+        android:id="@+id/addSongActivityBtn"
+        android:layout_below="@+id/willstuffBtn"/>
+
 </RelativeLayout>
