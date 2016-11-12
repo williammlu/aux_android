@@ -274,18 +274,18 @@ public class SearchActivity extends AppCompatActivity {
     }
 
     private void getPlaylist(String key) {
-        DatabaseReference playlistRef = CreatePlaylistActivity.mDatabase.child("playlists").child(key);
-        playlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Playlist myPlaylist = dataSnapshot.getValue(Playlist.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // ...
-            }
-        });
+//        DatabaseReference playlistRef = CreatePlaylistActivity.mDatabase.child("playlists").child(key);
+//        playlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(DataSnapshot dataSnapshot) {
+//                Playlist myPlaylist = dataSnapshot.getValue(Playlist.class);
+//            }
+//
+//            @Override
+//            public void onCancelled(DatabaseError databaseError) {
+//                // ...
+//            }
+//        });
     }
 
 
