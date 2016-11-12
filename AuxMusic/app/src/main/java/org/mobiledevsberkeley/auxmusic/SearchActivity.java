@@ -29,6 +29,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
@@ -48,8 +49,7 @@ import static android.R.attr.value;
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class SearchActivity extends AppCompatActivity implements
-        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+public class SearchActivity extends AppCompatActivity {
 
     private Button mTestSpotifyAuth;
     private Button mPlayButton;
@@ -153,10 +153,6 @@ public class SearchActivity extends AppCompatActivity implements
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
         mTestSpotifyAuth = (Button) findViewById(R.id.auth_button);
-        mPlayButton = (Button) findViewById(R.id.play_button);
-        mSkipButton = (Button) findViewById(R.id.skip_button);
-        mQueueSearchButton = (Button) findViewById(R.id.play_songs_button);
-        mSongNameTextView = (EditText) findViewById(R.id.search_song_name_text);
 
         setSearchView();
 
@@ -315,109 +311,33 @@ public class SearchActivity extends AppCompatActivity implements
     }
 
 
-        mPlayButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String msg;
-
-                if(auxSpotifyPlayer == null)
-                {
-                    msg = "AuxSpotifyPlayer not yet created";
-                } else {
-                    // Choose to Pause or Play
-                    msg = auxSpotifyPlayer.togglePlay();
-                }
-
-                Snackbar snackbar = Snackbar
-                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
-                snackbar.show();
-            }
-        });
-
-        mSkipButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                String msg;
-                if (auxSpotifyPlayer == null) {
-                    msg = "AuxSpotifyPlayer not yet created";
-                    Snackbar snackbar = Snackbar
-                            .make(mContentView, msg, Snackbar.LENGTH_SHORT);
-                    snackbar.show();
-                } else {
-                    long index = auxSpotifyPlayer.skip();
-                }
-            }
-        });
-
-
-
-        mQueueSearchButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            SpotifyApi api = new SpotifyApi();
-
-            // Most (but not all) of the Spotify Web API endpoints require authorisation.
-            // If you know you'll only use the ones that don't require authorisation you can skip this step
-            api.setAccessToken(mAccessToken);
-
-            SpotifyService spotify = api.getService();
-            String searchQuery = mSongNameTextView.getText().toString();
-            Log.d("SearchActivity", "Search box said: " + searchQuery);
-            if (searchQuery.length() > 0) {
-                spotify.searchTracks(searchQuery, new Callback<TracksPager>(){
-                    @Override
-                    public void success(TracksPager tPager, Response response) {
-                        String msg;
-                        List<Track> tracks = tPager.tracks.items;
-                        if (tracks.size() > 0) {
-                            Track track = tracks.get(0);
-                            Song song = new Song(track);
-                            Log.e("SearchActivity", "Added song is " + song.getTrackLength() + "ms");
-                            mPlaylist.addSong(song);
-                            msg = "Queued " + song.getSongName();
-
-                        } else {
-                            msg = "No Songs matched this search!";
-                        }
-                        Snackbar snackbar = Snackbar
-                                .make(mContentView, msg, Snackbar.LENGTH_SHORT);
-                        snackbar.show();
-                    }
-
-                    @Override
-                    public void failure(RetrofitError error) {
-                        Log.e("Track Playing failure", error.toString());
-                    }
-                });
-            }
-            }
-        });
-
-    }
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        if (requestCode == mRequestCode) {
-            String result = "";
-            String accessToken = "";
-            if (resultCode == Activity.RESULT_OK) {
-                result = data.getStringExtra("result");
-                mAccessToken = data.getStringExtra("access_token");
-                createSpotifyPlayer(mAccessToken);
-            }
-            if (resultCode == Activity.RESULT_CANCELED) {
-                result = data.getStringExtra("result");
-            }
-
-            Snackbar snackbar = Snackbar
-                    .make(mContentView, result + "\naccess_token=" + mAccessToken, Snackbar.LENGTH_INDEFINITE)
-                    .setAction("Dismiss", new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            // Handle user action
-                            Log.d("SearchActivity", "Snack bar dismissed");
-                        }
-                    });
-            snackbar.show();
-        }
-    }
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+//
+//        if (requestCode == mRequestCode) {
+//            String result = "";
+//            String accessToken = "";
+//            if (resultCode == Activity.RESULT_OK) {
+//                result = data.getStringExtra("result");
+//                mAccessToken = data.getStringExtra("access_token");
+//                createSpotifyPlayer(mAccessToken);
+//            }
+//            if (resultCode == Activity.RESULT_CANCELED) {
+//                result = data.getStringExtra("result");
+//            }
+//
+//            Snackbar snackbar = Snackbar
+//                    .make(mContentView, result + "\naccess_token=" + mAccessToken, Snackbar.LENGTH_INDEFINITE)
+//                    .setAction("Dismiss", new View.OnClickListener() {
+//                        @Override
+//                        public void onClick(View v) {
+//                            // Handle user action
+//                            Log.d("SearchActivity", "Snack bar dismissed");
+//                        }
+//                    });
+//            snackbar.show();
+//        }
+//    }
 
 
     @Override

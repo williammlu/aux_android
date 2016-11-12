@@ -19,10 +19,10 @@ public class Playlist {
     private Boolean isPlaying;
     private long currentSongTime;
 
+    public String currentSongID;
 
 
-    @Exclude
-    private int currentSongIndex;
+
     // private List ourownsonglist - possible variable
 
     public Playlist() {
@@ -68,7 +68,11 @@ public class Playlist {
     }
 
     public String getCurrentSongID() {
-        return spotifySongIDList.get(currentSongIndex);
+        if (spotifySongIDList.size() > 0) {
+            return spotifySongIDList.get(currentSongIndex);
+        }
+        return "";
+
     }
     public int getCurrentSongIndex() {
         return currentSongIndex;
@@ -106,11 +110,6 @@ public class Playlist {
         return playlistName;
     }
 
-    public int getCurrentSongIndex() {
-        return currentSongIndex;
-
-        // spotifySongIDList.indexOf(currentSongID); will always get first instance...
-    }
 
     public void setCurrentSongIndex(int currentSongIndex) {
         this.currentSongIndex = currentSongIndex;
