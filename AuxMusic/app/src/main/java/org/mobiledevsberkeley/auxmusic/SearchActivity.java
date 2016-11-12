@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.Toast;
+import android.widget.EditText;
 
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
@@ -30,17 +30,38 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import static android.R.attr.data;
+import java.util.List;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.TracksPager;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 import static android.R.attr.value;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
  */
-public class SearchActivity extends AppCompatActivity {
+public class SearchActivity extends AppCompatActivity implements
+        SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
 
     private Button mTestSpotifyAuth;
+    private Button mPlayButton;
+    private Button mSkipButton;
+    private Button mQueueSearchButton;
+    private EditText mSongNameTextView;
+    private Playlist mPlaylist = new Playlist();
+
+    private AuxSpotifyPlayer auxSpotifyPlayer;
+
+    String mAccessToken = "";
+
     private int mRequestCode = 5;
     private static final boolean mDisableHide = true;
     public static final String debugTag = "debug";
@@ -131,6 +152,10 @@ public class SearchActivity extends AppCompatActivity {
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
         mTestSpotifyAuth = (Button) findViewById(R.id.auth_button);
+        mPlayButton = (Button) findViewById(R.id.play_button);
+        mSkipButton = (Button) findViewById(R.id.skip_button);
+        mQueueSearchButton = (Button) findViewById(R.id.play_songs_button);
+        mSongNameTextView = (EditText) findViewById(R.id.search_song_name_text);
 
         setSearchView();
 
@@ -142,6 +167,16 @@ public class SearchActivity extends AppCompatActivity {
                 toggle();
             }
         });
+
+
+        // Play button - play if player is not null
+        mContentView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                toggle();
+            }
+        });
+
 
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
@@ -258,6 +293,82 @@ public class SearchActivity extends AppCompatActivity {
     }
 
 
+        mPlayButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String msg;
+
+                if(auxSpotifyPlayer == null)
+                {
+                    msg = "AuxSpotifyPlayer not yet created";
+                } else {
+                    // Choose to Pause or Play
+                    msg = auxSpotifyPlayer.togglePlay();
+                }
+
+                Snackbar snackbar = Snackbar
+                        .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                snackbar.show();
+            }
+        });
+
+        mSkipButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                String msg;
+                if (auxSpotifyPlayer == null) {
+                    msg = "AuxSpotifyPlayer not yet created";
+                    Snackbar snackbar = Snackbar
+                            .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                    snackbar.show();
+                } else {
+                    long index = auxSpotifyPlayer.skip();
+                }
+            }
+        });
+
+
+
+        mQueueSearchButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            SpotifyApi api = new SpotifyApi();
+
+            // Most (but not all) of the Spotify Web API endpoints require authorisation.
+            // If you know you'll only use the ones that don't require authorisation you can skip this step
+            api.setAccessToken(mAccessToken);
+
+            SpotifyService spotify = api.getService();
+            String searchQuery = mSongNameTextView.getText().toString();
+            Log.d("SearchActivity", "Search box said: " + searchQuery);
+            if (searchQuery.length() > 0) {
+                spotify.searchTracks(searchQuery, new Callback<TracksPager>(){
+                    @Override
+                    public void success(TracksPager tPager, Response response) {
+                        String msg;
+                        List<Track> tracks = tPager.tracks.items;
+                        if (tracks.size() > 0) {
+                            Track track = tracks.get(0);
+                            Song song = new Song(track);
+                            Log.e("SearchActivity", "Added song is " + song.getTrackLength() + "ms");
+                            mPlaylist.addSong(song);
+                            msg = "Queued " + song.getSongName();
+
+                        } else {
+                            msg = "No Songs matched this search!";
+                        }
+                        Snackbar snackbar = Snackbar
+                                .make(mContentView, msg, Snackbar.LENGTH_SHORT);
+                        snackbar.show();
+                    }
+
+                    @Override
+                    public void failure(RetrofitError error) {
+                        Log.e("Track Playing failure", error.toString());
+                    }
+                });
+            }
+            }
+        });
+
+    }
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 
@@ -266,14 +377,15 @@ public class SearchActivity extends AppCompatActivity {
             String accessToken = "";
             if (resultCode == Activity.RESULT_OK) {
                 result = data.getStringExtra("result");
-                accessToken = data.getStringExtra("access_token");
+                mAccessToken = data.getStringExtra("access_token");
+                createSpotifyPlayer(mAccessToken);
             }
             if (resultCode == Activity.RESULT_CANCELED) {
                 result = data.getStringExtra("result");
             }
 
             Snackbar snackbar = Snackbar
-                    .make(mContentView, result + "\naccess_token=" + accessToken, Snackbar.LENGTH_INDEFINITE)
+                    .make(mContentView, result + "\naccess_token=" + mAccessToken, Snackbar.LENGTH_INDEFINITE)
                     .setAction("Dismiss", new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
