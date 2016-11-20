@@ -35,7 +35,7 @@ public class StartActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        firebaseSignIn();
+//        firebaseSignIn();
 
         createPlaylistButton = (Button) findViewById(R.id.createPlaylistActivityBtn);
         willsSpotifyButton = (Button) findViewById(R.id.willstuffBtn);
@@ -48,8 +48,11 @@ public class StartActivity extends AppCompatActivity {
         createPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent cpIntent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
-                startActivity(cpIntent);
+//                Intent cpIntent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
+//                startActivity(cpIntent);
+                //this is just used for my testing, feel free to delete
+                Intent searchSongs = new Intent(getApplicationContext(), ActualStartActivity.class);
+                startActivity(searchSongs);
             }
         });
         willsSpotifyButton.setOnClickListener(new View.OnClickListener() {
@@ -62,8 +65,8 @@ public class StartActivity extends AppCompatActivity {
         playlistActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent pIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
-//                startActivity(pIntent);
+                Intent pIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
+                startActivity(pIntent);
             }
         });
         addSongActivityButton.setOnClickListener(new View.OnClickListener() {
@@ -114,15 +117,15 @@ public class StartActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+//        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
+//        if (mAuthListener != null) {
+//            mAuth.removeAuthStateListener(mAuthListener);
+//        }
     }
 
 }

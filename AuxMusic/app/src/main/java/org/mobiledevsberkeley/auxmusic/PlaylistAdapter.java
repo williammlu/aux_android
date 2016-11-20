@@ -1,5 +1,9 @@
 package org.mobiledevsberkeley.auxmusic;
 
+/**
+ * Created by Young on 11/19/2016.
+ */
+
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,31 +14,28 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
-/**
- * Created by Young on 10/8/2016.
- */
-
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHolder>{
-    ArrayList<Song> list;
+public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.CustomViewHolder>{
+    ArrayList<Playlist> list;
     Context context;
 
-    public MusicAdapter(Context applicationContext, ArrayList<Song> list) {
+    public PlaylistAdapter(Context applicationContext, ArrayList<Playlist> list) {
         context = applicationContext;
         this.list = list;
     }
 
+
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.song_row_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.playlist_near_me_row_view, parent, false);
         return new CustomViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
-        Song song = list.get(position);
-        holder.songTitle.setText(song.getSongName());
-        holder.artistTitle.setText(song.getArtistName());
-        holder.albumTitle.setText(song.getAlbumName());
+        Playlist playlist = list.get(position);
+        holder.playlistName.setText(playlist.getPlaylistName());
+        holder.hostName.setText(playlist.getHostDeviceID());
+        //might need to make host name a attribute of playlist
     }
 
     @Override
@@ -44,20 +45,23 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
         ImageView img;
-        TextView songTitle;
-        TextView artistTitle;
-        TextView albumTitle;
+        TextView playlistName;
+        TextView hostName;
 
         public CustomViewHolder(View v) {
             super(v);
 //            img = (ImageView) v.findViewById(R.id.imageView);
-            songTitle = (TextView) v.findViewById(R.id.songName);
-            artistTitle = (TextView) v.findViewById(R.id.artistName);
-            albumTitle = (TextView) v.findViewById(R.id.albumName);
+            playlistName = (TextView) v.findViewById(R.id.playlistName);
+            hostName = (TextView) v.findViewById(R.id.hostName);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    do we want to do anything here
+                    for (Playlist p: list) {
+                        if (p.getPlaylistName().equals(playlistName.toString())) {
+                            AuxSingleton.getInstance().setCurrentPlaylist(p);
+                            break;
+                        }
+                    }
                 }
             });
         }

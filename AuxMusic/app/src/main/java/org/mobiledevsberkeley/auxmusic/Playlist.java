@@ -1,6 +1,5 @@
 package org.mobiledevsberkeley.auxmusic;
 
-import com.google.firebase.database.Exclude;
 import com.firebase.geofire.GeoLocation;
 import java.util.*;
 /**
@@ -16,8 +15,9 @@ public class Playlist {
     private boolean hostApproval;
     private String hostDeviceID;
     private int currentSongIndex;
-    private Boolean isPlaying;
+    private Boolean isActive;
     private long currentSongTime;
+    private String coverArtURL;
 
     public String currentSongID;
 
@@ -38,16 +38,17 @@ public class Playlist {
 
 
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
-                    String password, String hostDeviceID, int currentSongIndex, Boolean isPlaying, long currentSongTime, GeoLocation location,
-                    boolean hostApproval) {
+                    String password, String hostDeviceID, int currentSongIndex, Boolean isActive, long currentSongTime, GeoLocation location,
+                    String coverArtURL) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
         this.playlistName = playlistName;
         this.password = password;
         this.hostDeviceID = hostDeviceID;
         this.currentSongIndex = currentSongIndex;
-        this.isPlaying = isPlaying;
+        this.isActive = isActive;
         this.currentSongTime = currentSongTime;
+        this.coverArtURL = coverArtURL;
     }
     public void setCurrentSongID(String currentSongID) {
         this.currentSongID = currentSongID;
@@ -79,11 +80,11 @@ public class Playlist {
     }
 
     public Boolean getPlaying() {
-        return isPlaying;
+        return isActive;
     }
 
     public void setPlaying(boolean isPlaying ) {
-        this.isPlaying = isPlaying;
+        this.isActive = isPlaying;
     }
 
     public long getCurrentSongTime() {

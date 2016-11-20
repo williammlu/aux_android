@@ -1,5 +1,6 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -20,12 +21,13 @@ public class User {
         // Null constructor might be necessary for Firebase -> Java conversion
     }
 
-    public User(String UID, boolean isHost, String spotifyAuthKey, String participantName, String playlistKey) {
+    public User(String UID, boolean isHost, String spotifyAuthKey, String participantName, String playlistKey, ArrayList<String> pastPlaylists) {
         this.UID = UID;
         this.isHost = isHost;
         this.spotifyAuthKey = spotifyAuthKey;
         this.participantName = participantName;
         this.playlistKey = playlistKey;
+        this.pastPlaylists = pastPlaylists;
     }
 
     public String getPlaylistKey() {

@@ -16,8 +16,7 @@
             android:name=".SearchActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:label="@string/app_name"
-            android:theme="@style/FullscreenTheme">
-        </activity>
+            android:theme="@style/FullscreenTheme" />
         <activity
             android:name=".SpotifyAuthTest"
             android:label="@string/app_name">
@@ -57,7 +56,12 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity android:name=".ParticipantsActivity"></activity>
+        <activity android:name=".ParticipantsActivity" />
+        <activity
+            android:name=".PlaylistActivity"
+            android:label="@string/title_activity_playlist"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity android:name=".ActualStartActivity"></activity>
     </application>
 
 </manifest>

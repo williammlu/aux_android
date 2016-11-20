@@ -18,9 +18,13 @@ public class SearchSongsActivity extends AppCompatActivity {
 
 
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+//        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(llm);
         long i = 0;
         list.add(new Song("bob","boblite", "bobo", "hardcoded", "wheee", i));
+        list.add(new Song("bob","boblite", "bobo", "hardcoded", "wheee", i));
+
 
         MusicAdapter musicAdapter = new MusicAdapter(this, list);
 
