@@ -58,7 +58,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
                 public void onClick(View v) {
                     for (Playlist p: list) {
                         if (p.getPlaylistName().equals(playlistName.toString())) {
-                            AuxSingleton.getInstance().setCurrentPlaylist(p);
+                            AuxSingleton.getInstance().setCurrentPlaylist(p, "");
                             break;
                         }
                     }

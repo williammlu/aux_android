@@ -37,6 +37,7 @@ public class StartActivity extends AppCompatActivity {
     private Button playlistActivityButton;
     private Button addSongActivityButton;
     private Button wilburTestingStuffButton;
+    private Button youngStartButton;
 
     private Button mWill_button;
 
@@ -53,6 +54,7 @@ public class StartActivity extends AppCompatActivity {
         playlistActivityButton = (Button) findViewById(R.id.playlistActivityBtn);
         addSongActivityButton = (Button) findViewById(R.id.addSongActivityBtn);
         wilburTestingStuffButton = (Button) findViewById(R.id.wilburTestingBtn);
+        youngStartButton = (Button) findViewById(R.id.youngTestingBtn);
         setBtnListeners();
 
         mWill_button.setOnClickListener(new View.OnClickListener() {
@@ -86,6 +88,15 @@ public class StartActivity extends AppCompatActivity {
 
 
     private void setBtnListeners() {
+        youngStartButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //this is just used for my testing, feel free to delete
+                Intent startIntent = new Intent(getApplicationContext(), ActualStartActivity.class);
+                startActivity(startIntent);
+            }
+        });
+
         wilburTestingStuffButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,11 +108,8 @@ public class StartActivity extends AppCompatActivity {
         createPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent cpIntent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
-//                startActivity(cpIntent);
-                //this is just used for my testing, feel free to delete
-                Intent searchSongs = new Intent(getApplicationContext(), ActualStartActivity.class);
-                startActivity(searchSongs);
+                Intent cpIntent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
+                startActivity(cpIntent);
             }
         });
         willsSpotifyButton.setOnClickListener(new View.OnClickListener() {

@@ -1,6 +1,8 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import com.firebase.geofire.GeoLocation;
+import com.google.firebase.database.Exclude;
+
 import java.util.*;
 /**
  * Created by wilbu on 10/15/2016.
@@ -18,13 +20,14 @@ public class Playlist {
     private Boolean isActive;
     private long currentSongTime;
     private String coverArtURL;
-
     public String currentSongID;
 
     @Exclude
     private List<Song> spotifySongList;
     @Exclude
     private List<User> usersList;
+
+    // potential host approval in the future
 
 
 
@@ -44,8 +47,7 @@ public class Playlist {
 
 
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
-                    String password, String hostDeviceID, int currentSongIndex, Boolean isActive, long currentSongTime, GeoLocation location,
-                    String coverArtURL) {
+                    String password, String hostDeviceID, int currentSongIndex, Boolean isActive, long currentSongTime, GeoLocation location) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
         this.playlistName = playlistName;
@@ -54,7 +56,6 @@ public class Playlist {
         this.currentSongIndex = currentSongIndex;
         this.isActive = isActive;
         this.currentSongTime = currentSongTime;
-        this.coverArtURL = coverArtURL;
     }
     public void setCurrentSongID(String currentSongID) {
         this.currentSongID = currentSongID;
@@ -87,13 +88,22 @@ public class Playlist {
         return currentSongIndex;
     }
 
-    public Boolean getPlaying() {
+    public Boolean getActive() {
         return isActive;
     }
 
-    public void setPlaying(boolean isPlaying ) {
-        this.isActive = isPlaying;
+    public void setActive(boolean isActive) {
+        this.isActive = isActive;
     }
+
+    public String getCoverArtURL() {
+        return coverArtURL;
+    }
+
+    public void setCoverArtURL(String coverArtURL) {
+        this.coverArtURL = coverArtURL;
+    }
+
 
     public long getCurrentSongTime() {
         return currentSongTime;

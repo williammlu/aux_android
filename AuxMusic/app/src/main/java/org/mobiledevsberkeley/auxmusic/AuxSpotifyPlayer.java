@@ -119,7 +119,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
         else {
             List<String> songs = mPlaylist.getSpotifySongIDList();
             mPlaylist.setCurrentSongTime(0);
-            mPlaylist.setPlaying(true);
+            mPlaylist.setActive(true);
             mPlaylist.setCurrentSongIndex(targetTrack);
             mPlaylist.setCurrentSongID(songs.get(targetTrack));
 

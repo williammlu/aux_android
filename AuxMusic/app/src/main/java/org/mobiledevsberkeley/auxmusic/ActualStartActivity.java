@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.telecom.Call;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -26,26 +27,35 @@ public class ActualStartActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
-    Playlist playlist;
     ArrayList<Playlist> myPlaylists;
     ArrayList<Playlist> nearMe;
+    SignInCallback callback;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        firebaseSignIn();
-        checkIfCurrentPlaylist();
-        setContentView(R.layout.activity_actual_start);
-        setRecyclerViewNearMe();
-        setRecyclerViewMyPlaylist();
-    }
+        callback = new SignInCallback() {
+            @Override
+            public void userOnComplete() {
+                Log.d(TAG, "on oncomplete");
+                aux.hasCurrentPlaylist(this);
+            }
 
-    private void checkIfCurrentPlaylist() {
-        Playlist mPlaylist = aux.getCurrentPlaylist();
-        if (mPlaylist != null) {
-            Intent playlistIntent = new Intent(getApplicationContext(),PlaylistActivity.class);
-            startActivity(playlistIntent);
-        }
+            @Override
+            public void playlistOnComplete(boolean hasCurrentPlaylist) {
+                if (hasCurrentPlaylist) {
+                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
+                    startActivity(playlistIntent);
+                    Log.d(TAG, "hasplaylist");
+                } else {
+                    setContentView(R.layout.activity_actual_start);
+                    setRecyclerViewNearMe();
+                    setRecyclerViewMyPlaylist();
+                    Log.d(TAG, "doesnthaveplaylist");
+                }
+            }
+        };
+        firebaseSignIn();
     }
 
     private void setRecyclerViewMyPlaylist() {
@@ -77,48 +87,15 @@ public class ActualStartActivity extends AppCompatActivity {
                 if (firebaseUser == null && currentUser == null) {
                     signInAnon();
                 } else if (currentUser == null) {
-                    getUser(firebaseUser);
-                    setPlaylistIfActive(aux.getCurrentUser().getPlaylistKey());
-                } else if (firebaseUser != null && aux.getCurrentUser() != null) {
-                    setPlaylistIfActive(aux.getCurrentUser().getPlaylistKey());
+                    aux.getUser(firebaseUser.getUid(), callback);
+                    Log.d(TAG, "second else if");
+                } else if (firebaseUser != null && currentUser != null) {
+                    Log.d(TAG, "3rd elseif");
+                    callback.userOnComplete();
+//                    setPlaylistIfActive(aux.getCurrentUser().getPlaylistKey());
                 }
             }
         };
-    }
-    private void getUser(FirebaseUser firebaseUser) {
-
-        DatabaseReference usersRef = aux.getDataBaseReference().child("users").child(firebaseUser.getUid());
-        usersRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                aux.setCurrentUser(dataSnapshot.getValue(User.class));
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-            }
-        });
-    }
-
-    private void setPlaylistIfActive(String playlistKey) {
-        getPlaylist(playlistKey);
-        if (playlist != null && playlist.getPlaying()) aux.setCurrentPlaylist(playlist);
-    }
-
-    private void getPlaylist(String playlistKey) {
-        //this will set the playlist variable in the global scope, however we only want to ever use the SINGLETON playlist
-        DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists").child(playlistKey);
-        playlistRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                playlist = dataSnapshot.getValue(Playlist.class);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                // ...
-            }
-        });
     }
 
     private void signInAnon() {

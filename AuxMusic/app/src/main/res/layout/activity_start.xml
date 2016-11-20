@@ -39,6 +39,12 @@
         android:text="Wilbur Test stuff"
         android:id="@+id/wilburTestingBtn"
         android:layout_below="@+id/addSongActivityBtn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Young start activty"
+        android:id="@+id/youngTestingBtn"
+        android:layout_below="@+id/wilburTestingBtn"/>
 
     <Button
         android:text="Will's button"

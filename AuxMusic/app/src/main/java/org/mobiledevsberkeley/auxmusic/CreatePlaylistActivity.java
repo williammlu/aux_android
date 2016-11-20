@@ -196,7 +196,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
                     // do location track stuff, then mGeoLocation != null
                 }
 
-//                aux.createPlaylist(partyName, password, mGeoLocation, hostApproval);
+                aux.createPlaylist(partyName, password, mGeoLocation, hostApproval);
 
                 Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
                 startActivity(searchSongsIntent);
@@ -254,7 +254,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 //
 //                playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
 //                    @Override
-//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                    public void userOnComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 //                        if (databaseError != null) {
 //                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
 //                        } else {

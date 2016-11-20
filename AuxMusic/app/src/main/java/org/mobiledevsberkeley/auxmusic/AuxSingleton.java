@@ -21,13 +21,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.MutableData;
-import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -75,10 +72,11 @@ public class AuxSingleton {
    }
 
     private void updateValue(DatabaseReference ref, String key, Object value) {
-        Map<String, Object> childUpdates = new HashMap<>();
-        childUpdates.put(key, value);
-        ref.updateChildren(childUpdates);
-        Log.d(TAG, "we added a thingy, yay!");
+        ref.child(key).setValue(value);
+//        Map<String, Object> childUpdates = new HashMap<>();
+//        childUpdates.put(key, value);
+//        ref.updateChildren(childUpdates);
+        Log.d(TAG, "we added a " + key + ", at " + ref.getKey() + "yay!");
     }
 
     public static AuxSingleton getInstance() {
@@ -89,29 +87,63 @@ public class AuxSingleton {
         return currentUser;
     }
 
-    public void setCurrentUser(final User user) {
-
+    public void setCurrentUser(User user) {
         String uid = user.getUID();
         userRef = dbReference.child(USERS_NODE).child(uid);
-        userRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+        this.currentUser = user;
+    }
+
+    public void getUser(final String uid, final SignInCallback callback) {
+        if(userRef == null) {
+            userRef = dbReference.child(USERS_NODE).child(uid);
+        }
+        userRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User snapshotUser = dataSnapshot.getValue(User.class);
-                if (snapshotUser != null) {
-                    auxSingleton.currentUser = snapshotUser;
-                    Log.d(TAG, "snapshot was not null, we have old user with uid: " + snapshotUser.getUID() + " and isHost: " + snapshotUser.isHost());
-                } else {
-                    auxSingleton.currentUser = user;
-                    auxSingleton.addUser(user);
+                if (snapshotUser == null) {
+                    User newUser = new User();
+                    newUser.setUID(uid);
+                    auxSingleton.addUser(newUser);
                     Log.d(TAG, "snapshot was null, we now have user with uid: " + currentUser.getUID() + " and isHost: " + currentUser.isHost());
+                } else {
+                    auxSingleton.setCurrentUser(snapshotUser);
+                    Log.d(TAG, "snapshot was not null, we have old user with uid: " + snapshotUser.getUID() + " and isHost: " + snapshotUser.isHost());
                 }
+                callback.userOnComplete();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                // ...
             }
         });
+    }
+
+    public void hasCurrentPlaylist(final SignInCallback callback) {
+        //this will set the playlist variable in the global scope, however we only want to ever use the SINGLETON playlist
+        final String playlistKey = currentUser.getPlaylistKey();
+        Log.d(TAG, "in hascurrentplaylist singleton, key is: " + playlistKey);
+        if (playlistKey == null || playlistKey.equals("")) {
+            callback.playlistOnComplete(false);
+        } else {
+            dbReference.child(PLAYLISTS_NODE).child(playlistKey).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                    boolean hasCurrent = false;
+                    if (playlist != null && playlist.getActive()) {
+                        setCurrentPlaylist(playlist, playlistKey);
+                        hasCurrent = true;
+                    }
+                    callback.playlistOnComplete(hasCurrent);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    // ...
+                }
+            });
+        }
     }
 
     public Playlist getCurrentPlaylist() {
@@ -155,7 +187,7 @@ public class AuxSingleton {
 
         playlistRef = dbReference.child(PLAYLISTS_NODE).push();
         setCurrentPlaylist(new Playlist(userUIDList, songList, partyName, password, currentUser.getUID(),
-                0, false, 0, mGeoLocation, hostApproval), null);
+                0, true, 0, mGeoLocation), playlistRef.getKey());
     }
 
     public void addToPlaylist(String key, String value) {
@@ -171,6 +203,7 @@ public class AuxSingleton {
 
     public void addUser(User user) {
         dbReference.child(USERS_NODE).child(user.getUID()).setValue(user);
+        setCurrentUser(user);
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
 
