@@ -64,7 +64,7 @@ public class Playlist {
     }
 
     public void addSong(Song song) {
-        spotifySongList.add(song);
+//        spotifySongList.add(song);
         spotifySongIDList.add(song.getSongURI());
     }
 

@@ -24,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+
 public class StartActivity extends AppCompatActivity {
     private String TAG = "debug";
 
@@ -101,7 +103,7 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 if (aux.getCurrentPlaylist() != null) {
-                    aux.addSong(new Song("songuri", "imageurl", "songname", "artistname", "albumname", 0));
+                    aux.addSong(new Song("songuri", new ArrayList<String>(), "songname", "artistname", "albumname", 0));
                 }
             }
         });

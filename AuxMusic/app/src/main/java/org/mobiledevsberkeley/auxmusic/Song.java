@@ -62,6 +62,9 @@ public class Song {
 
     public String getImageUrl(int px) {
 
+        if (this.imageUrl.size() < 3) {
+            return "";
+        }
         if (px <= 64) {
             return this.imageUrl.get(2);
         } else if (px <= 300) {
