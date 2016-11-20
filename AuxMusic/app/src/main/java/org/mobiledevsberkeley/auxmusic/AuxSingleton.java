@@ -21,10 +21,14 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -50,14 +54,31 @@ public class AuxSingleton {
 
     private static SpotifyPlayer spotifyPlayer;
     public static final String TAG = "debug";
+    public static final String USERS_NODE = "users";
+    public static final String PLAYLISTS_NODE = "playlists";
+    public static final String SPOTIFYSONGID_LIST = "spotifySongIDList";
+    public static final String USERID_LIST = "userDeviceIDList";
+
     private static AuxSingleton auxSingleton = new AuxSingleton();
 
-    private static DatabaseReference dbReference;
-    private static Playlist currentPlaylist;
-    private static User currentUser;
+    private DatabaseReference dbReference;
+    private Playlist currentPlaylist;
+    private User currentUser;
+    private DatabaseReference playlistRef;
+    private DatabaseReference userRef;
+
+//    private ValueEventListener userListener;
+    // have song list and users list right here. this is a weird structure, but i'm not sure how to deal with this yet.
 
     private AuxSingleton() {
         dbReference = FirebaseDatabase.getInstance().getReference();
+   }
+
+    private void updateValue(DatabaseReference ref, String key, Object value) {
+        Map<String, Object> childUpdates = new HashMap<>();
+        childUpdates.put(key, value);
+        ref.updateChildren(childUpdates);
+        Log.d(TAG, "we added a thingy, yay!");
     }
 
     public static AuxSingleton getInstance() {
@@ -68,10 +89,11 @@ public class AuxSingleton {
         return currentUser;
     }
 
-    public void setCurrentUser(final User currentUser) {
-        String uid = currentUser.getUID();
-        final DatabaseReference usersRef = dbReference.child("users");
-        usersRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+    public void setCurrentUser(final User user) {
+
+        String uid = user.getUID();
+        userRef = dbReference.child(USERS_NODE).child(uid);
+        userRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 User snapshotUser = dataSnapshot.getValue(User.class);
@@ -79,9 +101,9 @@ public class AuxSingleton {
                     auxSingleton.currentUser = snapshotUser;
                     Log.d(TAG, "snapshot was not null, we have old user with uid: " + snapshotUser.getUID() + " and isHost: " + snapshotUser.isHost());
                 } else {
-                    auxSingleton.currentUser = currentUser;
-                    auxSingleton.addUser(currentUser);
-                    Log.d(TAG, "snapshot was null, we now have old user with uid: " + currentUser.getUID() + " and isHost: " + currentUser.isHost());
+                    auxSingleton.currentUser = user;
+                    auxSingleton.addUser(user);
+                    Log.d(TAG, "snapshot was null, we now have user with uid: " + currentUser.getUID() + " and isHost: " + currentUser.isHost());
                 }
             }
 
@@ -96,45 +118,59 @@ public class AuxSingleton {
         return currentPlaylist;
     }
 
-    public void setCurrentPlaylist(Playlist currentPlaylist) {
+    public void setCurrentPlaylist(Playlist currentPlaylist, String playlistKey) {
+        // TAKE CARE OF STARTING OFF ON AN OLD PLAYLIST
+//        if (playlistListener != null) {
+//            playlistRef.removeEventListener(playlistListener);
+//        }
         this.currentPlaylist = currentPlaylist;
+        if (playlistKey != null) {
+            playlistRef = dbReference.child(PLAYLISTS_NODE).child(playlistKey);
+        }
+//        initializePlaylistListener();
+        currentUser.setPlaylistKey(playlistKey);
+        updateValue(userRef, "playlistKey", playlistKey);
+        playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if (databaseError != null) {
+                    Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+                } else {
+                    Log.d(TAG, "Data saved successfully.");
+                }
+            }
+        });
+
+//        initializePlaylistListener();
     }
 
     public void createPlaylist(String partyName, String password, GeoLocation mGeoLocation, Boolean hostApproval) {
         // only host could have called this method. thus, the current user is a host.
         currentUser.setHost(true);
+        updateValue(dbReference.child(USERS_NODE).child(currentUser.getUID()), "host", true);
         ArrayList<String> userUIDList = new ArrayList<String>();
         userUIDList.add(currentUser.getUID());
 
         ArrayList<String> songList = new ArrayList<String>();
 
+        playlistRef = dbReference.child(PLAYLISTS_NODE).push();
         setCurrentPlaylist(new Playlist(userUIDList, songList, partyName, password, currentUser.getUID(),
-                0, false, 0, mGeoLocation, hostApproval));
-
-        DatabaseReference playlistRef = dbReference.child("playlists").push();
-        currentUser.setPlaylistKey(playlistRef.getKey());
-        playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
-                        } else {
-                            Log.d(TAG, "Data saved successfully.");
-                        }
-                    }
-                });
+                0, false, 0, mGeoLocation, hostApproval), null);
     }
 
     public void addToPlaylist(String key, String value) {
 
     }
 
-    public static void addSong(Song song) {
+    public void addSong(Song song) {
+        currentPlaylist.addSong(song);
+        updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
+        Log.d(TAG, "we added a song (maybe), yay!");
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
 
     public void addUser(User user) {
-        dbReference.child("users").child(user.getUID()).setValue(user);
+        dbReference.child(USERS_NODE).child(user.getUID()).setValue(user);
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
 
@@ -149,7 +185,6 @@ public class AuxSingleton {
     public DatabaseReference getDataBaseReference() {
         return dbReference;
     }
-
 
 
     public static String getSpotifyAuthId() {
@@ -192,5 +227,4 @@ public class AuxSingleton {
     public void setContext(Context context) {
         this.context = context;
     }
-
 }

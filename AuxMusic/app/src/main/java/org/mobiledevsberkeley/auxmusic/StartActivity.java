@@ -36,6 +36,7 @@ public class StartActivity extends AppCompatActivity {
     private Button willsSpotifyButton;
     private Button playlistActivityButton;
     private Button addSongActivityButton;
+    private Button wilburTestingStuffButton;
 
     private Button mWill_button;
 
@@ -51,6 +52,7 @@ public class StartActivity extends AppCompatActivity {
         willsSpotifyButton = (Button) findViewById(R.id.willstuffBtn);
         playlistActivityButton = (Button) findViewById(R.id.playlistActivityBtn);
         addSongActivityButton = (Button) findViewById(R.id.addSongActivityBtn);
+        wilburTestingStuffButton = (Button) findViewById(R.id.wilburTestingBtn);
         setBtnListeners();
 
         mWill_button.setOnClickListener(new View.OnClickListener() {
@@ -84,6 +86,14 @@ public class StartActivity extends AppCompatActivity {
 
 
     private void setBtnListeners() {
+        wilburTestingStuffButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (aux.getCurrentPlaylist() != null) {
+                    aux.addSong(new Song("songuri", "imageurl", "songname", "artistname", "albumname", 0));
+                }
+            }
+        });
         createPlaylistButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

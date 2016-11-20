@@ -33,6 +33,12 @@
         android:text="AddSong activity"
         android:id="@+id/addSongActivityBtn"
         android:layout_below="@+id/willstuffBtn"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Wilbur Test stuff"
+        android:id="@+id/wilburTestingBtn"
+        android:layout_below="@+id/addSongActivityBtn"/>
 
     <Button
         android:text="Will's button"

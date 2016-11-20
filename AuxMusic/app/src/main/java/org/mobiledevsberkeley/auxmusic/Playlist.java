@@ -21,12 +21,18 @@ public class Playlist {
 
     public String currentSongID;
 
+    @Exclude
+    private List<Song> spotifySongList;
+    @Exclude
+    private List<User> usersList;
+
 
 
     // private List ourownsonglist - possible variable
 
     public Playlist() {
-        spotifySongIDList = new ArrayList<String>();
+        spotifySongIDList = new ArrayList<>();
+        userDeviceIDList = new ArrayList<>();
         currentSongID = "";
         currentSongTime = 0;
         currentSongIndex = 0;
@@ -57,10 +63,12 @@ public class Playlist {
     }
 
     public void addSong(Song song) {
+        spotifySongList.add(song);
         spotifySongIDList.add(song.getSongURI());
     }
 
     public void addUser(User user) {
+        usersList.add(user);
         userDeviceIDList.add(user.getUID());
     }
 
