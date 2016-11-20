@@ -20,6 +20,9 @@ public class Playlist {
     private Boolean isActive;
     private long currentSongTime;
     private String coverArtURL;
+    private String hostSpotifyName;
+    private String regexedPlaylistName;
+
     public String currentSongID;
 
     @Exclude
@@ -47,7 +50,8 @@ public class Playlist {
 
 
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
-                    String password, String hostDeviceID, int currentSongIndex, Boolean isActive, long currentSongTime, GeoLocation location) {
+                    String password, String hostDeviceID, int currentSongIndex, Boolean isActive, long currentSongTime, GeoLocation location,
+                    String coverArtURL, String hostSpotifyName) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
         this.playlistName = playlistName;
@@ -56,6 +60,9 @@ public class Playlist {
         this.currentSongIndex = currentSongIndex;
         this.isActive = isActive;
         this.currentSongTime = currentSongTime;
+        this.coverArtURL = coverArtURL;
+        this.hostSpotifyName = hostSpotifyName;
+        this.regexedPlaylistName = playlistName.replaceAll("[^A-Za-z]","").toLowerCase();
     }
     public void setCurrentSongID(String currentSongID) {
         this.currentSongID = currentSongID;
@@ -127,6 +134,12 @@ public class Playlist {
 
     public String getPlaylistName() {
         return playlistName;
+    }
+
+//    this is just used for  young testing purposes. do NOT delete
+    public void setPlaylistName(String playlistName) {
+        this.playlistName = playlistName;
+        this.regexedPlaylistName = playlistName.replaceAll("[^A-Za-z]","").toLowerCase();
     }
 
 

@@ -40,6 +40,7 @@ public class StartActivity extends AppCompatActivity {
     private Button addSongActivityButton;
     private Button wilburTestingStuffButton;
     private Button youngStartButton;
+    private Button defaultPlaylistButton;
 
     private Button mWill_button;
 
@@ -57,6 +58,7 @@ public class StartActivity extends AppCompatActivity {
         addSongActivityButton = (Button) findViewById(R.id.addSongActivityBtn);
         wilburTestingStuffButton = (Button) findViewById(R.id.wilburTestingBtn);
         youngStartButton = (Button) findViewById(R.id.youngTestingBtn);
+        defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
         setBtnListeners();
 
         mWill_button.setOnClickListener(new View.OnClickListener() {
@@ -133,6 +135,28 @@ public class StartActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent ssIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
                 startActivity(ssIntent);
+            }
+        });
+        defaultPlaylistButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference playlistRef = aux.getDataBaseReference().child(getString(R.string.playlistFirebase)).push();
+                Playlist currentPlaylist = new Playlist();
+                currentPlaylist.setPlaylistName("Young's Playlist");
+
+                playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
+                    @Override
+                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                        if (databaseError != null) {
+                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+                        } else {
+                            Log.d(TAG, "Data saved successfully.");
+                        }
+                    }
+                });
+                Intent searchSongs = new Intent(getApplicationContext(), ActualStartActivity.class);
+                startActivity(searchSongs);
+
             }
         });
     }

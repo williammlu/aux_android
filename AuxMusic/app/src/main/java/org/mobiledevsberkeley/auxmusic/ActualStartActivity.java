@@ -7,14 +7,17 @@ import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telecom.Call;
+import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -30,6 +33,7 @@ public class ActualStartActivity extends AppCompatActivity {
     ArrayList<Playlist> myPlaylists;
     ArrayList<Playlist> nearMe;
     SignInCallback callback;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,6 +53,8 @@ public class ActualStartActivity extends AppCompatActivity {
                     Log.d(TAG, "hasplaylist");
                 } else {
                     setContentView(R.layout.activity_actual_start);
+                    searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
+                    setSearchView();
                     setRecyclerViewNearMe();
                     setRecyclerViewMyPlaylist();
                     Log.d(TAG, "doesnthaveplaylist");
@@ -57,6 +63,54 @@ public class ActualStartActivity extends AppCompatActivity {
         };
         firebaseSignIn();
     }
+
+    private void setSearchView() {
+        searchView.setIconified(false);
+        searchView.requestFocus();
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                String regexed = query.replaceAll("[^A-Za-z]","").toLowerCase();
+                DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
+                com.google.firebase.database.Query queryRef = playlistRef.orderByChild("regexedPlaylistName").equalTo(regexed);
+
+                queryRef.addChildEventListener(new ChildEventListener() {
+                    @Override
+                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                        System.out.println(dataSnapshot.getKey());
+                        Log.d("debug", dataSnapshot.getKey());
+                    }
+
+                    @Override
+                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+                    }
+
+                    @Override
+                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
+    }
+
 
     private void setRecyclerViewMyPlaylist() {
 //        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
@@ -112,14 +166,14 @@ public class ActualStartActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-        mAuth.addAuthStateListener(mAuthListener);
+//        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-        if (mAuthListener != null) {
-            mAuth.removeAuthStateListener(mAuthListener);
-        }
+//        if (mAuthListener != null) {
+//            mAuth.removeAuthStateListener(mAuthListener);
+//        }
     }
 }
