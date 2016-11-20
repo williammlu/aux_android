@@ -13,6 +13,24 @@
     tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivity"
     tools:showIn="@layout/activity_playlist">
 
+    <Button
+        android:text="Activate Playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"
+        android:id="@+id/activatePlaylist" />
+
+    <Button
+        android:text="Leave Playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"
+        android:id="@+id/leavePlaylist" />
+
     <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
