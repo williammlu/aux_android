@@ -34,4 +34,12 @@
         android:id="@+id/addSongActivityBtn"
         android:layout_below="@+id/willstuffBtn"/>
 
+    <Button
+        android:text="Will's button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/will_button"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
 </RelativeLayout>

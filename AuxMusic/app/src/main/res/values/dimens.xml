@@ -3,4 +3,9 @@
     <dimen name="activity_horizontal_margin">16dp</dimen>
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="search_list_margin">16dp</dimen>
+
+    <dimen name="search_album_image_side"> 100dp</dimen>
+
+    <dimen name="no_results_text_top_margin"> 50dp</dimen>
 </resources>

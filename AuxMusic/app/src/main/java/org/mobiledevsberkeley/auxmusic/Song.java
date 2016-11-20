@@ -1,7 +1,21 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.AsyncTask;
+import android.util.Log;
+import android.util.TypedValue;
+import android.widget.ImageView;
+
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.ArtistSimple;
+import kaaes.spotify.webapi.android.models.Image;
 import kaaes.spotify.webapi.android.models.Track;
 
 /**
@@ -11,7 +25,7 @@ import kaaes.spotify.webapi.android.models.Track;
 public class Song {
     // Generic song class that has the necessary extracted information from an API (Spotify for now, possibly Soundcloud, etc. in the future)
     private String songURI;
-    private String imageUrl; // potentially save the image as a different variable
+    private List<String> imageUrl; // potentially save the image as a different variable
     private String songName;
     private String artistName;
     private String albumName;
@@ -19,8 +33,12 @@ public class Song {
 
     public Song(Track t) {
         this.songURI = t.uri;
-        this.imageUrl = "NO URL RIGHT NOW";
+        this.imageUrl = new ArrayList<String>();
+        for (Image im: t.album.images) {
+            imageUrl.add(im.url);
+        }
         this.songName = t.name;
+        this.artistName = "";
         for(ArtistSimple as : t.artists) {
             this.artistName += as.name  + ", ";
         }
@@ -29,7 +47,7 @@ public class Song {
         this.trackLength = t.duration_ms;
     }
 
-    public Song(String songURI, String imageUrl, String songName, String artistName, String albumName, long trackLength) {
+    public Song(String songURI, ArrayList<String>imageUrl, String songName, String artistName, String albumName, long trackLength) {
         this.songURI = songURI;
         this.imageUrl = imageUrl;
         this.songName = songName;
@@ -42,8 +60,15 @@ public class Song {
         return songURI;
     }
 
-    public String getImageUrl() {
-        return imageUrl;
+    public String getImageUrl(int px) {
+
+        if (px <= 64) {
+            return this.imageUrl.get(2);
+        } else if (px <= 300) {
+            return this.imageUrl.get(1);
+        } else {
+            return this.imageUrl.get(0);
+        }
     }
 
     public String getSongName() {
@@ -61,4 +86,8 @@ public class Song {
     public long getTrackLength() {
         return trackLength;
     }
+
+
+
+
 }

@@ -8,13 +8,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseReference;
 
 public class StartActivity extends AppCompatActivity {
     private String TAG = "debug";
@@ -29,11 +33,13 @@ public class StartActivity extends AppCompatActivity {
     private Button playlistActivityButton;
     private Button addSongActivityButton;
 
+    private Button mWill_button;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
+        mWill_button = (Button) findViewById(R.id.will_button);
 
 //        firebaseSignIn();
 
@@ -42,7 +48,36 @@ public class StartActivity extends AppCompatActivity {
         playlistActivityButton = (Button) findViewById(R.id.playlistActivityBtn);
         addSongActivityButton = (Button) findViewById(R.id.addSongActivityBtn);
         setBtnListeners();
+
+        mWill_button.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(StartActivity.this, SearchSongsActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        mWill_button.setOnLongClickListener(new View.OnLongClickListener() {
+            public boolean onLongClick(View v) {
+
+                int mRequestCode = 5;
+
+
+                Snackbar snackbar = Snackbar
+                        .make(v, "Starting Spotify Auth", Snackbar.LENGTH_SHORT);
+                snackbar.show();
+
+                // Go to Spotify test Auth
+                Intent myIntent = new Intent(StartActivity.this, SpotifyAuthTest.class);
+//                        myIntent.putExtra("key", value); //Optional parameters
+                // TODO change requestCode and put somewhere safer, currently matches
+                // request code in SpotifyAuthTest
+                StartActivity.this.startActivityForResult(myIntent, mRequestCode);
+                return false;
+            }
+        });
     }
+
+
 
     private void setBtnListeners() {
         createPlaylistButton.setOnClickListener(new View.OnClickListener() {
@@ -127,5 +162,6 @@ public class StartActivity extends AppCompatActivity {
 //            mAuth.removeAuthStateListener(mAuthListener);
 //        }
     }
-
 }
+
+

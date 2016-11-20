@@ -24,9 +24,9 @@ public class PlaylistActivity extends AppCompatActivity {
         RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         long i = 0;
-        songsList.add(new Song("bob","boblite", "bobo", "hardcoded", "wheee", i));
+        songsList.add(new Song("bob",new ArrayList<String>(), "bobo", "hardcoded", "wheee", i));
 
-        MusicAdapter musicAdapter = new MusicAdapter(this, songsList);
+        MusicAdapter musicAdapter = new MusicAdapter(this, songsList, MusicAdapter.DISPLAY_PLAYLIST);
 
         recyclerView.setAdapter(musicAdapter);
 

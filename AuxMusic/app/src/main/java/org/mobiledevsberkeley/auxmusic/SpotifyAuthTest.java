@@ -59,12 +59,14 @@ public class SpotifyAuthTest extends Activity implements
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-                    Log.e("onActivityResult", "successful auth token " + response.getAccessToken());
+                    Log.e("SpotifyAuthTest", "successful auth token " + response.getAccessToken());
                     returnIntent = new Intent();
 
+                    AuxSingleton.getInstance().setSpotifyAuthId(response.getAccessToken());
 
-                    returnIntent.putExtra("result","Logged in successfully!");
-                    returnIntent.putExtra("access_token", response.getAccessToken());
+
+//                    returnIntent.putExtra("result","Logged in successfully!");
+//                    returnIntent.putExtra("access_token", response.getAccessToken());
 
 
 //                    Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
@@ -107,6 +109,9 @@ public class SpotifyAuthTest extends Activity implements
                 mPlayer = spotifyPlayer;
                 mPlayer.addConnectionStateCallback(SpotifyAuthTest.this);
                 mPlayer.addNotificationCallback(SpotifyAuthTest.this);
+
+                AuxSingleton.getInstance().setMusicPlayer(mPlayer);
+
 
             }
 
