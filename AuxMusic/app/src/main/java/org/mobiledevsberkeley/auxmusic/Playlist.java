@@ -23,20 +23,23 @@ public class Playlist {
     private String hostSpotifyName;
     private String regexedPlaylistName;
 
+
+    private String playlistKey;
+
     public String currentSongID;
 
-    @Exclude
-    private List<Song> spotifySongList;
+//    @Exclude
+//    private List<Song> spotifySongList;
     @Exclude
     private List<User> usersList;
 
     // potential host approval in the future
 
 
-
     // private List ourownsonglist - possible variable
 
     public Playlist() {
+//        spotifySongList = new ArrayList<>();
         spotifySongIDList = new ArrayList<>();
         userDeviceIDList = new ArrayList<>();
         currentSongID = "";
@@ -69,6 +72,7 @@ public class Playlist {
         this.location = location;
         this.hostApproval = hostApproval;
     }
+
 
     public void addSong(Song song) {
 //        spotifySongList.add(song);
@@ -124,6 +128,11 @@ public class Playlist {
         return spotifySongIDList;
     }
 
+//    public List<Song> getSpotifySongList() {
+//        return spotifySongList;
+//    }
+
+
     public String getPassword() {
         return password;
     }
@@ -136,14 +145,34 @@ public class Playlist {
         return playlistName;
     }
 
-//    this is just used for  young testing purposes. do NOT delete
     public void setPlaylistName(String playlistName) {
         this.playlistName = playlistName;
         this.regexedPlaylistName = playlistName.replaceAll("[^A-Za-z]","").toLowerCase();
+    }
+    public String getRegexedPlaylistName() {
+        return regexedPlaylistName;
     }
 
 
     public void setCurrentSongIndex(int currentSongIndex) {
         this.currentSongIndex = currentSongIndex;
+    }
+
+    public String getHostSpotifyName() {
+        return hostSpotifyName;
+    }
+
+    public String getPlaylistKey() {
+        return playlistKey;
+    }
+
+    public String getImageUrl(int sideLengthPx) {
+        //TODO: finish once getting a song from ID is finalized
+        if (spotifySongIDList.size() > 0) {
+//            return spotifySongIDList.get(0).getImageUrl(sideLengthPx);
+        }
+        return null;
+        //TODO: return some default image
+
     }
 }

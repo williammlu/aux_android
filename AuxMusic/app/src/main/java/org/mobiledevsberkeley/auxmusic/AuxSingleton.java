@@ -25,6 +25,7 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -37,35 +38,30 @@ import kaaes.spotify.webapi.android.SpotifyService;
 public class AuxSingleton {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
-
-
     private static Context context;
-
-
     private static String spotifyAuthId = "";
     private static Player musicPlayer;
-
-
-
     private static SpotifyService spotifyService;
-
     private static SpotifyPlayer spotifyPlayer;
     public static final String TAG = "debug";
     public static final String USERS_NODE = "users";
     public static final String PLAYLISTS_NODE = "playlists";
     public static final String SPOTIFYSONGID_LIST = "spotifySongIDList";
+//    public static final String SPOTIFYSONG_LIST = "spotifySongList";
     public static final String USERID_LIST = "userDeviceIDList";
 
     private static AuxSingleton auxSingleton = new AuxSingleton();
-
+//TODO: Once we figure out what we're doing with current/active playlists, may need to change methods.
     private DatabaseReference dbReference;
     private Playlist currentPlaylist;
     private User currentUser;
     private DatabaseReference playlistRef;
     private DatabaseReference userRef;
 
+    private ArrayList<Playlist> myPlaylists = new ArrayList<>();
+
 //    private ValueEventListener userListener;
-    // have song list and users list right here. this is a weird structure, but i'm not sure how to deal with this yet.
+    // have song playlists and users playlists right here. this is a weird structure, but i'm not sure how to deal with this yet.
 
     private AuxSingleton() {
         dbReference = FirebaseDatabase.getInstance().getReference();
@@ -91,6 +87,24 @@ public class AuxSingleton {
         String uid = user.getUID();
         userRef = dbReference.child(USERS_NODE).child(uid);
         this.currentUser = user;
+    }
+    public ArrayList<Playlist> getMyPlaylists() { return myPlaylists;}
+    public void getPlaylistByIDForMyPlaylists(String playlistID) {
+        System.out.println(playlistID);
+        DatabaseReference temp = dbReference.child(PLAYLISTS_NODE).child(playlistID);
+        temp.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                System.out.println("did i even finish tho");
+                myPlaylists.add(playlist);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 
     public void getUser(final String uid, final SignInCallback callback) {
@@ -176,7 +190,7 @@ public class AuxSingleton {
 //        initializePlaylistListener();
     }
 
-    public void createPlaylist(String partyName, String password, GeoLocation mGeoLocation, Boolean hostApproval) {
+    public void createPlaylist(String partyName, String password, GeoLocation mGeoLocation) {
         // only host could have called this method. thus, the current user is a host.
         currentUser.setHost(true);
         updateValue(dbReference.child(USERS_NODE).child(currentUser.getUID()), "host", true);
@@ -186,8 +200,9 @@ public class AuxSingleton {
         ArrayList<String> songList = new ArrayList<String>();
 
         playlistRef = dbReference.child(PLAYLISTS_NODE).push();
-        setCurrentPlaylist(new Playlist(userUIDList, songList, partyName, password, currentUser.getUID(),
-                0, true, 0, mGeoLocation), playlistRef.getKey());
+        //TODO: Dunno why this is commented out. -Young
+//        setCurrentPlaylist(new Playlist(userUIDList, songList, partyName, password, currentUser.getUID(),
+//                0, true, 0, mGeoLocation), playlistRef.getKey());
     }
 
     public void addToPlaylist(String key, String value) {

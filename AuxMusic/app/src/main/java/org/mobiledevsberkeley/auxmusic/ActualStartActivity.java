@@ -1,14 +1,18 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telecom.Call;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.drive.query.Query;
@@ -23,6 +27,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ActualStartActivity extends AppCompatActivity {
@@ -34,6 +39,8 @@ public class ActualStartActivity extends AppCompatActivity {
     ArrayList<Playlist> nearMe;
     SignInCallback callback;
     SearchView searchView;
+    ArrayList<Playlist> searchResults;
+    PlaylistAdapterSearch playlistAdapterSearch;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,28 +55,61 @@ public class ActualStartActivity extends AppCompatActivity {
             @Override
             public void playlistOnComplete(boolean hasCurrentPlaylist) {
                 if (hasCurrentPlaylist) {
+                    Log.d(TAG, "hasplaylist");
                     Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
                     startActivity(playlistIntent);
-                    Log.d(TAG, "hasplaylist");
                 } else {
+                    Log.d(TAG, "doesnthaveplaylist");
                     setContentView(R.layout.activity_actual_start);
+                    testingActivity();
                     searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
                     setSearchView();
+                    setReyclerViewByName();
                     setRecyclerViewNearMe();
                     setRecyclerViewMyPlaylist();
-                    Log.d(TAG, "doesnthaveplaylist");
                 }
             }
         };
         firebaseSignIn();
     }
 
+    private void setReyclerViewByName() {
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewByName);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                getResources().getConfiguration().orientation);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+
+        playlistAdapterSearch = new PlaylistAdapterSearch(this, searchResults);
+
+        recyclerView.setAdapter(playlistAdapterSearch);
+    }
+
+    private void testingActivity(){
+       Button defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
+
+        defaultPlaylistButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatabaseReference playlistRef = aux.getDataBaseReference().child(getString(R.string.playlistFirebase)).push();
+                Playlist currentPlaylist = new Playlist();
+                currentPlaylist.setPlaylistName("Young's Playlist");
+                //to test, must access wills search activity first
+                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
+                playlistRef.setValue(currentPlaylist);
+             }
+        });
+    }
+
+
     private void setSearchView() {
+        searchResults = new ArrayList<>();
         searchView.setIconified(false);
         searchView.requestFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
+                searchResults.clear();
                 String regexed = query.replaceAll("[^A-Za-z]","").toLowerCase();
                 DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
                 com.google.firebase.database.Query queryRef = playlistRef.orderByChild("regexedPlaylistName").equalTo(regexed);
@@ -77,8 +117,9 @@ public class ActualStartActivity extends AppCompatActivity {
                 queryRef.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        System.out.println(dataSnapshot.getKey());
-                        Log.d("debug", dataSnapshot.getKey());
+                        Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                        searchResults.add(playlist);
+                        playlistAdapterSearch.notifyDataSetChanged();
                     }
 
                     @Override
@@ -113,22 +154,48 @@ public class ActualStartActivity extends AppCompatActivity {
 
 
     private void setRecyclerViewMyPlaylist() {
+//        User user = aux.getCurrentUser();
 //        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
 //        LinearLayoutManager llm = new LinearLayoutManager(this);
 //        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
 //        recyclerView.setLayoutManager(llm);
 //        myPlaylists = new ArrayList<>();
+//        //want less than 3 for near me; if more than gg
+////        ArrayList<String> pastPlaylists = (ArrayList) user.getPastPlaylists();
+//        ArrayList<String> pastPlaylists = new ArrayList<>();
+////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+//
+//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+//
+//        int size = pastPlaylists.size() - 1;
+//        for (int i = size; i > -1 && i > size -3 ; i--) {
+//            aux.getPlaylistByIDForMyPlaylists(pastPlaylists.get(i));
+//        }
+//
+//        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, aux.getMyPlaylists());
+//        recyclerView.setAdapter(playlistAdapter);
     }
 
     private void setRecyclerViewNearMe() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewNearMe);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(llm);
-        nearMe = new ArrayList<>();
-
-        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, nearMe);
-        recyclerView.setAdapter(playlistAdapter);
+//        Playlist currentPlaylist = new Playlist();
+//        currentPlaylist.setPlaylistName("Young's Playlist");
+//        //to test, must access wills search activity first
+//        currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
+//
+//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewNearMe);
+//        LinearLayoutManager llm = new LinearLayoutManager(this);
+//        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+//        recyclerView.setLayoutManager(llm);
+//        nearMe = new ArrayList<>();
+//
+//        nearMe.add(currentPlaylist);
+//
+//        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, nearMe);
+//        recyclerView.setAdapter(playlistAdapter);
     }
 
     private void firebaseSignIn() {
@@ -166,14 +233,19 @@ public class ActualStartActivity extends AppCompatActivity {
     @Override
     public void onStart() {
         super.onStart();
-//        mAuth.addAuthStateListener(mAuthListener);
+        mAuth.addAuthStateListener(mAuthListener);
     }
 
     @Override
     public void onStop() {
         super.onStop();
-//        if (mAuthListener != null) {
-//            mAuth.removeAuthStateListener(mAuthListener);
-//        }
+        if (mAuthListener != null) {
+            mAuth.removeAuthStateListener(mAuthListener);
+        }
+    }
+
+    public void playlistIntent() {
+        Intent playlistIntent = new Intent(this, PlaylistActivity.class);
+        startActivity(playlistIntent);
     }
 }

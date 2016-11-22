@@ -40,6 +40,8 @@ import kaaes.spotify.webapi.android.SpotifyService;
 
 public class SearchSongsActivity extends AppCompatActivity {
     ArrayList<Song> list = new ArrayList<>();
+    //this Song is so young has a testing song for the recycler views on the start activity
+    public static Song youngSongTest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,6 +87,9 @@ public class SearchSongsActivity extends AppCompatActivity {
                         for (Track t : tracks) {
                             list.add(new Song(t));
                         }
+                        //TODO: delete this after testing is over:
+                        youngSongTest = list.get(0);
+
                         musicAdapter.notifyDataSetChanged();
 
                         // hide keyboard when complete

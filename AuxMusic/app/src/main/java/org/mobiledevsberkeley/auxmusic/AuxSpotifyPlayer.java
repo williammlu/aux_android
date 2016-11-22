@@ -59,7 +59,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
                 mPlayer.resume(null);
                 returnMessage = "Resuming song at time " + mPlaylist.getCurrentSongTime();
             } else {
-                if (mPlaylist.getSpotifySongIDList().size() == 0) {
+                if (mPlaylist.getSpotifySongList().size() == 0) {
                     Log.d("AuxSpotifyPlayer", "No Songs in queue");
                     returnMessage = "No Songs in queue";
                 } else {
@@ -84,7 +84,8 @@ public class AuxSpotifyPlayer implements PlayerInterface{
      * @return true if started new song, false if no more songs left
      */
     public boolean playNext() {
-        List<String> songs = mPlaylist.getSpotifySongIDList();
+//        List<String> songs = mPlaylist.getSpotifySongIDList();
+        List<Song> songs = mPlaylist.getSpotifySongList();
         int nextSongIndex = mPlaylist.getCurrentSongIndex() + 1;
 
         if (nextSongIndex >= songs.size()) {
@@ -112,16 +113,17 @@ public class AuxSpotifyPlayer implements PlayerInterface{
     }
 
     public boolean skipToTrack(int targetTrack) {
-        if (targetTrack >= mPlaylist.getSpotifySongIDList().size() || targetTrack < 0) {
+        if (targetTrack >= mPlaylist.getSpotifySongList().size() || targetTrack < 0) {
             Log.e("AuxSpotifyPlayer", "Playlist does not have a " + targetTrack + "th song!");
             return false;
         }
         else {
-            List<String> songs = mPlaylist.getSpotifySongIDList();
+//            List<String> songs = mPlaylist.getSpotifySongIDList();
+            List<Song> songs = mPlaylist.getSpotifySongList();
             mPlaylist.setCurrentSongTime(0);
             mPlaylist.setActive(true);
             mPlaylist.setCurrentSongIndex(targetTrack);
-            mPlaylist.setCurrentSongID(songs.get(targetTrack));
+            mPlaylist.setCurrentSongID(songs.get(targetTrack).getSongURI());
 
             mPlayer.playUri(null, mPlaylist.getCurrentSongID(), 0, (int) mPlaylist.getCurrentSongTime());
             return true;

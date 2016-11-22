@@ -1,7 +1,7 @@
 package org.mobiledevsberkeley.auxmusic;
 
 /**
- * Created by Young on 11/19/2016.
+ * Created by Young on 11/21/2016.
  */
 
 import android.content.Context;
@@ -9,57 +9,57 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
-public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.CustomViewHolder>{
-    ArrayList<Playlist> list;
+public class PlaylistAdapterSearch extends RecyclerView.Adapter<PlaylistAdapterSearch.CustomViewHolder>{
+    ArrayList<Playlist> playlists;
     Context context;
 
-    public PlaylistAdapter(Context applicationContext, ArrayList<Playlist> list) {
+    public PlaylistAdapterSearch(Context applicationContext, ArrayList<Playlist> playlists) {
         context = applicationContext;
-        this.list = list;
+        this.playlists = playlists;
     }
 
 
     @Override
     public CustomViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.playlist_near_me_row_view, parent, false);
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.playlist_search_row_view, parent, false);
         return new CustomViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(CustomViewHolder holder, int position) {
-        Playlist playlist = list.get(position);
+        Playlist playlist = playlists.get(position);
         holder.playlistName.setText(playlist.getPlaylistName());
         holder.hostName.setText(playlist.getHostSpotifyName());
 
-        int sideLengthPx = (int) context.getResources().getDimension(R.dimen.search_album_image_side_main_screen);
-        new DownloadImageTask(holder.img).execute(playlist.getImageUrl(sideLengthPx));
+
     }
 
     @Override
     public int getItemCount() {
-        return list.size();
+        return playlists.size();
     }
 
     public class CustomViewHolder extends RecyclerView.ViewHolder{
-        ImageView img;
         TextView playlistName;
         TextView hostName;
+        AuxSingleton aux = AuxSingleton.getInstance();
 
         public CustomViewHolder(View v) {
             super(v);
-            img = (ImageView) v.findViewById(R.id.imageView);
             playlistName = (TextView) v.findViewById(R.id.playlistName);
             hostName = (TextView) v.findViewById(R.id.hostName);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Playlist selectedPlaylist = list.get(getLayoutPosition());
-
+                    Playlist playlist = playlists.get(getLayoutPosition());
+                    String key = playlist.getPlaylistKey();
+                    aux.setCurrentPlaylist(playlist, key);
+                    ((ActualStartActivity) context).playlistIntent();
                 }
             });
         }

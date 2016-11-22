@@ -55,7 +55,7 @@ public class PlaylistActivity extends AppCompatActivity {
         * Make leave button active. If click leave:
         * Clear playlist under user. if host, also change isActive under the playlist attribute
         * 2. If no,
-        * Make reactivate button active. If active but not current playlist, add user to playlist. add playlist-list
+        * Make reactivate button active. If active but not current playlist, add user to playlist. add playlist-playlists
          * and playlsit to user. BUT IF USER HAD AN ACTIVE PLAYLIST, TELL THEM IT WILL LEAVE THAT PLAYLIST FIRST.
          * If inactive and host, clicking reactivate changes isActive to true, sets currentPlaylist
          * If inactive and not host, cannot do anything*/

@@ -15,6 +15,7 @@ public class User {
     // Could add future variables like "AuthKey" to accommodate other APIs (Soundcloud, etc.)
     private String participantName; // Optional, by default this is "Anon"
     private String playlistKey; // Key to the current playlist to check if they're in a playlist right now
+
     private List<String> pastPlaylists; // arraylist of either Playlist objects or String (playlistKeys). not sure right now which to use.
 
     public User() {
@@ -62,6 +63,10 @@ public class User {
 
     public boolean isHost() {
         return isHost;
+    }
+
+    public List<String> getPastPlaylists() {
+        return pastPlaylists;
     }
 
     public String getParticipantName() {

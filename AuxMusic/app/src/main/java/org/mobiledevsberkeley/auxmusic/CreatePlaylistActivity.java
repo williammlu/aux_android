@@ -1,56 +1,34 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.location.Location;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.media.MediaBrowserCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
-import android.widget.Switch;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
-import com.google.android.gms.common.ConnectionResult;
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.FusedLocationProviderApi;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-
-import java.util.ArrayList;
-import com.google.android.gms.location.LocationListener;
 
 public class CreatePlaylistActivity extends AppCompatActivity /*implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener*/{
     public static String TAG = "debug";
 
-    private CheckBox isPrivateCheckbox;
-    private TextView passwordText;
+    private CheckBox passwordProtectCheckbox;
     private EditText passwordEditText;
     private EditText nameText;
     private Button createPlaylistBtn;
+    private TextView passwordAdditionalInformation;
+    private TextView locationAdditionalInformation;
+
+    //these are to prevent edge case create playlists (ie no name, no password playlists
+    boolean isNameOK = false;
+    boolean isPasswordOK = true;
 
     private AuxSingleton aux = AuxSingleton.getInstance();
 
@@ -70,11 +48,12 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
         setContentView(R.layout.activity_create_playlist);
         thisActivity = this;
 
-        isPrivateCheckbox = (CheckBox) findViewById(R.id.publicPrivate);
-        passwordText = (TextView) findViewById(R.id.passwordTextView);
+        passwordProtectCheckbox = (CheckBox) findViewById(R.id.passwordProtect);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
         nameText = (EditText) findViewById(R.id.nameTextView);
         createPlaylistBtn = (Button) findViewById(R.id.createPlaylistBtn);
+        passwordAdditionalInformation = (TextView) findViewById(R.id.passwordAdditionalInformation);
+        locationAdditionalInformation = (TextView) findViewById(R.id.locationAdditionalInformation);
 
         mGeoLocation = null;
 
@@ -91,8 +70,9 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
-                if (s.length() == 0) createPlaylistBtn.setEnabled(false);
-                else createPlaylistBtn.setEnabled(true);
+                if (s.length() == 0) isNameOK = false;
+                else isNameOK = true;
+                checkCreatePlaylistButtonEnabled();
 
             }
 
@@ -103,14 +83,18 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
         });
     }
 
+    private void checkCreatePlaylistButtonEnabled() {
+        if (isNameOK && isPasswordOK) createPlaylistBtn.setEnabled(true);
+        else createPlaylistBtn.setEnabled(false);
+    }
+
     private void checkedChangeListener() {
-        isPrivateCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+        passwordProtectCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 if (isChecked) {
-                    passwordText.setVisibility(View.VISIBLE);
                     passwordEditText.setVisibility(View.VISIBLE);
-                    createPlaylistBtn.setEnabled(false);
+                    isPasswordOK = false;
                     passwordEditText.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -119,8 +103,8 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 
                         @Override
                         public void onTextChanged(CharSequence s, int start, int before, int count) {
-                            if (s.length() == 0) createPlaylistBtn.setEnabled(false);
-                            else createPlaylistBtn.setEnabled(true);
+                            if (s.length() == 0) isPasswordOK = false;
+                            else isPasswordOK = true;
                         }
 
                         @Override
@@ -130,9 +114,10 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
                     });
                 }
                 else {
-                    passwordText.setVisibility(View.GONE);
                     passwordEditText.setVisibility(View.GONE);
+                    isPasswordOK = true;
                 }
+                checkCreatePlaylistButtonEnabled();
             }
         });
     }
@@ -166,37 +151,23 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
         nameTextListener();
         checkedChangeListener();
 
-        isPrivateCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    passwordText.setVisibility(View.VISIBLE);
-                    passwordEditText.setVisibility(View.VISIBLE);
-                }
-                else {
-                    passwordText.setVisibility(View.GONE);
-                    passwordEditText.setVisibility(View.GONE);
-                }
-            }
-        });
-
         createPlaylistBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String partyName = nameText.getText().toString();
 
                 String password = "";
-                if (isPrivateCheckbox.isChecked()) {
+                if (passwordProtectCheckbox.isChecked()) {
                     password = passwordEditText.getText().toString();
                 }
                 boolean locationTrack = ((CheckBox) findViewById(R.id.locationChecker)).isChecked();
-                boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
+//                boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
 
                 if (locationTrack) {
                     // do location track stuff, then mGeoLocation != null
                 }
 
-                aux.createPlaylist(partyName, password, mGeoLocation, hostApproval);
+                aux.createPlaylist(partyName, password, mGeoLocation);
 
                 Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
                 startActivity(searchSongsIntent);
@@ -215,7 +186,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 //
 //                String partyName = nameText.getText().toString();
 //                String password = null;
-//                if (isPrivateCheckbox.isChecked()) {
+//                if (passwordProtectCheckbox.isChecked()) {
 //                    password = passwordEditText.getText().toString();
 //                }
 //                ArrayList<String> useridstuff = new ArrayList<>();
