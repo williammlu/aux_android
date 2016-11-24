@@ -28,8 +28,8 @@ public class Playlist {
 
     public String currentSongID;
 
-//    @Exclude
-//    private List<Song> spotifySongList;
+    @Exclude
+    private List<Song> spotifySongList;
     @Exclude
     private List<User> usersList;
 
@@ -39,7 +39,7 @@ public class Playlist {
     // private List ourownsonglist - possible variable
 
     public Playlist() {
-//        spotifySongList = new ArrayList<>();
+        spotifySongList = new ArrayList<>();
         spotifySongIDList = new ArrayList<>();
         userDeviceIDList = new ArrayList<>();
         currentSongID = "";
@@ -52,11 +52,13 @@ public class Playlist {
 
 
 
+    // Convert to builder in the future for cleaner code
     public Playlist(List<String> userDeviceIDList, List<String> spotifySongIDList, String playlistName,
                     String password, String hostDeviceID, int currentSongIndex, Boolean isActive, long currentSongTime, GeoLocation location,
                     String coverArtURL, String hostSpotifyName) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
+        this.spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
         this.playlistName = playlistName;
         this.password = password;
         this.hostDeviceID = hostDeviceID;
@@ -75,7 +77,7 @@ public class Playlist {
 
 
     public void addSong(Song song) {
-//        spotifySongList.add(song);
+        spotifySongList.add(song);
         spotifySongIDList.add(song.getSongURI());
     }
 
@@ -128,9 +130,9 @@ public class Playlist {
         return spotifySongIDList;
     }
 
-//    public List<Song> getSpotifySongList() {
-//        return spotifySongList;
-//    }
+    public List<Song> getSpotifySongList() {
+        return spotifySongList;
+    }
 
 
     public String getPassword() {

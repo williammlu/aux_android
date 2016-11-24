@@ -30,6 +30,8 @@ import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Track;
+import kaaes.spotify.webapi.android.models.Tracks;
 
 /**
  * Created by wilbu on 10/22/2016.
@@ -49,6 +51,8 @@ public class AuxSingleton {
     public static final String SPOTIFYSONGID_LIST = "spotifySongIDList";
 //    public static final String SPOTIFYSONG_LIST = "spotifySongList";
     public static final String USERID_LIST = "userDeviceIDList";
+
+    public static HashMap<String, Song> songCache = new HashMap<>();
 
     private static AuxSingleton auxSingleton = new AuxSingleton();
 //TODO: Once we figure out what we're doing with current/active playlists, may need to change methods.
@@ -197,19 +201,16 @@ public class AuxSingleton {
         ArrayList<String> userUIDList = new ArrayList<String>();
         userUIDList.add(currentUser.getUID());
 
-        ArrayList<String> songList = new ArrayList<String>();
+        ArrayList<String> songIdList = new ArrayList<String>();
 
         playlistRef = dbReference.child(PLAYLISTS_NODE).push();
         //TODO: Dunno why this is commented out. -Young
-//        setCurrentPlaylist(new Playlist(userUIDList, songList, partyName, password, currentUser.getUID(),
-//                0, true, 0, mGeoLocation), playlistRef.getKey());
-    }
-
-    public void addToPlaylist(String key, String value) {
-
+        setCurrentPlaylist(new Playlist(userUIDList, songIdList, partyName, password, currentUser.getUID(),
+                0, true, 0, mGeoLocation, "", ""), playlistRef.getKey());
     }
 
     public void addSong(Song song) {
+        songCache.put(song.getSongId(), song);
         currentPlaylist.addSong(song);
         updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
         Log.d(TAG, "we added a song (maybe), yay!");
@@ -264,6 +265,57 @@ public class AuxSingleton {
             spotifyService = api.getService();
         }
         return spotifyService;
+    }
+
+    /**
+     * Reads songs from memoized list of songs, or batch queries them from Spotify.
+     *
+     * @author Will
+     * @param songIds array of songIds, in the format of 6rqhFgbbKwnb9MLmUQDhG6, NOT spotify:track:6rqhFgbbKwnb9MLmUQDhG6
+     * @return list of Song objects
+     */
+    public static List<Song> getSongs(List<String> songIds) {
+        ArrayList<Song> output = new ArrayList<>();
+        StringBuilder builder = null;
+
+        // TODO make song id the actual id and not the uri
+
+        // Spotify batch queries limited to 50 songs max
+        int queryCounter = 0;
+        ArrayList<String> queries = new ArrayList<>();
+
+        for (String songId : songIds) {
+            Song s = songCache.get(songId);
+            if (s != null) {
+                output.add(s);
+            } else {
+                if (builder == null) {
+                    builder = new StringBuilder();
+                } else {
+                    builder.append(',');
+                }
+                builder.append(s);
+                queryCounter++;
+
+                if (queryCounter == 50) {
+                    queryCounter = 0;
+                    queries.add(builder.toString());
+                    builder = null;
+                }
+            }
+        }
+        if (builder != null) {
+            queries.add(builder.toString());
+        }
+
+        for (String q : queries) {
+            Tracks tracks = spotifyService.getTracks(builder.toString());
+            for (Track t : tracks.tracks) {
+                output.add(new Song(t));
+            }
+        }
+        return output;
+
     }
 
 

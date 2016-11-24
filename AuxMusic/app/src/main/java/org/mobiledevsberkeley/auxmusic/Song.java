@@ -24,7 +24,9 @@ import kaaes.spotify.webapi.android.models.Track;
 
 public class Song {
     // Generic song class that has the necessary extracted information from an API (Spotify for now, possibly Soundcloud, etc. in the future)
-    private String songURI;
+//    private String songURI;
+    private String songId;
+
     private List<String> imageUrl; // potentially save the image as a different variable
     private String songName;
     private String artistName;
@@ -32,7 +34,7 @@ public class Song {
     private long trackLength;
 
     public Song(Track t) {
-        this.songURI = t.uri;
+        this.songId = t.id;
         this.imageUrl = new ArrayList<String>();
         for (Image im: t.album.images) {
             imageUrl.add(im.url);
@@ -47,8 +49,8 @@ public class Song {
         this.trackLength = t.duration_ms;
     }
 
-    public Song(String songURI, ArrayList<String>imageUrl, String songName, String artistName, String albumName, long trackLength) {
-        this.songURI = songURI;
+    public Song(String songId, ArrayList<String>imageUrl, String songName, String artistName, String albumName, long trackLength) {
+        this.songId = songId;
         this.imageUrl = imageUrl;
         this.songName = songName;
         this.artistName = artistName;
@@ -56,8 +58,13 @@ public class Song {
         this.trackLength = trackLength;
     }
 
+    public String getSongId() {
+        return songId;
+    }
+
+
     public String getSongURI() {
-        return songURI;
+        return "spotify:track:" + songId;
     }
 
     public String getImageUrl(int px) {
@@ -72,6 +79,10 @@ public class Song {
         } else {
             return this.imageUrl.get(0);
         }
+    }
+
+    public static Song getTestSong() {
+        new Song();
     }
 
     public String getSongName() {
