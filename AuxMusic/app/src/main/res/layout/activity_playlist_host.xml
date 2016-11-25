@@ -6,10 +6,10 @@
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/activity_playlist_layout"
-    tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivity">
+    tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivityHost">
 
 
-    <include layout="@layout/content_playlist" />
+    <include layout="@layout/content_playlist_host" />
 
 
 </RelativeLayout>

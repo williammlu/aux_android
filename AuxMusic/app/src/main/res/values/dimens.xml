@@ -5,8 +5,8 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="search_list_margin">16dp</dimen>
 
-    <dimen name="search_album_image_side"> 100dp</dimen>
-    <dimen name="search_album_image_side_main_screen"> 300dp</dimen>
+    <dimen name="search_album_image_side">100dp</dimen>
+    <dimen name="search_album_image_side_main_screen">300dp</dimen>
 
-    <dimen name="no_results_text_top_margin"> 50dp</dimen>
+    <dimen name="no_results_text_top_margin">50dp</dimen>
 </resources>

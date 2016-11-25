@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/content_playlist"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivityHost"
+    tools:showIn="@layout/activity_playlist_host">
+
+    <Button
+        android:text="Activate Playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"
+        android:id="@+id/activatePlaylist" />
+
+    <Button
+        android:text="Leave Playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:visibility="gone"
+        android:id="@+id/leavePlaylist" />
+
+    <Button
+        android:text="Add Song"
+        android:id="@+id/playlistAddSongButton"
+        style="@style/ButtonStyle"
+        android:background="@drawable/button_shape"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
+
+
+    <Button
+        android:text="Host Approval"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:id="@+id/hostApproval"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/playlistAddSongButton" />
+
+    <Button
+        android:text="Export Playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/exportPlaylist"
+        android:visibility="gone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true" />
+
+    <org.mobiledevsberkeley.auxmusic.CurrentSongView
+        android:layout_width="match_parent"
+        android:layout_height="75dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        layout="@layout/song_row_view"
+        android:id="@+id/currentSongView"/>
+
+    <org.mobiledevsberkeley.auxmusic.PlayerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/player_view"
+        android:id="@+id/playlist_player_view"
+        android:visibility="visible"
+        android:layout_below="@+id/currentSongView"
+        android:layout_alignParentStart="true" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="fill_parent"
+        android:id="@+id/recyclerView"
+        android:layout_above="@+id/playlistAddSongButton"
+        android:layout_alignParentStart="true"
+        android:layout_below="@+id/playlist_player_view"
+        android:scrollbars="horizontal" />
+
+</RelativeLayout>

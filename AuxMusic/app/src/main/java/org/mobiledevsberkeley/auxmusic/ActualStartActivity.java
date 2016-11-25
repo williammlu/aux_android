@@ -1,6 +1,5 @@
 package org.mobiledevsberkeley.auxmusic;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -8,14 +7,12 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.telecom.Call;
 import android.support.v7.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.google.android.gms.drive.query.Query;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -25,9 +22,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.ValueEventListener;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class ActualStartActivity extends AppCompatActivity {
@@ -56,7 +51,7 @@ public class ActualStartActivity extends AppCompatActivity {
             public void playlistOnComplete(boolean hasCurrentPlaylist) {
                 if (hasCurrentPlaylist) {
                     Log.d(TAG, "hasplaylist");
-                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
+                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
                     startActivity(playlistIntent);
                 } else {
                     Log.d(TAG, "doesnthaveplaylist");
@@ -245,7 +240,7 @@ public class ActualStartActivity extends AppCompatActivity {
     }
 
     public void playlistIntent() {
-        Intent playlistIntent = new Intent(this, PlaylistActivity.class);
+        Intent playlistIntent = new Intent(this, PlaylistActivityHost.class);
         startActivity(playlistIntent);
     }
 }

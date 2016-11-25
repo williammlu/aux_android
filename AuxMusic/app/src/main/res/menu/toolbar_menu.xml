@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/exportPlaylist"
+        android:orderInCategory="1"
+        app:showAsAction="never"
+        android:title="Export Playlist"/>
+    <item
+        android:id="@+id/joinPlaylist"
+        android:orderInCategory="2"
+        android:visible="true"
+        app:showAsAction="never"
+        android:title="Join Playlist"/>
+    <item
+        android:id="@+id/leavePlaylist"
+        android:orderInCategory="3"
+        android:visible="false"
+        app:showAsAction="never"
+        android:title="Leave Playlist"/>
+
+</menu>

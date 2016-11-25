@@ -2,13 +2,11 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -22,10 +20,9 @@ import com.spotify.sdk.android.player.PlayerEvent;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
-import java.util.ArrayList;
 import java.util.List;
 
-public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+public class PlaylistActivityHost extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
     private View parentView;
@@ -35,7 +32,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playlist);
+        setContentView(R.layout.activity_playlist_host);
         parentView = findViewById(R.id.activity_playlist_layout);
 
 
@@ -75,7 +72,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
             public void onFinished(List<Song> songs) {
                 aux.getCurrentPlaylist().setSpotifySongList(songs);
                 musicAdapter.notifyDataSetChanged();
-                Log.e("PlaylistActivity", "callback with " + songs.size());
+                Log.e("PlaylistActivityHost", "callback with " + songs.size());
             }
         });
 
@@ -152,14 +149,14 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     @Override
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
-        Log.e("PlaylistActivity", "calling destroy!!");
+        Log.e("PlaylistActivityHost", "calling destroy!!");
         Spotify.destroyPlayer(this);
         super.onDestroy();
     }
 
     @Override
     public void onPlaybackEvent(PlayerEvent playerEvent) {
-        Log.d("PlaylistActivity", "Playback event received: " + playerEvent.name());
+        Log.d("PlaylistActivityHost", "Playback event received: " + playerEvent.name());
         switch (playerEvent) {
             // Handle event type as necessary
             default:
@@ -169,7 +166,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 
     @Override
     public void onPlaybackError(Error error) {
-        Log.d("PlaylistActivity", "Playback error received: " + error.name());
+        Log.d("PlaylistActivityHost", "Playback error received: " + error.name());
         switch (error) {
             // Handle error type as necessary
             default:
@@ -179,28 +176,28 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 
     @Override
     public void onLoggedIn() {
-        Log.e("PlaylistActivity", "User logged in");
+        Log.e("PlaylistActivityHost", "User logged in");
 
     }
 
     @Override
     public void onLoggedOut() {
-        Log.e("PlaylistActivity", "User logged out");
+        Log.e("PlaylistActivityHost", "User logged out");
     }
 
     @Override
     public void onLoginFailed(int i) {
-        Log.e("PlaylistActivity", "Login failed");
+        Log.e("PlaylistActivityHost", "Login failed");
     }
 
     @Override
     public void onTemporaryError() {
-        Log.d("PlaylistActivity", "Temporary error occurred");
+        Log.d("PlaylistActivityHost", "Temporary error occurred");
     }
 
     @Override
     public void onConnectionMessage(String message) {
-        Log.d("PlaylistActivity", "Received connection message: " + message);
+        Log.d("PlaylistActivityHost", "Received connection message: " + message);
     }
 
     private static final String CLIENT_ID = "687e297cd52c436eb680444a7b0519f9";
@@ -211,8 +208,8 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
             SpotifyPlayer p = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
                 @Override
                 public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                    spotifyPlayer.addConnectionStateCallback(PlaylistActivity.this);
-                    spotifyPlayer.addNotificationCallback(PlaylistActivity.this);
+                    spotifyPlayer.addConnectionStateCallback(PlaylistActivityHost.this);
+                    spotifyPlayer.addNotificationCallback(PlaylistActivityHost.this);
                     AuxSingleton.getInstance().setSpotifyPlayer(spotifyPlayer);
                     AuxSingleton.getInstance().createAuxPlayer();
                 }
