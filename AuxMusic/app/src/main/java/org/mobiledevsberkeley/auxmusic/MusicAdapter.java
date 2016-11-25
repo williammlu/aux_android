@@ -14,13 +14,14 @@ import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Young on 10/8/2016.
  */
 
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHolder>{
-    ArrayList<Song> list;
+    List<Song> list;
     Context context;
 
     public static final int SEARCH_TO_ADD = 0;
@@ -29,7 +30,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
     public int displayType;
 
 
-    public MusicAdapter(Context applicationContext, ArrayList<Song> list, int type ) {
+    public MusicAdapter(Context applicationContext, List<Song> list, int type ) {
         context = applicationContext;
         this.list = list;
         this.displayType = type;

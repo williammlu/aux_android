@@ -25,7 +25,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
-    List<Song> songsList = new ArrayList<>();
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
 
@@ -45,9 +44,12 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        songsList = aux.getCurrentPlaylist().getSpotifySongList();
+//        songsList = aux.getCurrentPlaylist().getSpotifySongList();
 
-        musicAdapter = new MusicAdapter(this, (ArrayList<Song>) songsList, MusicAdapter.DISPLAY_PLAYLIST);
+        musicAdapter = new MusicAdapter(this, new ArrayList<Song>(), MusicAdapter.DISPLAY_PLAYLIST);
+
+        new DownloadSongsInfoTask(musicAdapter, aux.getCurrentPlaylist()).execute(aux.getCurrentPlaylist().getSpotifySongIDList());
+
 
         recyclerView.setAdapter(musicAdapter);
 

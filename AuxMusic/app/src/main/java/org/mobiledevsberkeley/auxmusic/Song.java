@@ -59,6 +59,19 @@ public class Song {
         this.trackLength = trackLength;
     }
 
+    /**
+     * Empty constructor for Firebase
+     */
+    public Song() {
+        this.songId = "";
+        this.imageUrl = new ArrayList<>();
+        this.songName = "";
+        this.artistName = "";
+        this.albumName = "";
+        this.trackLength = 0;
+    }
+
+
     public String getSongId() {
         return songId;
     }

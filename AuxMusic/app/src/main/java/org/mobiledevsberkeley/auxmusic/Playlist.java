@@ -131,11 +131,19 @@ public class Playlist {
     }
 
     public List<Song> getSpotifySongList() {
-        if (spotifySongList == null || spotifySongList.size() == 0) {
-            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
-        }
+//        if (spotifySongList == null || spotifySongList.size() == 0) {
+//            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
+//        }
         return spotifySongList;
     }
+
+    public void setSpotifySongList(List<Song> sl) {
+//        if (spotifySongList == null || spotifySongList.size() == 0) {
+//            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
+//        }
+        this.spotifySongList = sl;
+    }
+
 
 
     public String getPassword() {

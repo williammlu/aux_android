@@ -291,8 +291,6 @@ public class AuxSingleton {
         final ArrayList<Song> output = new ArrayList<>();
         StringBuilder builder = null;
 
-        // TODO make song id the actual id and not the uri
-
         // Spotify batch queries limited to 50 songs max
         int queryCounter = 0;
         ArrayList<String> queries = new ArrayList<>();
@@ -334,10 +332,6 @@ public class AuxSingleton {
                     Log.e("Get Song by id failure", error.toString());
                 }
             });
-
-
-
-
         }
         return output;
 
