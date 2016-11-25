@@ -2,6 +2,7 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -23,6 +25,7 @@ import java.util.List;
 public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHolder>{
     List<Song> list;
     Context context;
+    View view;
 
     public static final int SEARCH_TO_ADD = 0;
     public static final int DISPLAY_PLAYLIST = 1;
@@ -30,10 +33,11 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
     public int displayType;
 
 
-    public MusicAdapter(Context applicationContext, List<Song> list, int type ) {
+    public MusicAdapter(Context applicationContext, List<Song> list, int type, View view ) {
         context = applicationContext;
         this.list = list;
         this.displayType = type;
+        this.view = view;
     }
 
     @Override
@@ -66,6 +70,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
         TextView artistTitle;
         TextView albumTitle;
         Song song;
+        ImageView closeImageView;
 
 
         public CustomViewHolder(View v) {
@@ -75,24 +80,69 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
             songTitle = (TextView) v.findViewById(R.id.songName);
             artistTitle = (TextView) v.findViewById(R.id.artistName);
             albumTitle = (TextView) v.findViewById(R.id.albumName);
+            closeImageView = (ImageView) v.findViewById(R.id.closeImageView);
+            if (displayType == DISPLAY_PLAYLIST) {
+                closeImageView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        // dialog to confirm removing
+                        final int songIndex = getLayoutPosition();
+                        final String songName = getSongAtIndex(songIndex).getSongName();
+                        final Snackbar snackbarRemove = Snackbar.make(view, "Removing song: " + songName, Snackbar.LENGTH_SHORT);
+                        String message = "Are you sure you want to remove: " +
+                                songTitle.getText().toString();
+                        new MaterialDialog.Builder(context)
+                                .title(R.string.removeSongDialogTitle)
+                                .content(message)
+//                                    .icon(img.getDrawable())
+                                .positiveText(R.string.SongDialogPositive)
+                                .negativeText(R.string.SongDialogNegative)
+                                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                    @Override
+                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                        AuxSingleton aux = AuxSingleton.getInstance();
+                                        int currentSongIndex = aux.getCurrentPlaylist().getCurrentSongIndex();
+                                        if (songIndex < currentSongIndex) {
+                                            aux.getCurrentPlaylist().setCurrentSongIndex(currentSongIndex - 1);
+                                        } else if (songIndex == currentSongIndex) {
+                                            aux.getCurrentPlaylist().setCurrentSongIndex(Math.max(currentSongIndex, list.size() - 1));
+                                            // HA. GET FUCKED
+                                        }
+                                        Log.d("MusicAdapter", "Adding a song " + songName);
+                                        snackbarRemove.show();
+                                        Song targetSong = getSongAtIndex(getLayoutPosition());
+                                        //TODO: put this back in once Singleton's addSong method works
+                                        AuxSingleton.getInstance().removeSong(targetSong);
+                                        notifyDataSetChanged();
+                                    }
+                                })
+                                .show();
+                    }
+                });
+            } else {
+                closeImageView.setVisibility(View.GONE);
+            }
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     switch (displayType) {
                         case SEARCH_TO_ADD:
                             // dialog to confirm playing
+                            final String songName = getSongAtIndex(getLayoutPosition()).getSongName();
+                            final Snackbar snackbarAdd = Snackbar.make(view, "Adding song: " + songName, Snackbar.LENGTH_SHORT);
                             String message = "Are you sure you want to add: " +
                                     songTitle.getText().toString();
                             new MaterialDialog.Builder(context)
                                     .title(R.string.addSongDialogTitle)
                                     .content(message)
 //                                    .icon(img.getDrawable())
-                                    .positiveText(R.string.addSongDialogPositive)
-                                    .negativeText(R.string.addSongDialogNegative)
+                                    .positiveText(R.string.SongDialogPositive)
+                                    .negativeText(R.string.SongDialogNegative)
                                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                                         @Override
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            Log.d("MusicAdapter", "Adding a song " + getSongAtIndex(getLayoutPosition()).getSongName());
+                                            Log.d("MusicAdapter", "Adding a song " + songName);
+                                            snackbarAdd.show();
                                             Song targetSong = getSongAtIndex(getLayoutPosition());
                                             //TODO: put this back in once Singleton's addSong method works
                                             AuxSingleton.getInstance().addSong(targetSong);

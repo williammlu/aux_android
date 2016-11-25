@@ -19,6 +19,7 @@
     <string name="songSearchHint">Search by song, artist or album name...</string>
     <string name="noSongsFound">No songs found</string>
     <string name="addSongDialogTitle">Add Song Confirmation</string>
-    <string name="addSongDialogPositive">Confirm</string>
-    <string name="addSongDialogNegative">Cancel</string>
+    <string name="SongDialogPositive">Confirm</string>
+    <string name="SongDialogNegative">Cancel</string>
+    <string name="removeSongDialogTitle">Remove Song Confirmation</string>
 </resources>

@@ -53,7 +53,7 @@ public class SearchSongsActivity extends AppCompatActivity {
                 getResources().getConfiguration().orientation);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        final MusicAdapter musicAdapter = new MusicAdapter(this, list, MusicAdapter.SEARCH_TO_ADD);
+        final MusicAdapter musicAdapter = new MusicAdapter(this, list, MusicAdapter.SEARCH_TO_ADD, findViewById(R.id.activity_search_songs));
 
         recyclerView.setAdapter(musicAdapter);
 

@@ -57,4 +57,12 @@
         android:layout_below="@+id/artistName"
         android:layout_alignParentEnd="true"
         android:layout_toEndOf="@+id/imageView" />
+    <ImageView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="10dp"
+        android:paddingRight="10dp"
+        android:layout_alignParentRight="true"
+        android:id="@+id/closeImageView"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"/>
 </RelativeLayout>

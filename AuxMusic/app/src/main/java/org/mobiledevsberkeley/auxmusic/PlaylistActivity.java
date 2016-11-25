@@ -46,10 +46,9 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 //        songsList = aux.getCurrentPlaylist().getSpotifySongList();
 
-        musicAdapter = new MusicAdapter(this, new ArrayList<Song>(), MusicAdapter.DISPLAY_PLAYLIST);
+        musicAdapter = new MusicAdapter(this, new ArrayList<Song>(), MusicAdapter.DISPLAY_PLAYLIST, null);
 
         new DownloadSongsInfoTask(musicAdapter, aux.getCurrentPlaylist()).execute(aux.getCurrentPlaylist().getSpotifySongIDList());
-
 
         recyclerView.setAdapter(musicAdapter);
 
@@ -79,37 +78,37 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         Button activateButton = (Button) findViewById(R.id.activatePlaylist);
         //singleton playlist should reflect whichever playlist is being DISPLAYED. firebase playlist should reflect whichever is ACTIVE
 
-        //replace all of this once merged
-        final User user = aux.getCurrentUser();
-        final DatabaseReference usersRef = aux.getDataBaseReference().child("users").child(user.getUID()).push();
-        boolean isCurrentPlaylist = user.getPlaylistKey().equals("");
-        boolean isActive = true;
-        final boolean isHost = true;
-
-        if (isCurrentPlaylist && isActive) {
-            leaveButton.setVisibility(View.VISIBLE);
-            leaveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    user.setPlaylistKey(null);
-                    usersRef.setValue(user, new DatabaseReference.CompletionListener() {
-                    @Override
-                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                        if (databaseError != null) {
-                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
-                        } else {
-                            Log.d(TAG, "Data saved successfully.");
-                        }
-                    }
-                });
-                    if (isHost) {
-
-                    }
-                }
-            });
-
-        }
-
+//        //replace all of this once merged
+//        final User user = aux.getCurrentUser();
+//        final DatabaseReference usersRef = aux.getDataBaseReference().child("users").child(user.getUID()).push();
+//        boolean isCurrentPlaylist = user.getPlaylistKey().equals("");
+//        boolean isActive = true;
+//        final boolean isHost = true;
+//
+//        if (isCurrentPlaylist && isActive) {
+//            leaveButton.setVisibility(View.VISIBLE);
+//            leaveButton.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View view) {
+//                    user.setPlaylistKey(null);
+//                    usersRef.setValue(user, new DatabaseReference.CompletionListener() {
+//                    @Override
+//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+//                        if (databaseError != null) {
+//                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+//                        } else {
+//                            Log.d(TAG, "Data saved successfully.");
+//                        }
+//                    }
+//                });
+//                    if (isHost) {
+//
+//                    }
+//                }
+//            });
+//
+//        }
+//
 
 
     }

@@ -225,6 +225,8 @@ public class AuxSingleton {
     }
 
     public void removeSong(Song song) {
+        currentPlaylist.removeSong(song);
+        updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
 
     }
 

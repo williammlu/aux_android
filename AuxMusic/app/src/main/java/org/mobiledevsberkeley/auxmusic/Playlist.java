@@ -81,6 +81,11 @@ public class Playlist {
         spotifySongIDList.add(song.getSongId());
     }
 
+    public void removeSong(Song song) {
+        spotifySongList.remove(song);
+        spotifySongIDList.remove(song.getSongId());
+    }
+
     public void addUser(User user) {
         usersList.add(user);
         userDeviceIDList.add(user.getUID());
