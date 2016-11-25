@@ -58,20 +58,26 @@ public class SpotifyAuthTest extends Activity
                 case TOKEN:
                     Log.e("SpotifyAuthTest", "successful auth token " + response.getAccessToken());
                     AuxSingleton.getInstance().setSpotifyAuthToken(response.getAccessToken());
+
+                    // TODO: this activity will be opened from the actualstartactivity in the future when pressing the button to auth
+                    // if playlist exists, it will redirect, but ensure that it will still work
+                    Log.e("SpotifyAuthTest", "starting actualstartactivity");
+                    Intent i = new Intent(this, ActualStartActivity.class);
+                    startActivity(i);
                     break;
 
                 // Auth flow returned an error
                 case ERROR:
                     Log.e("onActivityResult", "Auth error: " + response.getError());
+
+                    // requires premium, notify user that it requires premium
                     break;
 
                 // Most likely auth flow was cancelled
                 default:
                     Log.e("onActivityResult", "Auth result: " + response.getType());
             }
-            Log.e("SpotifyAuthTest", "starting actualstartactivity");
-            Intent i = new Intent(this, ActualStartActivity.class);
-            startActivity(i);
+
         }
     }
 
