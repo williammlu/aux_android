@@ -29,6 +29,8 @@ public class SpotifyAuthTest extends Activity
 // Can be any integer
     private static final int REQUEST_CODE = 1337;
 
+    public static final String LOGIN_ERROR = "LOGIN_ERROR";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +55,8 @@ public class SpotifyAuthTest extends Activity
         if (requestCode == REQUEST_CODE) {
 
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+            Intent i = new Intent(this, ActualStartActivity.class);
+
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
@@ -62,13 +66,14 @@ public class SpotifyAuthTest extends Activity
                     // TODO: this activity will be opened from the actualstartactivity in the future when pressing the button to auth
                     // if playlist exists, it will redirect, but ensure that it will still work
                     Log.e("SpotifyAuthTest", "starting actualstartactivity");
-                    Intent i = new Intent(this, ActualStartActivity.class);
                     startActivity(i);
                     break;
 
                 // Auth flow returned an error
                 case ERROR:
                     Log.e("onActivityResult", "Auth error: " + response.getError());
+                    i.putExtra(LOGIN_ERROR, "Unfortunately, Aux requires Spotify premium to host a playlist. Without it, you will not be able to stream music");
+                    startActivity(i);
 
                     // requires premium, notify user that it requires premium
                     break;

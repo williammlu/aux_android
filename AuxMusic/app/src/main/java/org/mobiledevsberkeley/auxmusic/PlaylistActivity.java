@@ -28,6 +28,7 @@ import java.util.List;
 public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
+    private View parentView;
 
     private RecyclerView recyclerView;
     private MusicAdapter musicAdapter;
@@ -35,6 +36,20 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
+        parentView = findViewById(R.id.activity_playlist_layout);
+
+
+        Intent i = getIntent();
+        if (i.hasExtra(SpotifyAuthTest.LOGIN_ERROR)) {
+            String loginErrorMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_ERROR);
+            Snackbar snackbar = Snackbar
+                    .make(parentView, loginErrorMessage, Snackbar.LENGTH_INDEFINITE);
+            snackbar.show();
+
+
+        }
+
+
 
         createSpotifyPlayer(AuxSingleton.getInstance().getSpotifyAuthToken());
 

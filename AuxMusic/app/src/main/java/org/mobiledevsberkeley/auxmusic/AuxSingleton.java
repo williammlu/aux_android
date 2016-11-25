@@ -216,7 +216,9 @@ public class AuxSingleton {
         songCache.put(song.getSongId(), song);
         currentPlaylist.addSong(song);
         updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
-        musicAdapter.notifyDataSetChanged();
+        if (musicAdapter != null) {
+            musicAdapter.notifyDataSetChanged();
+        }
         Log.d(TAG, "we added a song (maybe), yay!");
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
