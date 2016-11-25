@@ -95,7 +95,7 @@ public class ActualStartActivity extends AppCompatActivity {
                 Playlist currentPlaylist = new Playlist();
                 currentPlaylist.setPlaylistName("Young's Playlist");
                 //to test, must access wills search activity first
-                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
+//                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
                 playlistRef.setValue(currentPlaylist);
              }
         });

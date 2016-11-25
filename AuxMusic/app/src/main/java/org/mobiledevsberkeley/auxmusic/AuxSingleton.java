@@ -1,37 +1,33 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.util.Log;
-import android.widget.Toast;
+import android.view.View;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.spotify.sdk.android.player.Player;
+import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
-import android.util.Log;
 
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
+import kaaes.spotify.webapi.android.models.TracksPager;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 /**
  * Created by wilbu on 10/22/2016.
@@ -41,10 +37,16 @@ public class AuxSingleton {
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private static Context context;
-    private static String spotifyAuthId = "";
-    private static Player musicPlayer;
-    private static SpotifyService spotifyService;
-    private static SpotifyPlayer spotifyPlayer;
+    private static String spotifyAuthToken = "";
+
+    // TODO: create player interface
+    private static Player spotifyPlayer;
+    private static PlayerInterface auxPlayer;
+    private static SpotifyService spotifyService = new SpotifyApi().getService();
+
+
+
+    private static Object playerReference;
     public static final String TAG = "debug";
     public static final String USERS_NODE = "users";
     public static final String PLAYLISTS_NODE = "playlists";
@@ -204,7 +206,6 @@ public class AuxSingleton {
         ArrayList<String> songIdList = new ArrayList<String>();
 
         playlistRef = dbReference.child(PLAYLISTS_NODE).push();
-        //TODO: Dunno why this is commented out. -Young
         setCurrentPlaylist(new Playlist(userUIDList, songIdList, partyName, password, currentUser.getUID(),
                 0, true, 0, mGeoLocation, "", ""), playlistRef.getKey());
     }
@@ -236,24 +237,36 @@ public class AuxSingleton {
     }
 
 
-    public static String getSpotifyAuthId() {
-        return spotifyAuthId;
+    public static String getSpotifyAuthToken() {
+        return spotifyAuthToken;
     }
 
-    public static void setSpotifyAuthId(String spotifyAuthId) {
-        AuxSingleton.spotifyAuthId = spotifyAuthId;
+    public static void setSpotifyAuthToken(String spotifyAuthToken) {
+        AuxSingleton.spotifyAuthToken = spotifyAuthToken;
     }
 
-    public static boolean hasMusicPlayer() {
-        return musicPlayer != null;
+    public static boolean hasAuxPlayer() {
+        return auxPlayer != null;
     }
 
-    public static Player getMusicPlayer() {
-        return musicPlayer;
+    public PlayerInterface getAuxPlayer() {
+//        if (auxPlayer == null) {
+//            // TODO: do null checks on spotifyPlayer and Currentplayist
+//            auxPlayer = new AuxSpotifyPlayer(spotifyPlayer, currentPlaylist);
+//        }
+        return auxPlayer;
     }
 
-    public static void setMusicPlayer(Player musicPlayer) {
-        AuxSingleton.musicPlayer = musicPlayer;
+    public static void setSpotifyPlayer(Player musicPlayer) {
+        AuxSingleton.spotifyPlayer = musicPlayer;
+    }
+
+    public void createAuxPlayer() {
+        auxPlayer = new AuxSpotifyPlayer(getSpotifyPlayer(), currentPlaylist);
+    }
+
+    public static Player getSpotifyPlayer() {
+        return spotifyPlayer;
     }
 
     public static SpotifyService getSpotifyService() {
@@ -261,7 +274,7 @@ public class AuxSingleton {
             SpotifyApi api = new SpotifyApi();
             // Most (but not all) of the Spotify Web API endpoints require authorisation.
             // If you know you'll only use the ones that don't require authorisation you can skip this step
-//                api.setAccessToken(AuxSingleton.getSpotifyAuthId());
+//                api.setAccessToken(AuxSingleton.getSpotifyAuthToken());
             spotifyService = api.getService();
         }
         return spotifyService;
@@ -275,7 +288,7 @@ public class AuxSingleton {
      * @return list of Song objects
      */
     public static List<Song> getSongs(List<String> songIds) {
-        ArrayList<Song> output = new ArrayList<>();
+        final ArrayList<Song> output = new ArrayList<>();
         StringBuilder builder = null;
 
         // TODO make song id the actual id and not the uri
@@ -294,7 +307,7 @@ public class AuxSingleton {
                 } else {
                     builder.append(',');
                 }
-                builder.append(s);
+                builder.append(songId);
                 queryCounter++;
 
                 if (queryCounter == 50) {
@@ -309,14 +322,41 @@ public class AuxSingleton {
         }
 
         for (String q : queries) {
-            Tracks tracks = spotifyService.getTracks(builder.toString());
-            for (Track t : tracks.tracks) {
-                output.add(new Song(t));
-            }
+            getSpotifyService().getTracks(q, new Callback<Tracks>(){
+                @Override
+                public void success(Tracks tracks, Response response) {
+                    for (Track t : tracks.tracks) {
+                        output.add(new Song(t));
+                    }
+                }
+                @Override
+                public void failure(RetrofitError error) {
+                    Log.e("Get Song by id failure", error.toString());
+                }
+            });
+
+
+
+
         }
         return output;
 
     }
+
+
+
+    public static Object getPlayerReference() {
+        return playerReference;
+    }
+
+    public static void setPlayerReference(Object playerReference) {
+        AuxSingleton.playerReference = playerReference;
+    }
+
+    public static void destroyPlayerReference() {
+        Spotify.destroyPlayer(playerReference);
+    }
+
 
 
 
@@ -327,4 +367,5 @@ public class AuxSingleton {
     public void setContext(Context context) {
         this.context = context;
     }
+
 }

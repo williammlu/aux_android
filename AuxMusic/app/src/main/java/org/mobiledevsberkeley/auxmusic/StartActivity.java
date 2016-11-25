@@ -1,5 +1,6 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -23,8 +24,12 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 
 import java.util.ArrayList;
+
+import static org.mobiledevsberkeley.auxmusic.AuxSingleton.getContext;
 
 public class StartActivity extends AppCompatActivity {
     private String TAG = "debug";
@@ -41,8 +46,11 @@ public class StartActivity extends AppCompatActivity {
     private Button wilburTestingStuffButton;
     private Button youngStartButton;
     private Button defaultPlaylistButton;
-
     private Button mWill_button;
+
+
+    private int mSpotifyRequestCode = 5;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,17 +70,6 @@ public class StartActivity extends AppCompatActivity {
 
         mWill_button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                Intent intent = new Intent(StartActivity.this, SearchSongsActivity.class);
-                startActivity(intent);
-            }
-        });
-
-        mWill_button.setOnLongClickListener(new View.OnLongClickListener() {
-            public boolean onLongClick(View v) {
-
-                int mRequestCode = 5;
-
-
                 Snackbar snackbar = Snackbar
                         .make(v, "Starting Spotify Auth", Snackbar.LENGTH_SHORT);
                 snackbar.show();
@@ -82,8 +79,7 @@ public class StartActivity extends AppCompatActivity {
 //                        myIntent.putExtra("key", value); //Optional parameters
                 // TODO change requestCode and put somewhere safer, currently matches
                 // request code in SpotifyAuthTest
-                StartActivity.this.startActivityForResult(myIntent, mRequestCode);
-                return false;
+                startActivity(myIntent);
             }
         });
     }
@@ -175,6 +171,10 @@ public class StartActivity extends AppCompatActivity {
                 });
     }
 
+
+
+
+
     @Override
     public void onStart() {
         super.onStart();
@@ -188,6 +188,10 @@ public class StartActivity extends AppCompatActivity {
 //            mAuth.removeAuthStateListener(mAuthListener);
 //        }
     }
+
+
+
+
 }
 
 

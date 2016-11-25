@@ -11,6 +11,7 @@ import android.widget.ImageView;
 
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyService;
@@ -81,8 +82,17 @@ public class Song {
         }
     }
 
+    /**
+     * Creates a test song object (Fake Love by Drake) instead of hardcoding stuff every time
+     * @return
+     */
     public static Song getTestSong() {
-        new Song();
+        return new Song("6NMNgWgEAzde5M8U3lc6FN",
+                new ArrayList<String>(Arrays.asList("https://i.scdn.co/image/5b14b24dea78b0a14244ccb86f3bfd20bf77326d", "https://i.scdn.co/image/177939e6656bd0ae46d12e1f36e9162016d28a3c", "https://i.scdn.co/image/7b42b976267520f4dbb2f67e1baa63ca13bdbfdb")),
+                "Fake Love",
+                "Drake",
+                "Fake Love",
+                207813);
     }
 
     public String getSongName() {

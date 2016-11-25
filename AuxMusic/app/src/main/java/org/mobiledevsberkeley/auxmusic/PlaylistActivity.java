@@ -1,5 +1,6 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -13,14 +14,23 @@ import android.widget.Button;
 
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.spotify.sdk.android.player.Config;
+import com.spotify.sdk.android.player.ConnectionStateCallback;
+import com.spotify.sdk.android.player.Error;
+import com.spotify.sdk.android.player.PlayerEvent;
+import com.spotify.sdk.android.player.Spotify;
+import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.ArrayList;
+import java.util.List;
 
-public class PlaylistActivity extends AppCompatActivity {
-    ArrayList<Song> songsList = new ArrayList<>();
+public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer.NotificationCallback, ConnectionStateCallback {
+    List<Song> songsList = new ArrayList<>();
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
 
+    private RecyclerView recyclerView;
+    private MusicAdapter musicAdapter;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,27 +38,31 @@ public class PlaylistActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+
+        createSpotifyPlayer(AuxSingleton.getInstance().getSpotifyAuthToken());
+
         youngShit();
 
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        long i = 0;
-        songsList.add(new Song("bob",new ArrayList<String>(), "bobo", "hardcoded", "wheee", i));
+        songsList = aux.getCurrentPlaylist().getSpotifySongList();
 
-        MusicAdapter musicAdapter = new MusicAdapter(this, songsList, MusicAdapter.DISPLAY_PLAYLIST);
+        musicAdapter = new MusicAdapter(this, (ArrayList<Song>) songsList, MusicAdapter.DISPLAY_PLAYLIST);
 
         recyclerView.setAdapter(musicAdapter);
 
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
+        Button addSongButton = (Button) findViewById(R.id.playlistAddSongButton);
+        addSongButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), SearchSongsActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
+    // TODO: young can you rename to be more informative
     private void youngShit() {
         /*1. Check if this current playlist and is active
         * If yes:
@@ -89,11 +103,6 @@ public class PlaylistActivity extends AppCompatActivity {
                     if (isHost) {
 
                     }
-
-
-
-
-
                 }
             });
 
@@ -102,5 +111,95 @@ public class PlaylistActivity extends AppCompatActivity {
 
 
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+        updateRecyclerView();
+    }
+
+    public void updateRecyclerView() {
+        if (musicAdapter != null) {
+            musicAdapter.notifyDataSetChanged();
+        }
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        // VERY IMPORTANT! This must always be called or else you will leak resources
+        Log.e("PlaylistActivity", "calling destroy!!");
+        Spotify.destroyPlayer(this);
+        super.onDestroy();
+    }
+
+    @Override
+    public void onPlaybackEvent(PlayerEvent playerEvent) {
+        Log.d("PlaylistActivity", "Playback event received: " + playerEvent.name());
+        switch (playerEvent) {
+            // Handle event type as necessary
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onPlaybackError(Error error) {
+        Log.d("PlaylistActivity", "Playback error received: " + error.name());
+        switch (error) {
+            // Handle error type as necessary
+            default:
+                break;
+        }
+    }
+
+    @Override
+    public void onLoggedIn() {
+        Log.e("PlaylistActivity", "User logged in");
+    }
+
+    @Override
+    public void onLoggedOut() {
+        Log.e("PlaylistActivity", "User logged out");
+    }
+
+    @Override
+    public void onLoginFailed(int i) {
+        Log.e("PlaylistActivity", "Login failed");
+    }
+
+    @Override
+    public void onTemporaryError() {
+        Log.d("PlaylistActivity", "Temporary error occurred");
+    }
+
+    @Override
+    public void onConnectionMessage(String message) {
+        Log.d("PlaylistActivity", "Received connection message: " + message);
+    }
+
+    private static final String CLIENT_ID = "687e297cd52c436eb680444a7b0519f9";
+
+    public void createSpotifyPlayer(String token) {
+        if (token != null && token.length() != 0) {
+            Config playerConfig = new Config(this, token, CLIENT_ID);
+            SpotifyPlayer p = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
+                @Override
+                public void onInitialized(SpotifyPlayer spotifyPlayer) {
+                    spotifyPlayer.addConnectionStateCallback(PlaylistActivity.this);
+                    spotifyPlayer.addNotificationCallback(PlaylistActivity.this);
+                    AuxSingleton.getInstance().setSpotifyPlayer(spotifyPlayer);
+                    AuxSingleton.getInstance().createAuxPlayer();
+                }
+
+                @Override
+                public void onError(Throwable throwable) {
+                    Log.e("SpotifyAuth", "Could not initialize player: " + throwable.getMessage());
+                }
+            });
+
+        }
+    }
+
 
 }

@@ -78,7 +78,7 @@ public class Playlist {
 
     public void addSong(Song song) {
         spotifySongList.add(song);
-        spotifySongIDList.add(song.getSongURI());
+        spotifySongIDList.add(song.getSongId());
     }
 
     public void addUser(User user) {
@@ -90,9 +90,9 @@ public class Playlist {
         return hostDeviceID;
     }
 
-    public String getCurrentSongID() {
+    public String getCurrentSongURI() {
         if (spotifySongIDList.size() > 0) {
-            return spotifySongIDList.get(currentSongIndex);
+            return "spotify:track:" + spotifySongIDList.get(currentSongIndex);
         }
         return "";
 
@@ -131,6 +131,9 @@ public class Playlist {
     }
 
     public List<Song> getSpotifySongList() {
+        if (spotifySongList == null || spotifySongList.size() == 0) {
+            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
+        }
         return spotifySongList;
     }
 

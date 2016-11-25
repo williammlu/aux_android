@@ -30,7 +30,7 @@ public class SpotifyAuthTest extends Activity implements
 // Can be any integer
     private static final int REQUEST_CODE = 1337;
 
-    private Player mPlayer;
+//    private Player mPlayer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,49 +55,25 @@ public class SpotifyAuthTest extends Activity implements
         if (requestCode == REQUEST_CODE) {
 
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            Intent returnIntent;
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
                     Log.e("SpotifyAuthTest", "successful auth token " + response.getAccessToken());
-                    returnIntent = new Intent();
-
-                    AuxSingleton.getInstance().setSpotifyAuthId(response.getAccessToken());
-
-
-//                    returnIntent.putExtra("result","Logged in successfully!");
-//                    returnIntent.putExtra("access_token", response.getAccessToken());
-
-
-//                    Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
-                    getSpotifyPlayer(response.getAccessToken());
-//                    createSpotifyPlayer(response.getAccessToken()); // run again so spotify player created
-
-//                    mPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
-
-
-
-                    setResult(Activity.RESULT_OK,returnIntent);
-                    finish();
+                    AuxSingleton.getInstance().setSpotifyAuthToken(response.getAccessToken());
                     break;
 
                 // Auth flow returned an error
                 case ERROR:
                     Log.e("onActivityResult", "Auth error: " + response.getError());
-                    returnIntent = new Intent();
-                    returnIntent.putExtra("result","Log in authentication failed...");
-                    setResult(Activity.RESULT_CANCELED,returnIntent);
-                    finish();
                     break;
 
                 // Most likely auth flow was cancelled
                 default:
                     Log.e("onActivityResult", "Auth result: " + response.getType());
-                    returnIntent = new Intent();
-                    returnIntent.putExtra("result","Log in failed from unknown");
-                    setResult(Activity.RESULT_CANCELED,returnIntent);
-                    finish();
             }
+            Log.e("SpotifyAuthTest", "starting actualstartactivity");
+            Intent i = new Intent(this, ActualStartActivity.class);
+            startActivity(i);
         }
     }
 
@@ -106,12 +82,12 @@ public class SpotifyAuthTest extends Activity implements
         SpotifyPlayer p = Spotify.getPlayer(playerConfig, this, new SpotifyPlayer.InitializationObserver() {
             @Override
             public void onInitialized(SpotifyPlayer spotifyPlayer) {
-                mPlayer = spotifyPlayer;
-                mPlayer.addConnectionStateCallback(SpotifyAuthTest.this);
-                mPlayer.addNotificationCallback(SpotifyAuthTest.this);
-
-                AuxSingleton.getInstance().setMusicPlayer(mPlayer);
-
+                spotifyPlayer.addConnectionStateCallback(SpotifyAuthTest.this);
+                spotifyPlayer.addNotificationCallback(SpotifyAuthTest.this);
+                AuxSingleton.getInstance().setSpotifyPlayer(spotifyPlayer);
+                AuxSingleton.getInstance().createAuxPlayer();
+                AuxSingleton.getInstance().setPlayerReference(SpotifyAuthTest.this);
+                spotifyPlayer.playUri(null, "spotify:track:2TpxZ7JUBn3uw46aR7qd6V", 0, 0);
 
             }
 
@@ -126,7 +102,9 @@ public class SpotifyAuthTest extends Activity implements
     @Override
     protected void onDestroy() {
         // VERY IMPORTANT! This must always be called or else you will leak resources
-        Spotify.destroyPlayer(this);
+        Log.d("SpotifyAuthTest", "destroyed player");
+
+//        Spotify.destroyPlayer(this);
         super.onDestroy();
     }
 

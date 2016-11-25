@@ -2,17 +2,13 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.util.Log;
 
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.PlaybackState;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import java.util.List;
-import java.util.Random;
 
 /**
  * Created by wml on 10/29/16.
@@ -22,28 +18,30 @@ import java.util.Random;
 
 public class AuxSpotifyPlayer implements PlayerInterface{
 
-    private SpotifyPlayer mPlayer;
+    private Player mPlayer;
     private Playlist mPlaylist;
 
-    public AuxSpotifyPlayer(SpotifyPlayer sp, Playlist p){
+    public AuxSpotifyPlayer(Player sp, Playlist p){
         mPlayer = sp;
         mPlaylist = p;
-        sp.addNotificationCallback(new Player.NotificationCallback() {
-            @Override
-            public void onPlaybackEvent(PlayerEvent playerEvent) {
-                Log.d("AuxSpotifyPlayer", playerEvent.name());
-                if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
-                    // reached the end of Spotify playing queue
-                    Log.e("AuxSpotifyPlayer", "Finshed the end of a song, will be playing next..");
-                    playNext();
+        if (sp != null && p != null) {
+            sp.addNotificationCallback(new Player.NotificationCallback() {
+                @Override
+                public void onPlaybackEvent(PlayerEvent playerEvent) {
+                    Log.d("AuxSpotifyPlayer", playerEvent.name());
+                    if (playerEvent.equals(PlayerEvent.kSpPlaybackNotifyAudioDeliveryDone)) {
+                        // reached the end of Spotify playing queue
+                        Log.e("AuxSpotifyPlayer", "Finshed the end of a song, will be playing next..");
+                        playNext();
+                    }
                 }
-            }
 
-            @Override
-            public void onPlaybackError(Error error) {
-                Log.e("AuxSpotifyPlayer", error.toString());
-            }
-        });
+                @Override
+                public void onPlaybackError(Error error) {
+                    Log.e("AuxSpotifyPlayer", error.toString());
+                }
+            });
+        }
     }
 
 
@@ -64,7 +62,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
                     returnMessage = "No Songs in queue";
                 } else {
                     Log.e("AuxSpotifyPlayer", "Playing new song");
-                    mPlayer.playUri(null, mPlaylist.getCurrentSongID(), 0, (int) mPlaylist.getCurrentSongTime());
+                    mPlayer.playUri(null, mPlaylist.getCurrentSongURI(), 0, (int) mPlaylist.getCurrentSongTime());
                     returnMessage = "Playing new song";
                 };
             }
@@ -106,10 +104,20 @@ public class AuxSpotifyPlayer implements PlayerInterface{
 
     public int skipBack() {
 
-        // TODO: implement way to skip to beginning of song.
         int trackIndex = mPlaylist.getCurrentSongIndex();
-        skipToTrack(trackIndex + 1);
-        return trackIndex + 1;
+
+        // jump back a song if there is a back song, and is more than 1 second into the song
+        if (trackIndex != 0 && mPlayer.getPlaybackState().positionMs < 3000) {
+            Log.e("AuxSpotifyPlayer", "Going back 1 song: " + mPlayer.getPlaybackState().positionMs);
+            skipToTrack(trackIndex - 1);
+            return trackIndex - 1;
+        } else {
+            // "skip" to current, track, which restarts to the beginning
+            skipToTrack(trackIndex);
+            Log.e("AuxSpotifyPlayer", "return to start of song " + mPlayer.getPlaybackState().positionMs);
+
+            return trackIndex;
+        }
     }
 
     public boolean skipToTrack(int targetTrack) {
@@ -124,8 +132,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
             mPlaylist.setActive(true);
             mPlaylist.setCurrentSongIndex(targetTrack);
             mPlaylist.setCurrentSongID(songs.get(targetTrack).getSongURI());
-
-            mPlayer.playUri(null, mPlaylist.getCurrentSongID(), 0, (int) mPlaylist.getCurrentSongTime());
+            mPlayer.playUri(null, mPlaylist.getCurrentSongURI(), 0, (int) mPlaylist.getCurrentSongTime());
             return true;
         }
     }
