@@ -4,6 +4,14 @@ import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.Exclude;
 
 import java.util.*;
+
+import kaaes.spotify.webapi.android.models.Track;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
+import static org.mobiledevsberkeley.auxmusic.AuxSingleton.getSpotifyService;
+
 /**
  * Created by wilbu on 10/15/2016.
  */
@@ -19,7 +27,7 @@ public class Playlist {
     private int currentSongIndex;
     private Boolean isActive;
     private long currentSongTime;
-    private String coverArtURL;
+    private String coverArtURL = "";
     private String hostSpotifyName;
     private String regexedPlaylistName;
 
@@ -58,14 +66,19 @@ public class Playlist {
                     String coverArtURL, String hostSpotifyName) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
-        this.spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
+        if (coverArtURL == null || coverArtURL == "") {
+            setImageUrl();
+        } else
+        {
+            this.coverArtURL = coverArtURL;
+        }
+        this.spotifySongList = new ArrayList<>(); //.getInstance().getSongs(spotifySongIDList);
         this.playlistName = playlistName;
         this.password = password;
         this.hostDeviceID = hostDeviceID;
         this.currentSongIndex = currentSongIndex;
         this.isActive = isActive;
         this.currentSongTime = currentSongTime;
-        this.coverArtURL = coverArtURL;
         this.hostSpotifyName = hostSpotifyName;
         this.regexedPlaylistName = playlistName.replaceAll("[^A-Za-z]","").toLowerCase();
     }
@@ -136,17 +149,16 @@ public class Playlist {
     }
 
     public List<Song> getSpotifySongList() {
-//        if (spotifySongList == null || spotifySongList.size() == 0) {
-//            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
-//        }
         return spotifySongList;
     }
 
+    /**
+     * Mutates original list
+     * @param sl
+     */
     public void setSpotifySongList(List<Song> sl) {
-//        if (spotifySongList == null || spotifySongList.size() == 0) {
-//            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
-//        }
-        this.spotifySongList = sl;
+        this.spotifySongList.clear();
+        this.spotifySongList.addAll(sl);
     }
 
 
@@ -184,13 +196,21 @@ public class Playlist {
         return playlistKey;
     }
 
-    public String getImageUrl(int sideLengthPx) {
+    public void setImageUrl() {
         //TODO: finish once getting a song from ID is finalized
         if (spotifySongIDList.size() > 0) {
-//            return spotifySongIDList.get(0).getImageUrl(sideLengthPx);
-        }
-        return null;
-        //TODO: return some default image
+            String firstSongId = spotifySongIDList.get(0);
+            AuxSingleton.getSpotifyService().getTrack(firstSongId, new Callback<Track>() {
+                @Override
+                public void success(Track track, Response response) {
+                    setCoverArtURL(track.album.images.get(0).url);
+                }
 
+                @Override
+                public void failure(RetrofitError error) {
+
+                }
+            });
+        }
     }
 }

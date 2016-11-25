@@ -144,7 +144,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
                                             Log.d("MusicAdapter", "Adding a song " + songName);
                                             snackbarAdd.show();
                                             Song targetSong = getSongAtIndex(getLayoutPosition());
-                                            //TODO: put this back in once Singleton's addSong method works
                                             AuxSingleton.getInstance().addSong(targetSong);
 
                                         }

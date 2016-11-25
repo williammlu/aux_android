@@ -36,8 +36,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
         holder.playlistName.setText(playlist.getPlaylistName());
         holder.hostName.setText(playlist.getHostSpotifyName());
 
-        int sideLengthPx = (int) context.getResources().getDimension(R.dimen.search_album_image_side_main_screen);
-        new DownloadImageTask(holder.img).execute(playlist.getImageUrl(sideLengthPx));
+        new DownloadImageTask(holder.img).execute(playlist.getCoverArtURL());
     }
 
     @Override
