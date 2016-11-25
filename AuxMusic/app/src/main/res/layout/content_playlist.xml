@@ -17,19 +17,17 @@
         android:text="Activate Playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:visibility="gone"
-        android:id="@+id/activatePlaylist" />
+        android:id="@+id/activatePlaylist"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 
     <Button
         android:text="Leave Playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:visibility="gone"
-        android:id="@+id/leavePlaylist" />
+        android:id="@+id/leavePlaylist"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/playlistAddSongButton" />
 
     <Button
         android:text="Add Song"
@@ -44,6 +42,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/hostApproval"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/playlistAddSongButton" />
 
@@ -52,6 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/exportPlaylist"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 

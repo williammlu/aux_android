@@ -198,6 +198,24 @@ public class AuxSingleton {
 //        initializePlaylistListener();
     }
 
+    public boolean checkIsHost(String uid) {
+        boolean isHost = false;
+        if (playlistRef != null && currentPlaylist != null) {
+            isHost = currentPlaylist.getHostDeviceID().equals(uid);
+        }
+        return isHost;
+    }
+
+    public void leavePlaylist() {
+        removeUser(currentUser);
+        userRef.child("playlistKey").removeValue();
+        if (checkIsHost(currentUser.getUID())) {
+            currentPlaylist.setActive(false);
+            DatabaseReference currPlaylistRef = dbReference.child(PLAYLISTS_NODE).child(currentPlaylist.getPlaylistKey());
+            updateValue(currPlaylistRef, "active", false);
+        }
+    }
+
     public void createPlaylist(String partyName, String password, GeoLocation mGeoLocation) {
         // only host could have called this method. thus, the current user is a host.
         currentUser.setHost(true);
@@ -208,8 +226,11 @@ public class AuxSingleton {
         ArrayList<String> songIdList = new ArrayList<String>();
 
         playlistRef = dbReference.child(PLAYLISTS_NODE).push();
-        setCurrentPlaylist(new Playlist(userUIDList, songIdList, partyName, password, currentUser.getUID(),
-                0, true, 0, mGeoLocation, "", ""), playlistRef.getKey());
+        String key = playlistRef.getKey();
+        Playlist playlist = new Playlist(userUIDList, songIdList, partyName, password, currentUser.getUID(),
+                0, true, 0, mGeoLocation, "", "");
+        playlist.setPlaylistKey(key);
+        setCurrentPlaylist(playlist, key);
     }
 
     public void addSong(Song song) {
@@ -223,20 +244,25 @@ public class AuxSingleton {
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
 
+    public void removeSong(Song song) {
+        currentPlaylist.removeSong(song);
+        updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
+    }
+
     public void addUser(User user) {
         dbReference.child(USERS_NODE).child(user.getUID()).setValue(user);
         setCurrentUser(user);
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
 
-    public void removeSong(Song song) {
-        currentPlaylist.removeSong(song);
-        updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
-
+    public void addUserToPlaylist(User user) {
+        currentPlaylist.addUser(user);
+        updateValue(playlistRef, USERID_LIST, currentPlaylist.getUserDeviceIDList());
     }
 
     public void removeUser(User user) {
-
+        currentPlaylist.removeUser(user);
+        updateValue(playlistRef, USERID_LIST, currentPlaylist.getUserDeviceIDList());
     }
 
     public DatabaseReference getDataBaseReference() {

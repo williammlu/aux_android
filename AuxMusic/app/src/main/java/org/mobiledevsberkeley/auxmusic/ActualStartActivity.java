@@ -41,6 +41,7 @@ public class ActualStartActivity extends AppCompatActivity {
     SearchView searchView;
     ArrayList<Playlist> searchResults;
     PlaylistAdapterSearch playlistAdapterSearch;
+    private Button hostPlaylistButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,12 +62,20 @@ public class ActualStartActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "doesnthaveplaylist");
                     setContentView(R.layout.activity_actual_start);
-                    testingActivity();
+//                    testingActivity();
                     searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
                     setSearchView();
                     setReyclerViewByName();
                     setRecyclerViewNearMe();
                     setRecyclerViewMyPlaylist();
+                    hostPlaylistButton = (Button) findViewById(R.id.hostPlaylistBtn);
+                    hostPlaylistButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent cpIntent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
+                            startActivity(cpIntent);
+                        }
+                    });
                 }
             }
         };
@@ -85,21 +94,21 @@ public class ActualStartActivity extends AppCompatActivity {
         recyclerView.setAdapter(playlistAdapterSearch);
     }
 
-    private void testingActivity(){
-       Button defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
-
-        defaultPlaylistButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference playlistRef = aux.getDataBaseReference().child(getString(R.string.playlistFirebase)).push();
-                Playlist currentPlaylist = new Playlist();
-                currentPlaylist.setPlaylistName("Young's Playlist");
-                //to test, must access wills search activity first
-//                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
-                playlistRef.setValue(currentPlaylist);
-             }
-        });
-    }
+//    private void testingActivity(){
+//       Button defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
+//
+//        defaultPlaylistButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DatabaseReference playlistRef = aux.getDataBaseReference().child(getString(R.string.playlistFirebase)).push();
+//                Playlist currentPlaylist = new Playlist();
+//                currentPlaylist.setPlaylistName("Young's Playlist");
+//                //to test, must access wills search activity first
+////                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
+//                playlistRef.setValue(currentPlaylist);
+//             }
+//        });
+//    }
 
 
     private void setSearchView() {

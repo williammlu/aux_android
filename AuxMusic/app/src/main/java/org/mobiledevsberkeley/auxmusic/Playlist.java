@@ -104,6 +104,11 @@ public class Playlist {
         userDeviceIDList.add(user.getUID());
     }
 
+    public void removeUser(User user) {
+//        usersList.remove(user);
+        userDeviceIDList.remove(user.getUID());
+    }
+
     public String getHostDeviceID() {
         return hostDeviceID;
     }
@@ -194,6 +199,10 @@ public class Playlist {
 
     public String getPlaylistKey() {
         return playlistKey;
+    }
+
+    public void setPlaylistKey(String key) {
+        playlistKey = key;
     }
 
     public void setImageUrl() {
