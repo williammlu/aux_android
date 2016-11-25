@@ -61,7 +61,8 @@
         android:id="@+id/recyclerView"
         android:layout_above="@+id/playlistAddSongButton"
         android:layout_alignParentStart="true"
-        android:layout_below="@+id/playlist_player_view" />
+        android:layout_below="@+id/playlist_player_view"
+        android:scrollbars="horizontal" />
 
     <org.mobiledevsberkeley.auxmusic.PlayerView
         android:layout_width="match_parent"
@@ -69,8 +70,6 @@
         layout="@layout/player_view"
         android:id="@+id/playlist_player_view"
         android:visibility="visible"
-        android:layout_marginTop="66dp"
-        android:layout_marginStart="24dp"
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 

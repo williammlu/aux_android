@@ -94,7 +94,6 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
                                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
                                             Log.d("MusicAdapter", "Adding a song " + getSongAtIndex(getLayoutPosition()).getSongName());
                                             Song targetSong = getSongAtIndex(getLayoutPosition());
-                                            //TODO: put this back in once Singleton's addSong method works
                                             AuxSingleton.getInstance().addSong(targetSong);
 
                                         }

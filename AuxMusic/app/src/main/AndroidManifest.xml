@@ -66,8 +66,7 @@
 
         <activity
             android:name=".PlaylistActivity"
-            android:label="@string/title_activity_playlist"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:label="@string/title_activity_playlist" />
         <activity android:name=".ActualStartActivity"></activity>
     </application>
 

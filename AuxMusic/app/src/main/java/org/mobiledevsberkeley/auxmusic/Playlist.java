@@ -58,7 +58,7 @@ public class Playlist {
                     String coverArtURL, String hostSpotifyName) {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
-        this.spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
+        this.spotifySongList = new ArrayList<>(); //.getInstance().getSongs(spotifySongIDList);
         this.playlistName = playlistName;
         this.password = password;
         this.hostDeviceID = hostDeviceID;
@@ -131,17 +131,16 @@ public class Playlist {
     }
 
     public List<Song> getSpotifySongList() {
-//        if (spotifySongList == null || spotifySongList.size() == 0) {
-//            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
-//        }
         return spotifySongList;
     }
 
+    /**
+     * Mutates original list
+     * @param sl
+     */
     public void setSpotifySongList(List<Song> sl) {
-//        if (spotifySongList == null || spotifySongList.size() == 0) {
-//            spotifySongList = AuxSingleton.getInstance().getSongs(spotifySongIDList);
-//        }
-        this.spotifySongList = sl;
+        this.spotifySongList.clear();
+        this.spotifySongList.addAll(sl);
     }
 
 

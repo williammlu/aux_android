@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -34,9 +35,6 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playlist);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
-
 
         createSpotifyPlayer(AuxSingleton.getInstance().getSpotifyAuthToken());
 
@@ -44,14 +42,28 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 
         recyclerView = (RecyclerView) findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
-//        songsList = aux.getCurrentPlaylist().getSpotifySongList();
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+                getResources().getConfiguration().orientation);
+        recyclerView.addItemDecoration(dividerItemDecoration);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        musicAdapter = new MusicAdapter(this, new ArrayList<Song>(), MusicAdapter.DISPLAY_PLAYLIST);
 
-        new DownloadSongsInfoTask(musicAdapter, aux.getCurrentPlaylist()).execute(aux.getCurrentPlaylist().getSpotifySongIDList());
-
-
+        // set musicadapter/recyclerview to take the same list of songs as the current playlist!
+        List<Song> playlistSongList = AuxSingleton.getInstance().getCurrentPlaylist().getSpotifySongList();
+        musicAdapter = new MusicAdapter(this, playlistSongList, MusicAdapter.DISPLAY_PLAYLIST);
+        AuxSingleton.getInstance().setMusicAdapter(musicAdapter);
         recyclerView.setAdapter(musicAdapter);
+
+        // For creation, replace songs in list with retrieved results
+        AuxSingleton.getSongs(aux.getCurrentPlaylist().getSpotifySongIDList(), new AuxSingleton.AuxGetSongTask() {
+            @Override
+            public void onFinished(List<Song> songs) {
+                aux.getCurrentPlaylist().setSpotifySongList(songs);
+                musicAdapter.notifyDataSetChanged();
+                Log.e("PlaylistActivity", "callback with " + songs.size());
+            }
+        });
+
 
         Button addSongButton = (Button) findViewById(R.id.playlistAddSongButton);
         addSongButton.setOnClickListener(new View.OnClickListener() {
@@ -61,7 +73,6 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
                 startActivity(intent);
             }
         });
-
     }
 
     // TODO: young can you rename to be more informative
@@ -117,10 +128,6 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
-        updateRecyclerView();
-    }
-
-    public void updateRecyclerView() {
         if (musicAdapter != null) {
             musicAdapter.notifyDataSetChanged();
         }
@@ -158,6 +165,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     @Override
     public void onLoggedIn() {
         Log.e("PlaylistActivity", "User logged in");
+
     }
 
     @Override

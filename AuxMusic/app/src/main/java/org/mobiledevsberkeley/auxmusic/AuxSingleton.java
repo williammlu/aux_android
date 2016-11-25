@@ -44,6 +44,8 @@ public class AuxSingleton {
     private static PlayerInterface auxPlayer;
     private static SpotifyService spotifyService = new SpotifyApi().getService();
 
+    private static MusicAdapter musicAdapter;
+
 
 
     private static Object playerReference;
@@ -214,6 +216,7 @@ public class AuxSingleton {
         songCache.put(song.getSongId(), song);
         currentPlaylist.addSong(song);
         updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
+        musicAdapter.notifyDataSetChanged();
         Log.d(TAG, "we added a song (maybe), yay!");
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
@@ -257,6 +260,15 @@ public class AuxSingleton {
         return auxPlayer;
     }
 
+    public static MusicAdapter getMusicAdapter() {
+        return musicAdapter;
+    }
+
+    public static void setMusicAdapter(MusicAdapter musicAdapter) {
+        AuxSingleton.musicAdapter = musicAdapter;
+    }
+
+
     public static void setSpotifyPlayer(Player musicPlayer) {
         AuxSingleton.spotifyPlayer = musicPlayer;
     }
@@ -280,6 +292,12 @@ public class AuxSingleton {
         return spotifyService;
     }
 
+
+    public interface AuxGetSongTask {
+        public void onFinished(List<Song> songs);
+    }
+
+
     /**
      * Reads songs from memoized list of songs, or batch queries them from Spotify.
      *
@@ -287,7 +305,7 @@ public class AuxSingleton {
      * @param songIds array of songIds, in the format of 6rqhFgbbKwnb9MLmUQDhG6, NOT spotify:track:6rqhFgbbKwnb9MLmUQDhG6
      * @return list of Song objects
      */
-    public static List<Song> getSongs(List<String> songIds) {
+    public static List<Song> getSongs(List<String> songIds, final AuxGetSongTask agst) {
         final ArrayList<Song> output = new ArrayList<>();
         StringBuilder builder = null;
 
@@ -323,9 +341,16 @@ public class AuxSingleton {
             getSpotifyService().getTracks(q, new Callback<Tracks>(){
                 @Override
                 public void success(Tracks tracks, Response response) {
+                    ArrayList<Song> tempList = new ArrayList<Song>();
                     for (Track t : tracks.tracks) {
-                        output.add(new Song(t));
+                        Song s = new Song(t);
+                        tempList.add(s);
+                        output.add(s);
                     }
+                    agst.onFinished(tempList);
+
+                    Log.e("AuxSingleton", "Called callback on " + tracks.tracks.size() + " tracks");
+
                 }
                 @Override
                 public void failure(RetrofitError error) {
@@ -333,6 +358,7 @@ public class AuxSingleton {
                 }
             });
         }
+        Log.e("AuxSingleton", "Finished getSong");
         return output;
 
     }
