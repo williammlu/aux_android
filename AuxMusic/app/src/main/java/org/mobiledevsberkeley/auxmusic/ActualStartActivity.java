@@ -8,8 +8,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+
 import android.telecom.Call;
-import android.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -26,6 +26,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
+
 
 public class ActualStartActivity extends AppCompatActivity {
     private FirebaseAuth mAuth;
@@ -53,6 +54,7 @@ public class ActualStartActivity extends AppCompatActivity {
             public void playlistOnComplete(boolean hasCurrentPlaylist) {
                 if (hasCurrentPlaylist) {
                     Log.d(TAG, "hasplaylist");
+                    //might need to change this
                     Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
                     startActivity(playlistIntent);
                     // jump to spotify auth
@@ -60,7 +62,7 @@ public class ActualStartActivity extends AppCompatActivity {
                         Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
                         startActivity(spotifyAuthIntent);
                     } else { // else go directly to playlist
-                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
+//                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
                         startActivity(playlistIntent);
                     }
 

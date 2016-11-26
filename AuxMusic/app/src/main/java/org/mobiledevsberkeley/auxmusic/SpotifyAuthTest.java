@@ -56,7 +56,7 @@ public class SpotifyAuthTest extends Activity
         if (requestCode == REQUEST_CODE) {
 
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            Intent i = new Intent(this, PlaylistActivity.class);
+            Intent i = new Intent(this, PlaylistActivityHost.class);
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
