@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
     android:id="@+id/activity_playlist_layout"
-    tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivityHost">
+    tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivity">
 
 
     <include layout="@layout/content_playlist_host" />
 
+</android.support.design.widget.CoordinatorLayout>
 
-</RelativeLayout>
 
 <!--<android.support.design.widget.FloatingActionButton-->
 <!--android:id="@+id/fab"-->

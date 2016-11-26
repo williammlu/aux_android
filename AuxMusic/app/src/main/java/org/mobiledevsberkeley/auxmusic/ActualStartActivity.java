@@ -4,15 +4,14 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+//import android.support.v7.widget.SearchView;
 
-import android.telecom.Call;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -20,10 +19,6 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 
 import java.util.ArrayList;
 
@@ -39,6 +34,7 @@ public class ActualStartActivity extends AppCompatActivity {
     SearchView searchView;
     ArrayList<Playlist> searchResults;
     PlaylistAdapterSearch playlistAdapterSearch;
+    private Button hostPlaylistButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,21 +51,20 @@ public class ActualStartActivity extends AppCompatActivity {
                 if (hasCurrentPlaylist) {
                     Log.d(TAG, "hasplaylist");
                     //might need to change this
-                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
+                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
                     startActivity(playlistIntent);
                     // jump to spotify auth
                     if (true ) { // if host, jump to spotify auth, which will redirect to playlist
                         Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
                         startActivity(spotifyAuthIntent);
                     } else { // else go directly to playlist
-//                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
+//                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
                         startActivity(playlistIntent);
                     }
 
                 } else {
                     Log.d(TAG, "doesnthaveplaylist");
                     setContentView(R.layout.activity_actual_start);
-
                     Button createPlaylistButton = (Button) findViewById(R.id.create_playlist_button);
 
                     createPlaylistButton.setOnClickListener(new View.OnClickListener() {
@@ -80,7 +75,7 @@ public class ActualStartActivity extends AppCompatActivity {
                         }
                     });
 
-                    testingActivity();
+//                    testingActivity();
                     searchView = (SearchView) findViewById(R.id.searchView);
                     setSearchView();
                     setRecyclerViewNearMe();
@@ -96,21 +91,21 @@ public class ActualStartActivity extends AppCompatActivity {
 
 
 
-    private void testingActivity(){
-       Button defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
-
-        defaultPlaylistButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                DatabaseReference playlistRef = aux.getDataBaseReference().child(getString(R.string.playlistFirebase)).push();
-                Playlist currentPlaylist = new Playlist();
-                currentPlaylist.setPlaylistName("Young's Playlist");
-                //to test, must access wills search activity first
-//                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
-                playlistRef.setValue(currentPlaylist);
-             }
-        });
-    }
+//    private void testingActivity(){
+//       Button defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
+//
+//        defaultPlaylistButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                DatabaseReference playlistRef = aux.getDataBaseReference().child(getString(R.string.playlistFirebase)).push();
+//                Playlist currentPlaylist = new Playlist();
+//                currentPlaylist.setPlaylistName("Young's Playlist");
+//                //to test, must access wills search activity first
+////                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
+//                playlistRef.setValue(currentPlaylist);
+//             }
+//        });
+//    }
 
 
     private void setSearchView() {
@@ -121,35 +116,34 @@ public class ActualStartActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
-
     }
 
 
     private void setRecyclerViewMyPlaylist() {
-        User user = aux.getCurrentUser();
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
-        LinearLayoutManager llm = new LinearLayoutManager(this);
-        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-        recyclerView.setLayoutManager(llm);
-        myPlaylists = new ArrayList<>();
-        //want less than 3 for near me; if more than gg
-//        ArrayList<String> pastPlaylists = (ArrayList) user.getPastPlaylists();
-        ArrayList<String> pastPlaylists = new ArrayList<>();
-//        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-//        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-//        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-
-        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-
-        int size = pastPlaylists.size() - 1;
-        for (int i = size; i > -1 && i > size -3 ; i--) {
-            aux.getPlaylistByIDForMyPlaylists(pastPlaylists.get(i));
-        }
-
-        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, aux.getMyPlaylists());
-        recyclerView.setAdapter(playlistAdapter);
+//        User user = aux.getCurrentUser();
+//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
+//        LinearLayoutManager llm = new LinearLayoutManager(this);
+//        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+//        recyclerView.setLayoutManager(llm);
+//        myPlaylists = new ArrayList<>();
+//        //want less than 3 for near me; if more than gg
+////        ArrayList<String> pastPlaylists = (ArrayList) user.getPastPlaylists();
+//        ArrayList<String> pastPlaylists = new ArrayList<>();
+////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+//
+//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+//
+//        int size = pastPlaylists.size() - 1;
+//        for (int i = size; i > -1 && i > size -3 ; i--) {
+//            aux.getPlaylistByIDForMyPlaylists(pastPlaylists.get(i));
+//        }
+//
+//        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, aux.getMyPlaylists());
+//        recyclerView.setAdapter(playlistAdapter);
     }
 
     private void setRecyclerViewNearMe() {
@@ -217,7 +211,7 @@ public class ActualStartActivity extends AppCompatActivity {
     }
 
     public void playlistIntent() {
-        Intent playlistIntent = new Intent(this, PlaylistActivityHost.class);
+        Intent playlistIntent = new Intent(this, PlaylistActivity.class);
         startActivity(playlistIntent);
     }
 }

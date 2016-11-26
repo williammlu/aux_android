@@ -9,7 +9,6 @@ import java.util.List;
 
 public class User {
     private String UID;
-    private boolean isHost;
     private String spotifyAuthKey; // I chose to keep the isHost boolean and not just have a null check on this string because it is possible
                                    // that users can also authenticate in order to add their own playlists
     // Could add future variables like "AuthKey" to accommodate other APIs (Soundcloud, etc.)
@@ -22,9 +21,8 @@ public class User {
         // Null constructor might be necessary for Firebase -> Java conversion
     }
 
-    public User(String UID, boolean isHost, String spotifyAuthKey, String participantName, String playlistKey, ArrayList<String> pastPlaylists) {
+    public User(String UID, String spotifyAuthKey, String participantName, String playlistKey, ArrayList<String> pastPlaylists) {
         this.UID = UID;
-        this.isHost = isHost;
         this.spotifyAuthKey = spotifyAuthKey;
         this.participantName = participantName;
         this.playlistKey = playlistKey;
@@ -37,10 +35,6 @@ public class User {
 
     public void setUID(String UID) {
         this.UID = UID;
-    }
-
-    public void setHost(boolean host) {
-        isHost = host;
     }
 
     public void setSpotifyAuthKey(String spotifyAuthKey) {
@@ -59,10 +53,6 @@ public class User {
 
     public String getUID() {
         return UID;
-    }
-
-    public boolean isHost() {
-        return isHost;
     }
 
     public List<String> getPastPlaylists() {

@@ -1,5 +1,6 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -53,7 +54,7 @@ public class SearchSongsActivity extends AppCompatActivity {
                 getResources().getConfiguration().orientation);
         recyclerView.addItemDecoration(dividerItemDecoration);
 
-        final MusicAdapter musicAdapter = new MusicAdapter(this, list, MusicAdapter.SEARCH_TO_ADD);
+        final MusicAdapter musicAdapter = new MusicAdapter(this, list, MusicAdapter.SEARCH_TO_ADD, findViewById(R.id.activity_search_songs));
 
         recyclerView.setAdapter(musicAdapter);
 
@@ -114,6 +115,12 @@ public class SearchSongsActivity extends AppCompatActivity {
                 return false;
             }
         });
+    }
 
+    @Override
+    public void onBackPressed()
+    {
+        Intent playlistActivityIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
+        startActivity(playlistActivityIntent);
     }
 }

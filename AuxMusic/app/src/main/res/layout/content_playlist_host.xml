@@ -10,26 +10,24 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivityHost"
+    tools:context="org.mobiledevsberkeley.auxmusic.PlaylistActivity"
     tools:showIn="@layout/activity_playlist_host">
 
     <Button
         android:text="Activate Playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:visibility="gone"
-        android:id="@+id/activatePlaylist" />
+        android:id="@+id/activatePlaylist"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"/>
 
     <Button
         android:text="Leave Playlist"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:visibility="gone"
-        android:id="@+id/leavePlaylist" />
+        android:id="@+id/leavePlaylist"
+        android:layout_alignParentBottom="true"
+        android:layout_toEndOf="@+id/playlistAddSongButton" />
 
     <Button
         android:text="Add Song"
@@ -45,8 +43,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/hostApproval"
-        android:layout_alignParentBottom="true"
         android:visibility="gone"
+        android:layout_alignParentBottom="true"
         android:layout_toEndOf="@+id/playlistAddSongButton" />
 
     <Button

@@ -9,87 +9,67 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.mobiledevsberkeley.auxmusic.ActualStartActivity">
-
-
-    <Button
-        android:text="Create Default PlayList(Young)"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginBottom="10dp"
-        android:visibility="gone"
-        android:id="@+id/defaultPlaylist" />
-
     <TextView
         android:text="A U X"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
         android:id="@+id/titleText"
         android:textAppearance="@style/TextAppearance.AppCompat.Title"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
-
-    <android.widget.SearchView
+    <SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/titleText"
+        android:layout_centerHorizontal="true"
         android:queryHint="Search By Name"
         android:id="@+id/searchView"
-        android:layout_below="@+id/titleText"
-        android:layout_alignParentStart="true" />
-
-    <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@+id/searchView"
-        android:layout_alignParentStart="true"
-        android:layout_above="@+id/create_playlist_button">
-
-        <TextView
-            android:text="My Playlists"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/myPlaylistText"
-            android:layout_alignBottom="@+id/recyclerViewByName"
-            android:layout_alignStart="@+id/nearMeText" />
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recyclerViewByName"
-            android:layout_below="@+id/searchView"
-            android:layout_alignParentStart="true" />
-
-        <TextView
-            android:text="Near Me"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/nearMeText"
-            android:layout_below="@+id/searchView"
-            android:layout_alignParentStart="true" />
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/recyclerViewNearMe"
-            android:layout_above="@+id/create_playlist_button"
-            android:layout_alignParentStart="true" />
-
-        <android.support.v7.widget.RecyclerView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/recyclerViewMyPlaylist"
-            android:layout_alignParentBottom="true"
-            android:layout_alignParentStart="true" />
-    </LinearLayout>
-
-    <Button
-        android:text="@string/createPlaylist"
+        android:layout_marginTop="14dp" />
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/create_playlist_button"
+        android:id="@+id/recyclerViewByName"
+        android:layout_below="@+id/searchView"
+        android:layout_alignParentStart="true"
+        />
+    <TextView
+        android:text="Near Me"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/searchView"
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="14dp"
+        android:id="@+id/nearMeText" />
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recyclerViewNearMe"
+        android:layout_below="@+id/nearMeText"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp" />
+    <TextView
+        android:text="My Playlists"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/nearMeText"
+        android:layout_alignStart="@+id/nearMeText"
+        android:layout_marginTop="141dp"
+        android:id="@+id/myPlaylistText"/>
+    <Button
+        android:text="Host Playlist"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
-
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/create_playlist_button" />
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/recyclerViewMyPlaylist"
+        android:layout_below="@+id/myPlaylistText"
+        android:layout_above="@id/create_playlist_button"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="16dp" />
 </RelativeLayout>

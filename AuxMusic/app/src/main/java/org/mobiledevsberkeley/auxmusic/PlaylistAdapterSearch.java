@@ -59,6 +59,7 @@ public class PlaylistAdapterSearch extends RecyclerView.Adapter<PlaylistAdapterS
                     Playlist playlist = playlists.get(getLayoutPosition());
                     String key = playlist.getPlaylistKey();
                     aux.setCurrentPlaylist(playlist, key);
+                    aux.addUserToPlaylist(aux.getCurrentUser());
                     ((ActualStartActivity) context).playlistIntent();
                 }
             });

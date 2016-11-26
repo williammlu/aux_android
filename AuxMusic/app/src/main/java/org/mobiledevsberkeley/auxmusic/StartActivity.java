@@ -107,7 +107,7 @@ public class StartActivity extends AppCompatActivity {
         playlistActivityButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent pIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
+                Intent pIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
                 startActivity(pIntent);
             }
         });

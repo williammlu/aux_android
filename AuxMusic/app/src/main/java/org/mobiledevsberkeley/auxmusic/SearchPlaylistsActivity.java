@@ -5,7 +5,8 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+import android.widget.SearchView;
+//import android.support.v7.widget.SearchView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -24,23 +25,31 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_playlists);
+        searchView();
+        setReyclerViewByName();
+
+    }
+
+    private void searchView() {
+        SearchView searchView = (SearchView) findViewById(R.id.searchView);
         searchResults = new ArrayList<>();
         searchView.setIconified(false);
         searchView.requestFocus();
-        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(String s) {
                 searchResults.clear();
-                String regexed = query.replaceAll("[^A-Za-z]","").toLowerCase();
+                String regexed = s.replaceAll("[^A-Za-z]", "").toLowerCase();
                 DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
                 com.google.firebase.database.Query queryRef = playlistRef.orderByChild("regexedPlaylistName").equalTo(regexed);
-
                 queryRef.addChildEventListener(new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Playlist playlist = dataSnapshot.getValue(Playlist.class);
-                        searchResults.add(playlist);
-                        playlistAdapterSearch.notifyDataSetChanged();
+                        if (playlist.getActive()) {
+                            searchResults.add(playlist);
+                            playlistAdapterSearch.notifyDataSetChanged();
+                        }
                     }
 
                     @Override
@@ -63,15 +72,16 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
 
                     }
                 });
+
                 return true;
             }
 
             @Override
-            public boolean onQueryTextChange(String newText) {
+            public boolean onQueryTextChange(String s) {
                 return false;
             }
-        });
 
+        });
 
     }
 

@@ -9,13 +9,6 @@ import android.util.Log;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
 import com.spotify.sdk.android.authentication.AuthenticationResponse;
-import com.spotify.sdk.android.player.Config;
-import com.spotify.sdk.android.player.ConnectionStateCallback;
-import com.spotify.sdk.android.player.Error;
-import com.spotify.sdk.android.player.Player;
-import com.spotify.sdk.android.player.PlayerEvent;
-import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
 
 public class SpotifyAuthTest extends Activity
 {
@@ -56,7 +49,7 @@ public class SpotifyAuthTest extends Activity
         if (requestCode == REQUEST_CODE) {
 
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            Intent i = new Intent(this, PlaylistActivityHost.class);
+            Intent i = new Intent(this, PlaylistActivity.class);
 
             switch (response.getType()) {
                 // Response was successful and contains auth token

@@ -22,6 +22,10 @@
     <string name="addSongDialogPositive">Confirm</string>
     <string name="addSongDialogNegative">Cancel</string>
     <string name="title_activity_playlist_guest">PlaylistActivityGuest</string>
+
+    <string name="SongDialogPositive">Confirm</string>
+    <string name="SongDialogNegative">Cancel</string>
+    <string name="removeSongDialogTitle">Remove Song Confirmation</string>
     <string name="createPlaylist">Create Playlist</string>
     <string name="password_additional_dialog">If you set a password, users will need it to join the playlist.</string>
     <string name="location_additional_dialog">This allows anyone within a certain radius to be able to jon your playlist.</string>

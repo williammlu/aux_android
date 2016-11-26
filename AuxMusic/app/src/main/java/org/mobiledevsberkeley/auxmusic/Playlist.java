@@ -88,15 +88,28 @@ public class Playlist {
         this.hostApproval = hostApproval;
     }
 
+    public void setSpotifySongIDList(List<String> spotifySongIDList) {
+        this.spotifySongIDList = spotifySongIDList;
+    }
 
     public void addSong(Song song) {
-        spotifySongList.add(song);
+//        spotifySongList.add(song);
         spotifySongIDList.add(song.getSongId());
     }
 
+    public void removeSong(Song song) {
+//        spotifySongList.remove(song);
+        spotifySongIDList.remove(song.getSongId());
+    }
+
     public void addUser(User user) {
-        usersList.add(user);
+//        usersList.add(user);
         userDeviceIDList.add(user.getUID());
+    }
+
+    public void removeUser(User user) {
+//        usersList.remove(user);
+        userDeviceIDList.remove(user.getUID());
     }
 
     public String getHostDeviceID() {
@@ -190,6 +203,10 @@ public class Playlist {
 
     public String getPlaylistKey() {
         return playlistKey;
+    }
+
+    public void setPlaylistKey(String key) {
+        playlistKey = key;
     }
 
     public void setImageUrl() {
