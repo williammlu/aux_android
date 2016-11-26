@@ -5,6 +5,7 @@ package org.mobiledevsberkeley.auxmusic;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,7 +61,8 @@ public class PlaylistAdapterSearch extends RecyclerView.Adapter<PlaylistAdapterS
                     String key = playlist.getPlaylistKey();
                     aux.setCurrentPlaylist(playlist, key);
                     aux.addUserToPlaylist(aux.getCurrentUser());
-                    ((ActualStartActivity) context).playlistIntent();
+                    Intent playlistIntent = new Intent(context, PlaylistActivity.class);
+                    context.startActivity(playlistIntent);
                 }
             });
         }
