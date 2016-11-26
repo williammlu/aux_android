@@ -30,6 +30,7 @@ public class SpotifyAuthTest extends Activity
     private static final int REQUEST_CODE = 1337;
 
     public static final String LOGIN_ERROR = "LOGIN_ERROR";
+    public static final String LOGIN_TERMINATED = "LOGIN_TERMINATED";
 
 
     @Override
@@ -55,7 +56,7 @@ public class SpotifyAuthTest extends Activity
         if (requestCode == REQUEST_CODE) {
 
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            Intent i = new Intent(this, ActualStartActivity.class);
+            Intent i = new Intent(this, PlaylistActivity.class);
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
@@ -72,7 +73,7 @@ public class SpotifyAuthTest extends Activity
                 // Auth flow returned an error
                 case ERROR:
                     Log.e("onActivityResult", "Auth error: " + response.getError());
-                    i.putExtra(LOGIN_ERROR, "Unfortunately, Aux requires Spotify premium to host a playlist. Without it, you will not be able to stream music");
+                    i.putExtra(LOGIN_ERROR, "Unfortunately, Aux requires Spotify premium to host a playlist. Without it, you will not be able to stream music.");
                     startActivity(i);
 
                     // requires premium, notify user that it requires premium
@@ -81,6 +82,8 @@ public class SpotifyAuthTest extends Activity
                 // Most likely auth flow was cancelled
                 default:
                     Log.e("onActivityResult", "Auth result: " + response.getType());
+                    i.putExtra(LOGIN_TERMINATED, "Your authentication with Spotify was cancelled, please try again.");
+                    startActivity(i);
             }
 
         }

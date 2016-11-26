@@ -11,7 +11,7 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="org.mobiledevsberkeley.auxmusic.SearchSongsActivity">
 
-    <android.support.v7.widget.SearchView
+    <SearchView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id= "@+id/searchSongView"

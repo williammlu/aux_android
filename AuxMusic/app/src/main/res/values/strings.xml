@@ -22,4 +22,5 @@
     <string name="addSongDialogPositive">Confirm</string>
     <string name="addSongDialogNegative">Cancel</string>
     <string name="title_activity_playlist_guest">PlaylistActivityGuest</string>
+    <string name="createPlaylist">Create Playlist</string>
 </resources>

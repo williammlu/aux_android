@@ -8,6 +8,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.telecom.Call;
+import android.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,7 +35,7 @@ public class ActualStartActivity extends AppCompatActivity {
     ArrayList<Playlist> myPlaylists;
     ArrayList<Playlist> nearMe;
     SignInCallback callback;
-    SearchView searchView;
+    android.support.v7.widget.SearchView searchView;
     ArrayList<Playlist> searchResults;
     PlaylistAdapterSearch playlistAdapterSearch;
 
@@ -53,9 +55,29 @@ public class ActualStartActivity extends AppCompatActivity {
                     Log.d(TAG, "hasplaylist");
                     Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
                     startActivity(playlistIntent);
+                    // jump to spotify auth
+                    if (true ) { // if host, jump to spotify auth, which will redirect to playlist
+                        Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
+                        startActivity(spotifyAuthIntent);
+                    } else { // else go directly to playlist
+                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivityHost.class);
+                        startActivity(playlistIntent);
+                    }
+
                 } else {
                     Log.d(TAG, "doesnthaveplaylist");
                     setContentView(R.layout.activity_actual_start);
+
+                    Button createPlaylistButton = (Button) findViewById(R.id.create_playlist_button);
+
+                    createPlaylistButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
                     testingActivity();
                     searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
                     setSearchView();
@@ -65,6 +87,9 @@ public class ActualStartActivity extends AppCompatActivity {
                 }
             }
         };
+
+
+
         firebaseSignIn();
     }
 
@@ -101,7 +126,7 @@ public class ActualStartActivity extends AppCompatActivity {
         searchResults = new ArrayList<>();
         searchView.setIconified(false);
         searchView.requestFocus();
-        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
                 searchResults.clear();

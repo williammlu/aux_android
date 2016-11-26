@@ -44,9 +44,9 @@
         android:text="Host Approval"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"
         android:id="@+id/hostApproval"
         android:layout_alignParentBottom="true"
+        android:visibility="gone"
         android:layout_toEndOf="@+id/playlistAddSongButton" />
 
     <Button
