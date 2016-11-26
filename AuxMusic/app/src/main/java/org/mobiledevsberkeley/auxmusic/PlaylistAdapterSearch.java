@@ -35,8 +35,6 @@ public class PlaylistAdapterSearch extends RecyclerView.Adapter<PlaylistAdapterS
         Playlist playlist = playlists.get(position);
         holder.playlistName.setText(playlist.getPlaylistName());
         holder.hostName.setText(playlist.getHostSpotifyName());
-
-
     }
 
     @Override

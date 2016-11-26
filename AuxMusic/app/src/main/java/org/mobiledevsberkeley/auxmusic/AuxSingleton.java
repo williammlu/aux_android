@@ -283,6 +283,10 @@ public class AuxSingleton {
                                 Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
                             }
                         });
+                    } else {
+                        currentPlaylist.setSpotifySongIDList(new ArrayList<String>());
+                        currentPlaylist.setSpotifySongList(new ArrayList<Song>());
+                        musicAdapter.notifyDataSetChanged();
                     }
                 }
 
