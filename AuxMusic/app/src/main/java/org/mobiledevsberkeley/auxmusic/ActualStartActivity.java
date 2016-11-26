@@ -36,7 +36,7 @@ public class ActualStartActivity extends AppCompatActivity {
     ArrayList<Playlist> myPlaylists;
     ArrayList<Playlist> nearMe;
     SignInCallback callback;
-    android.support.v7.widget.SearchView searchView;
+    SearchView searchView;
     ArrayList<Playlist> searchResults;
     PlaylistAdapterSearch playlistAdapterSearch;
 
@@ -81,9 +81,8 @@ public class ActualStartActivity extends AppCompatActivity {
                     });
 
                     testingActivity();
-                    searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
+                    searchView = (SearchView) findViewById(R.id.searchView);
                     setSearchView();
-                    setReyclerViewByName();
                     setRecyclerViewNearMe();
                     setRecyclerViewMyPlaylist();
                 }
@@ -95,17 +94,7 @@ public class ActualStartActivity extends AppCompatActivity {
         firebaseSignIn();
     }
 
-    private void setReyclerViewByName() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewByName);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
-                getResources().getConfiguration().orientation);
-        recyclerView.addItemDecoration(dividerItemDecoration);
 
-        playlistAdapterSearch = new PlaylistAdapterSearch(this, searchResults);
-
-        recyclerView.setAdapter(playlistAdapterSearch);
-    }
 
     private void testingActivity(){
        Button defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
@@ -125,81 +114,42 @@ public class ActualStartActivity extends AppCompatActivity {
 
 
     private void setSearchView() {
-        searchResults = new ArrayList<>();
-        searchView.setIconified(false);
-        searchView.requestFocus();
-        searchView.setOnQueryTextListener(new android.support.v7.widget.SearchView.OnQueryTextListener() {
+        searchView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
-                searchResults.clear();
-                String regexed = query.replaceAll("[^A-Za-z]","").toLowerCase();
-                DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
-                com.google.firebase.database.Query queryRef = playlistRef.orderByChild("regexedPlaylistName").equalTo(regexed);
-
-                queryRef.addChildEventListener(new ChildEventListener() {
-                    @Override
-                    public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                        Playlist playlist = dataSnapshot.getValue(Playlist.class);
-                        searchResults.add(playlist);
-                        playlistAdapterSearch.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-                    }
-
-                    @Override
-                    public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-
-                    }
-                });
-                return true;
-            }
-
-            @Override
-            public boolean onQueryTextChange(String newText) {
-                return false;
+            public void onClick(View view) {
+                Intent intent = new Intent(getApplicationContext(), SearchPlaylistsActivity.class);
+                startActivity(intent);
             }
         });
+
     }
 
 
     private void setRecyclerViewMyPlaylist() {
-//        User user = aux.getCurrentUser();
-//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
-//        LinearLayoutManager llm = new LinearLayoutManager(this);
-//        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-//        recyclerView.setLayoutManager(llm);
-//        myPlaylists = new ArrayList<>();
-//        //want less than 3 for near me; if more than gg
-////        ArrayList<String> pastPlaylists = (ArrayList) user.getPastPlaylists();
-//        ArrayList<String> pastPlaylists = new ArrayList<>();
-////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-//
-//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-//
-//        int size = pastPlaylists.size() - 1;
-//        for (int i = size; i > -1 && i > size -3 ; i--) {
-//            aux.getPlaylistByIDForMyPlaylists(pastPlaylists.get(i));
-//        }
-//
-//        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, aux.getMyPlaylists());
-//        recyclerView.setAdapter(playlistAdapter);
+        User user = aux.getCurrentUser();
+        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        recyclerView.setLayoutManager(llm);
+        myPlaylists = new ArrayList<>();
+        //want less than 3 for near me; if more than gg
+//        ArrayList<String> pastPlaylists = (ArrayList) user.getPastPlaylists();
+        ArrayList<String> pastPlaylists = new ArrayList<>();
+//        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+//        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+//        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
+
+        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
+
+        int size = pastPlaylists.size() - 1;
+        for (int i = size; i > -1 && i > size -3 ; i--) {
+            aux.getPlaylistByIDForMyPlaylists(pastPlaylists.get(i));
+        }
+
+        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, aux.getMyPlaylists());
+        recyclerView.setAdapter(playlistAdapter);
     }
 
     private void setRecyclerViewNearMe() {

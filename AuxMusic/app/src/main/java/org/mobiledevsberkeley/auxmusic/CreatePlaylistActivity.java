@@ -1,6 +1,7 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -150,6 +151,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
     private void setBtnListeners() {
         nameTextListener();
         checkedChangeListener();
+        setAdditionalInformation();
 
         createPlaylistBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -173,6 +175,26 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
                 // do spotify auth when trying to create
                 Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
                 startActivity(spotifyAuthIntent);
+            }
+        });
+    }
+
+    private void setAdditionalInformation() {
+        passwordAdditionalInformation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+                builder.setMessage(R.string.password_additional_dialog)
+                .create();
+            }
+        });
+
+        locationAdditionalInformation.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+                builder.setMessage(R.string.location_additional_dialog)
+                        .create();
             }
         });
     }

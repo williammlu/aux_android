@@ -89,13 +89,11 @@
 
     <Button
         android:text="Create"
-        android:layout_width="200dp"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_alignParentBottom="true"
+        style="@style/ButtonStyle"
         android:id="@+id/createPlaylistBtn"
         android:enabled="false"
-        style= "@style/Widget.AppCompat.Button.Borderless"
-        />
+        android:background="@drawable/button_shape"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true" />
 
 </RelativeLayout>

@@ -128,6 +128,7 @@ public class Playlist {
 
     public void setCoverArtURL(String coverArtURL) {
         this.coverArtURL = coverArtURL;
+        AuxSingleton.getInstance().setCoverArtURL(coverArtURL);
     }
 
 

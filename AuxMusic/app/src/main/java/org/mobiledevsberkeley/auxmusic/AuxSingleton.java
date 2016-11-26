@@ -294,6 +294,10 @@ public class AuxSingleton {
         return spotifyService;
     }
 
+    public void setCoverArtURL(String coverArtURL) {
+//        updateValue(dbReference.child(PLAYLISTS_NODE).child(user.getUID()));
+    }
+
 
     public interface AuxGetSongTask {
         public void onFinished(List<Song> songs);
