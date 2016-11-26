@@ -72,9 +72,7 @@ public class PlayerView extends RelativeLayout {
                 player = AuxSingleton.getInstance().getAuxPlayer();
                 if (player != null) {
                     player.skip();
-                    if (AuxSingleton.getInstance().getCurrentPlaylist().getSpotifySongList().size() == 0) {
-                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
-                    } else {
+                    if (AuxSingleton.getInstance().isPlaying()) {
                         mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
                     }
                 }
@@ -89,11 +87,8 @@ public class PlayerView extends RelativeLayout {
             player = AuxSingleton.getInstance().getAuxPlayer();
             if (player != null) {
                 player.skipBack();
-                if (AuxSingleton.getInstance().getCurrentPlaylist().getSpotifySongList().size() == 0) {
-                    mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
-                } else {
+                if (AuxSingleton.getInstance().isPlaying()) {
                     mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
-
                 }
             }
             }
@@ -102,21 +97,22 @@ public class PlayerView extends RelativeLayout {
 
         mPlayButton = (ImageButton) this
                 .findViewById(R.id.player_view_play_button);
+
+        if (AuxSingleton.getInstance().isPlaying()) {
+            mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
+        }
+
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player = AuxSingleton.getInstance().getAuxPlayer();
                 if (player != null) {
-                    boolean isPlaying = player.togglePlay();
-                    if (!isPlaying) {
-                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
-                    } else {
+                    player.togglePlay();
+                    if (AuxSingleton.getInstance().isPlaying()) {
                         mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
-
                     }
                 }
 
-                // TODO: actually do the toggle on the button
             }
         });
 

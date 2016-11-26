@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.design.widget.Snackbar;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
@@ -21,6 +22,7 @@ public class CurrentSongView extends RelativeLayout {
     private TextView songTitle;
     private TextView artistTitle;
     private TextView albumTitle;
+    AuxSingleton aux = AuxSingleton.getInstance();
 
 
     public CurrentSongView(Context context) {
@@ -59,6 +61,15 @@ public class CurrentSongView extends RelativeLayout {
         albumTitle = (TextView) findViewById(R.id.albumName);
 
         songTitle.setText("Currently no song playing");
+        artistTitle.setText("");
+        albumTitle.setText("");
+
+        Song currentSong = aux.getCurrentSong();
+        if (currentSong != null) {
+            Log.d("CurrentSongView", currentSong.toString());
+            aux.setCurrentSongView(this);
+            aux.updateCurrentSongView(currentSong);
+        }
     }
 
     @Override

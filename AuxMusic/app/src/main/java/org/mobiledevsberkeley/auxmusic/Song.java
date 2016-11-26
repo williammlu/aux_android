@@ -125,6 +125,9 @@ public class Song {
     }
 
 
+    public String toString() {
+        return songName + "; " + artistName + "; "  + albumName;
+    }
 
 
 }

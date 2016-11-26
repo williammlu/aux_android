@@ -456,9 +456,26 @@ public class AuxSingleton {
         AuxSingleton.currentSongView = currentSongView;
     }
 
-    public static void updateCurrentSongView(Song song) {
+    public void updateCurrentSongView(Song song) {
         if (getCurrentSongView() != null) {
             getCurrentSongView().setSong(song);
+        }
+    }
+
+    public boolean isPlaying() {
+        try {
+            return getSpotifyPlayer().getPlaybackState().isPlaying;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public Song getCurrentSong() {
+        int index = currentPlaylist.getCurrentSongIndex();
+        if (index < currentPlaylist.getSpotifySongList().size()) {
+            return currentPlaylist.getSpotifySongList().get(index);
+        } else {
+            return null;
         }
     }
 
