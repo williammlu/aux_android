@@ -6,4 +6,28 @@
         <item name="android:windowDrawsSystemBarBackgrounds">true</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
+
+    <style name="AuxDarkTheme" parent="AppTheme">
+        <item name="android:colorBackground">#1D1D1D</item>
+        <item name="colorPrimaryDark">@android:color/white</item>
+        <item name="colorPrimary">#24323b</item>
+        <item name="colorAccent">@android:color/white</item>
+        <item name="android:navigationBarColor">#24323B</item>
+        <item name="android:statusBarColor">#24323B</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+    </style>
+
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorPrimaryDark">#24323B</item>
+        <item name="colorPrimary">#24323B</item>
+        <item name="colorAccent">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <item name="android:textColorSecondary">@android:color/white</item>
+        <item name="android:textColorTertiary">@android:color/white</item>
+        <item name="android:background">#1D1D1D</item>
+        <item name="android:textColorSecondaryInverse">@android:color/white</item>
+        <item name="android:statusBarColor">#24323B</item>
+        <item name="android:navigationBarColor">#24323B</item>
+    </style>
 </resources>

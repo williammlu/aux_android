@@ -1,6 +1,7 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -52,6 +53,7 @@ public class SearchSongsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 getResources().getConfiguration().orientation);
+        dividerItemDecoration.setDrawable(new ColorDrawable(0x979797));
         recyclerView.addItemDecoration(dividerItemDecoration);
 
         final MusicAdapter musicAdapter = new MusicAdapter(this, list, MusicAdapter.SEARCH_TO_ADD, findViewById(R.id.activity_search_songs));

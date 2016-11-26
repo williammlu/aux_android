@@ -34,6 +34,9 @@ public class AuxSingleton {
     private static Context context;
     private static String spotifyAuthToken = "";
 
+
+    private static CurrentSongView currentSongView;
+
     // TODO: create player interface
     private static Player spotifyPlayer;
     private static PlayerInterface auxPlayer;
@@ -268,17 +271,19 @@ public class AuxSingleton {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
-                    List<String> spotifySongIDList = dataSnapshot.getValue(t);
-                    currentPlaylist.setSpotifySongIDList(spotifySongIDList);
-                    Log.d(TAG, "we set the new spotifiysongidlist with last songid " + currentPlaylist.getSpotifySongIDList().get(spotifySongIDList.size()-1));
-                    getSongs(spotifySongIDList, new AuxGetSongTask() {
-                        @Override
-                        public void onFinished(List<Song> songs) {
-                            currentPlaylist.setSpotifySongList(songs);
-                            musicAdapter.notifyDataSetChanged();
-                            Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
-                        }
-                    });
+                    List<String> spotifySongIDList = dataSnapshot.getValue(t); // Causes bug when spotifySongIDList is null
+                    if (spotifySongIDList != null) {
+                        currentPlaylist.setSpotifySongIDList(spotifySongIDList);
+                        Log.d(TAG, "we set the new spotifiysongidlist with last songid " + currentPlaylist.getSpotifySongIDList().get(spotifySongIDList.size() - 1));
+                        getSongs(spotifySongIDList, new AuxGetSongTask() {
+                            @Override
+                            public void onFinished(List<Song> songs) {
+                                currentPlaylist.setSpotifySongList(songs);
+                                musicAdapter.notifyDataSetChanged();
+                                Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
+                            }
+                        });
+                    }
                 }
 
                 @Override
@@ -443,7 +448,19 @@ public class AuxSingleton {
         Spotify.destroyPlayer(playerReference);
     }
 
+    public static CurrentSongView getCurrentSongView() {
+        return currentSongView;
+    }
 
+    public static void setCurrentSongView(CurrentSongView currentSongView) {
+        AuxSingleton.currentSongView = currentSongView;
+    }
+
+    public static void updateCurrentSongView(Song song) {
+        if (getCurrentSongView() != null) {
+            getCurrentSongView().setSong(song);
+        }
+    }
 
 
     public static Context getContext() {

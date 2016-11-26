@@ -45,26 +45,29 @@ public class AuxSpotifyPlayer implements PlayerInterface{
     }
 
 
-    public String togglePlay() {
+    public boolean togglePlay() {
         String returnMessage = "";
         if (getPlaybackState() == null) {
             Log.e("AuxSpotifyPlayer", "playback state is null");
-            return "Playback state is null....";
+            return false;
         }
         if (!getPlaybackState().isPlaying) {
             if (mPlaylist.getCurrentSongTime() != 0) {
                 Log.d("AuxSpotifyPlayer", "Resuming at " + mPlaylist.getCurrentSongTime());
                 mPlayer.resume(null);
-                returnMessage = "Resuming song at time " + mPlaylist.getCurrentSongTime();
+                return true;
             } else {
                 if (mPlaylist.getSpotifySongList().size() == 0) {
                     Log.d("AuxSpotifyPlayer", "No Songs in queue");
-                    returnMessage = "No Songs in queue";
+                    return false;
                 } else {
                     Log.e("AuxSpotifyPlayer", "Playing new song");
                     mPlayer.playUri(null, mPlaylist.getCurrentSongURI(), 0, (int) mPlaylist.getCurrentSongTime());
-                    returnMessage = "Playing new song";
-                };
+
+                    // update song on PlaylistActivity
+                    AuxSingleton.getInstance().updateCurrentSongView(mPlaylist.getSpotifySongList().get(mPlaylist.getCurrentSongIndex()));
+                    return true;
+                }
             }
         } else {
             long curTime = getCurrentSongTime();
@@ -72,9 +75,8 @@ public class AuxSpotifyPlayer implements PlayerInterface{
             mPlaylist.setCurrentSongTime(curTime);
             mPlayer.pause(null);
             Log.d("AuxSpotifyPlayer", "Paused at " + curTime);
-            returnMessage = "Pausing";
+            return false;
         }
-        return returnMessage;
     }
 
     /**
@@ -132,6 +134,9 @@ public class AuxSpotifyPlayer implements PlayerInterface{
             mPlaylist.setActive(true);
             mPlaylist.setCurrentSongIndex(targetTrack);
             mPlaylist.setCurrentSongID(songs.get(targetTrack).getSongURI());
+            // update song on PlaylistActivity
+            AuxSingleton.getInstance().updateCurrentSongView(songs.get(mPlaylist.getCurrentSongIndex()));
+
             mPlayer.playUri(null, mPlaylist.getCurrentSongURI(), 0, (int) mPlaylist.getCurrentSongTime());
             return true;
         }

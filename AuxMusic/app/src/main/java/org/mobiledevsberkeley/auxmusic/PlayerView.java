@@ -14,6 +14,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.RelativeLayout;
 
 import com.google.firebase.database.DatabaseReference;
@@ -24,9 +25,9 @@ import com.spotify.sdk.android.player.Player;
  */
 public class PlayerView extends RelativeLayout {
 
-    private Button mForwardButton;
-    private Button mPlayButton;
-    private Button mBackButton;
+    private ImageButton mForwardButton;
+    private ImageButton mPlayButton;
+    private ImageButton mBackButton;
     private PlayerInterface player;
 
 
@@ -63,7 +64,7 @@ public class PlayerView extends RelativeLayout {
     protected void onFinishInflate() {
         super.onFinishInflate();
 
-        mForwardButton = (Button) this
+        mForwardButton = (ImageButton) this
                 .findViewById(R.id.player_view_skip_button);
         mForwardButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -74,7 +75,7 @@ public class PlayerView extends RelativeLayout {
             }
         });
 
-        mBackButton = (Button) this
+        mBackButton = (ImageButton) this
                 .findViewById(R.id.player_view_back_button);
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,14 +88,22 @@ public class PlayerView extends RelativeLayout {
         });
 
 
-        mPlayButton = (Button) this
+        mPlayButton = (ImageButton) this
                 .findViewById(R.id.player_view_play_button);
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player = AuxSingleton.getInstance().getAuxPlayer();
-                if (player != null)
-                    player.togglePlay();
+                if (player != null) {
+                    boolean isPlaying = player.togglePlay();
+                    if (!isPlaying) {
+                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
+                    } else {
+                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
+
+                    }
+                }
+
                 // TODO: actually do the toggle on the button
             }
         });

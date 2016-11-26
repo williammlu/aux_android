@@ -10,7 +10,11 @@ package org.mobiledevsberkeley.auxmusic;
  */
 public interface PlayerInterface {
 
-    String togglePlay();
+    /**
+     *
+     * @return  if result is playing music
+     */
+    boolean togglePlay();
     int skip();
     int skipBack();
     boolean skipToTrack(int targetTrack);

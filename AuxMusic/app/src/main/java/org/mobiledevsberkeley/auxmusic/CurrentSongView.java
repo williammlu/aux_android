@@ -8,17 +8,27 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 /**
  * Created by Young on 11/25/2016.
  */
 
 public class CurrentSongView extends RelativeLayout {
+    private ImageView img;
+    private TextView songTitle;
+    private TextView artistTitle;
+    private TextView albumTitle;
+
+
     public CurrentSongView(Context context) {
         super(context);
         initializeViews(context);
     }
+
+
 
     public CurrentSongView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -42,11 +52,26 @@ public class CurrentSongView extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.song_row_view, this);
+        findViewById(R.id.closeImageView).setVisibility(GONE);
+        img = (ImageView) findViewById(R.id.imageView);
+        songTitle = (TextView) findViewById(R.id.songName);
+        artistTitle = (TextView) findViewById(R.id.artistName);
+        albumTitle = (TextView) findViewById(R.id.albumName);
+
+        songTitle.setText("Currently no song playing");
     }
 
     @Override
     protected void onFinishInflate() {
         super.onFinishInflate();
 
+    }
+
+
+    public void setSong(Song song) {
+        new DownloadImageTask(img).execute(song.getImageUrl(300));
+        songTitle.setText(song.getSongName());
+        artistTitle.setText(song.getArtistName());
+        albumTitle.setText(song.getAlbumName());
     }
 }

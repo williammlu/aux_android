@@ -2,6 +2,7 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
@@ -66,6 +67,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 getResources().getConfiguration().orientation);
+        dividerItemDecoration.setDrawable(new ColorDrawable(0x979797));
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -86,7 +88,6 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         });
     }
 
-    // TODO: young can you rename to be more informative
     private void initializeButtons() {
         /*1. Check if this current playlist and is active
         * If yes:
@@ -140,6 +141,11 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 //            });
 //
 //        }
+
+        CurrentSongView currentSongView = (CurrentSongView) findViewById(R.id.currentSongView);
+        AuxSingleton.getInstance().setCurrentSongView(currentSongView);
+
+
 
         Button addSongButton = (Button) findViewById(R.id.playlistAddSongButton);
         addSongButton.setOnClickListener(new View.OnClickListener() {
