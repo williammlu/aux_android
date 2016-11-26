@@ -60,9 +60,7 @@ public class CurrentSongView extends RelativeLayout {
         artistTitle = (TextView) findViewById(R.id.artistName);
         albumTitle = (TextView) findViewById(R.id.albumName);
 
-        songTitle.setText("Currently no song playing");
-        artistTitle.setText("");
-        albumTitle.setText("");
+        clearAll();
 
         Song currentSong = aux.getCurrentSong();
         if (currentSong != null) {
@@ -84,5 +82,12 @@ public class CurrentSongView extends RelativeLayout {
         songTitle.setText(song.getSongName());
         artistTitle.setText(song.getArtistName());
         albumTitle.setText(song.getAlbumName());
+    }
+
+    public void clearAll() {
+        img.setImageResource(0);
+        songTitle.setText("Currently no song playing");
+        artistTitle.setText("");
+        albumTitle.setText("");
     }
 }

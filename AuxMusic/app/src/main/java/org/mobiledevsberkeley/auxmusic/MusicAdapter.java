@@ -114,6 +114,9 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
                                         //TODO: put this back in once Singleton's addSong method works
                                         AuxSingleton.getInstance().removeSong(targetSong);
                                         notifyDataSetChanged();
+                                        if (AuxSingleton.getInstance().getCurrentSong() == null) {
+                                            AuxSingleton.getInstance().getCurrentSongView().clearAll();
+                                        }
                                     }
                                 })
                                 .show();
