@@ -1,11 +1,15 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
+import android.view.View;
 import android.widget.SearchView;
+import android.widget.TextView;
 //import android.support.v7.widget.SearchView;
 
 import com.google.firebase.database.ChildEventListener;
@@ -17,6 +21,8 @@ import java.util.ArrayList;
 
 public class SearchPlaylistsActivity extends AppCompatActivity {
     SearchView searchView;
+    TextView mTextView;
+    RecyclerView mRecyclerView;
     ArrayList<Playlist> searchResults;
     AuxSingleton aux = AuxSingleton.getInstance();
     PlaylistAdapterSearch playlistAdapterSearch;
@@ -26,8 +32,8 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_playlists);
         searchView();
-        setReyclerViewByName();
-
+        setRecyclerViewByName();
+        mTextView = (TextView) findViewById(R.id.noPlaylistsFoundText);
     }
 
     private void searchView() {
@@ -38,6 +44,8 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                mTextView.setVisibility(View.VISIBLE);
+                mRecyclerView.setVisibility(View.GONE);
                 searchResults.clear();
                 String regexed = s.replaceAll("[^A-Za-z]", "").toLowerCase();
                 DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
@@ -47,8 +55,11 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Playlist playlist = dataSnapshot.getValue(Playlist.class);
                         if (playlist.getActive()) {
+                            mTextView.setVisibility(View.INVISIBLE);
+                            mRecyclerView.setVisibility(View.VISIBLE);
                             searchResults.add(playlist);
                             playlistAdapterSearch.notifyDataSetChanged();
+                            Log.d("debug", "found the damn playlist it's called " + playlist.getPlaylistName() + " and key " + playlist.getPlaylistKey());
                         }
                     }
 
@@ -85,15 +96,20 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
 
     }
 
-    private void setReyclerViewByName() {
-        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewByName);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
+    private void setRecyclerViewByName() {
+        mRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewByName);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(mRecyclerView.getContext(),
                 getResources().getConfiguration().orientation);
-        recyclerView.addItemDecoration(dividerItemDecoration);
+        mRecyclerView.addItemDecoration(dividerItemDecoration);
 
         playlistAdapterSearch = new PlaylistAdapterSearch(this, searchResults);
 
-        recyclerView.setAdapter(playlistAdapterSearch);
+        mRecyclerView.setAdapter(playlistAdapterSearch);
+    }
+
+    public void playlistIntent() {
+        Intent playlistIntent = new Intent(this, PlaylistActivity.class);
+        startActivity(playlistIntent);
     }
 }

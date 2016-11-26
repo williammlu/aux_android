@@ -25,7 +25,11 @@
     </style>
 
     <style name="AuxDarkActionBar" parent="Widget.AppCompat.ActionBar">
-        <item name="android:background">#24323B</item>
+        <!--<item name="android:background">#24323B</item>-->
+        <!--<item name="android:windowNoTitle">true</item>-->
+
+        <item name="windowActionBar">false</item>
+        <item name="windowNoTitle">true</item>
     </style>
 
     <style name="AuxDarkButton" parent="Widget.AppCompat.Button">

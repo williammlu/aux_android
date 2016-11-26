@@ -209,9 +209,4 @@ public class ActualStartActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
-
-    public void playlistIntent() {
-        Intent playlistIntent = new Intent(this, PlaylistActivity.class);
-        startActivity(playlistIntent);
-    }
 }

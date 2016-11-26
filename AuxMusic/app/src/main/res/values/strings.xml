@@ -16,6 +16,7 @@
 
     <string name="title_activity_playlist">PlaylistActivity</string>
 
+    <string name="noPlaylistsFound">No playlists found</string>
     <string name="songSearchHint">Search by song, artist or album name...</string>
     <string name="noSongsFound">No songs found</string>
     <string name="addSongDialogTitle">Add Song Confirmation</string>
