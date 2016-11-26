@@ -73,7 +73,7 @@ public class SpotifyAuthTest extends Activity
                 // Auth flow returned an error
                 case ERROR:
                     Log.e("onActivityResult", "Auth error: " + response.getError());
-                    i.putExtra(LOGIN_ERROR, "Unfortunately, Aux requires Spotify premium to host a playlist. Without it, you will not be able to stream music");
+                    i.putExtra(LOGIN_ERROR, "Unfortunately, Aux requires Spotify premium to host a playlist. Without it, you will not be able to stream music.");
                     startActivity(i);
 
                     // requires premium, notify user that it requires premium
@@ -82,7 +82,7 @@ public class SpotifyAuthTest extends Activity
                 // Most likely auth flow was cancelled
                 default:
                     Log.e("onActivityResult", "Auth result: " + response.getType());
-                    i.putExtra(LOGIN_TERMINATED, "Your authentication with Spotify was cancelled, please try again");
+                    i.putExtra(LOGIN_TERMINATED, "Your authentication with Spotify was cancelled, please try again.");
                     startActivity(i);
             }
 

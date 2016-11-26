@@ -33,7 +33,7 @@
 
     <Button
         android:text="Add Song"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/playlistAddSongButton"
         android:layout_alignParentBottom="true"
@@ -45,6 +45,7 @@
         android:layout_height="wrap_content"
         android:id="@+id/hostApproval"
         android:layout_alignParentBottom="true"
+        android:visibility="gone"
         android:layout_toEndOf="@+id/playlistAddSongButton" />
 
     <Button
@@ -52,6 +53,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/exportPlaylist"
+        android:visibility="gone"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true" />
 
