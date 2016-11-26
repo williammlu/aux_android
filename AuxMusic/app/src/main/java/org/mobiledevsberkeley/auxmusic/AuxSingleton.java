@@ -2,14 +2,13 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Context;
 import android.util.Log;
-import android.view.View;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.GenericTypeIndicator;
 import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.Spotify;
-import com.spotify.sdk.android.player.SpotifyPlayer;
 
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.DataSnapshot;
@@ -24,7 +23,6 @@ import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Track;
 import kaaes.spotify.webapi.android.models.Tracks;
-import kaaes.spotify.webapi.android.models.TracksPager;
 import retrofit.Callback;
 import retrofit.RetrofitError;
 import retrofit.client.Response;
@@ -34,8 +32,6 @@ import retrofit.client.Response;
  */
 
 public class AuxSingleton {
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
     private static Context context;
     private static String spotifyAuthToken = "";
 
@@ -45,8 +41,6 @@ public class AuxSingleton {
     private static SpotifyService spotifyService = new SpotifyApi().getService();
 
     private static MusicAdapter musicAdapter;
-
-
 
     private static Object playerReference;
     public static final String TAG = "debug";
@@ -65,6 +59,8 @@ public class AuxSingleton {
     private User currentUser;
     private DatabaseReference playlistRef;
     private DatabaseReference userRef;
+
+    private ValueEventListener spotifySongIDListener;
 
     private ArrayList<Playlist> myPlaylists = new ArrayList<>();
 
@@ -127,10 +123,10 @@ public class AuxSingleton {
                     User newUser = new User();
                     newUser.setUID(uid);
                     auxSingleton.addUser(newUser);
-                    Log.d(TAG, "snapshot was null, we now have user with uid: " + currentUser.getUID() + " and isHost: " + currentUser.isHost());
+//                    Log.d(TAG, "snapshot was null, we now have user with uid: " + currentUser.getUID() + " and isHost: " + currentUser.isHost());
                 } else {
                     auxSingleton.setCurrentUser(snapshotUser);
-                    Log.d(TAG, "snapshot was not null, we have old user with uid: " + snapshotUser.getUID() + " and isHost: " + snapshotUser.isHost());
+//                    Log.d(TAG, "snapshot was not null, we have old user with uid: " + snapshotUser.getUID() + " and isHost: " + snapshotUser.isHost());
                 }
                 callback.userOnComplete();
             }
@@ -206,20 +202,20 @@ public class AuxSingleton {
         return isHost;
     }
 
-    public void leavePlaylist() {
-        removeUser(currentUser);
+    public void leavePlaylist(Context context) {
+        removeUserFromPlaylist(currentUser);
         userRef.child("playlistKey").removeValue();
-        if (checkIsHost(currentUser.getUID())) {
+        if (currentPlaylist.getActive() && checkIsHost(currentUser.getUID())) {
+            // change playlist to inactive, remove user, etc.
             currentPlaylist.setActive(false);
             DatabaseReference currPlaylistRef = dbReference.child(PLAYLISTS_NODE).child(currentPlaylist.getPlaylistKey());
             updateValue(currPlaylistRef, "active", false);
         }
+        ((PlaylistActivity)context).goToStartActivity();
     }
 
     public void createPlaylist(String partyName, String password, GeoLocation mGeoLocation) {
         // only host could have called this method. thus, the current user is a host.
-        currentUser.setHost(true);
-        updateValue(dbReference.child(USERS_NODE).child(currentUser.getUID()), "host", true);
         ArrayList<String> userUIDList = new ArrayList<String>();
         userUIDList.add(currentUser.getUID());
 
@@ -237,9 +233,9 @@ public class AuxSingleton {
         songCache.put(song.getSongId(), song);
         currentPlaylist.addSong(song);
         updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
-        if (musicAdapter != null) {
-            musicAdapter.notifyDataSetChanged();
-        }
+//        if (musicAdapter != null) {
+//            musicAdapter.notifyDataSetChanged();
+//        }
         Log.d(TAG, "we added a song (maybe), yay!");
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
@@ -260,15 +256,51 @@ public class AuxSingleton {
         updateValue(playlistRef, USERID_LIST, currentPlaylist.getUserDeviceIDList());
     }
 
-    public void removeUser(User user) {
+    public void removeUserFromPlaylist(User user) {
+        user.setPlaylistKey("");
         currentPlaylist.removeUser(user);
         updateValue(playlistRef, USERID_LIST, currentPlaylist.getUserDeviceIDList());
+    }
+
+    public void initializePlaylistListeners() {
+        if (spotifySongIDListener == null) {
+            spotifySongIDListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    GenericTypeIndicator<List<String>> t = new GenericTypeIndicator<List<String>>() {};
+                    List<String> spotifySongIDList = dataSnapshot.getValue(t);
+                    currentPlaylist.setSpotifySongIDList(spotifySongIDList);
+                    Log.d(TAG, "we set the new spotifiysongidlist with last songid " + currentPlaylist.getSpotifySongIDList().get(spotifySongIDList.size()-1));
+                    getSongs(spotifySongIDList, new AuxGetSongTask() {
+                        @Override
+                        public void onFinished(List<Song> songs) {
+                            currentPlaylist.setSpotifySongList(songs);
+                            musicAdapter.notifyDataSetChanged();
+                            Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
+                        }
+                    });
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            playlistRef.child(SPOTIFYSONGID_LIST).addValueEventListener(spotifySongIDListener);
+        }
+    }
+
+    public void detachPlaylistListeners() {
+        if (spotifySongIDListener != null) {
+            playlistRef.child(SPOTIFYSONGID_LIST).removeEventListener(spotifySongIDListener);
+            spotifySongIDListener = null;
+            Log.d(TAG, "detach playlist listeners");
+        }
     }
 
     public DatabaseReference getDataBaseReference() {
         return dbReference;
     }
-
 
     public static String getSpotifyAuthToken() {
         return spotifyAuthToken;
@@ -344,24 +376,24 @@ public class AuxSingleton {
         ArrayList<String> queries = new ArrayList<>();
 
         for (String songId : songIds) {
-            Song s = songCache.get(songId);
-            if (s != null) {
-                output.add(s);
+//            Song s = songCache.get(songId);
+//            if (s != null) {
+//                output.add(s);
+//            } else {
+            if (builder == null) {
+                builder = new StringBuilder();
             } else {
-                if (builder == null) {
-                    builder = new StringBuilder();
-                } else {
-                    builder.append(',');
-                }
-                builder.append(songId);
-                queryCounter++;
-
-                if (queryCounter == 50) {
-                    queryCounter = 0;
-                    queries.add(builder.toString());
-                    builder = null;
-                }
+                builder.append(',');
             }
+            builder.append(songId);
+            queryCounter++;
+
+            if (queryCounter == 50) {
+                queryCounter = 0;
+                queries.add(builder.toString());
+                builder = null;
+            }
+//            }
         }
         if (builder != null) {
             queries.add(builder.toString());
@@ -371,13 +403,13 @@ public class AuxSingleton {
             getSpotifyService().getTracks(q, new Callback<Tracks>(){
                 @Override
                 public void success(Tracks tracks, Response response) {
-                    ArrayList<Song> tempList = new ArrayList<Song>();
+//                    ArrayList<Song> tempList = new ArrayList<Song>();
                     for (Track t : tracks.tracks) {
                         Song s = new Song(t);
-                        tempList.add(s);
+//                        tempList.add(s);
                         output.add(s);
                     }
-                    agst.onFinished(tempList);
+                    agst.onFinished(output);
 
                     Log.e("AuxSingleton", "Called callback on " + tracks.tracks.size() + " tracks");
 

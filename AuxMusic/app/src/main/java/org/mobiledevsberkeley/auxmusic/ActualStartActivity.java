@@ -127,8 +127,10 @@ public class ActualStartActivity extends AppCompatActivity {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Playlist playlist = dataSnapshot.getValue(Playlist.class);
-                        searchResults.add(playlist);
-                        playlistAdapterSearch.notifyDataSetChanged();
+                        if (playlist.getActive()) {
+                            searchResults.add(playlist);
+                            playlistAdapterSearch.notifyDataSetChanged();
+                        }
                     }
 
                     @Override

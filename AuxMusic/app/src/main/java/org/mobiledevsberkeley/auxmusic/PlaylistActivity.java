@@ -1,5 +1,6 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -40,8 +41,6 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
             Snackbar snackbar = Snackbar
                     .make(parentView, loginErrorMessage, Snackbar.LENGTH_INDEFINITE);
             snackbar.show();
-
-
         }
 
         createSpotifyPlayer(AuxSingleton.getInstance().getSpotifyAuthToken());
@@ -87,18 +86,15 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         Button activateButton = (Button) findViewById(R.id.activatePlaylist);
         //singleton playlist should reflect whichever playlist is being DISPLAYED. firebase playlist should reflect whichever is ACTIVE
 
-        User user = aux.getCurrentUser();
-        boolean isHost = aux.checkIsHost(user.getUID());
-        if (aux.getCurrentPlaylist().getActive()) {
-            leaveButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    aux.leavePlaylist();
-                    Intent intent = new Intent(getApplicationContext(), ActualStartActivity.class);
-                    startActivity(intent);
-                }
-            });
-        }
+//        User user = aux.getCurrentUser();
+//        final boolean isHost = aux.checkIsHost(user.getUID());
+        final Context context = this;
+        leaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                aux.leavePlaylist(context);
+            }
+        });
 //        //replace all of this once merged
 //        final User user = aux.getCurrentUser();
 //        final DatabaseReference usersRef = aux.getDataBaseReference().child("users").child(user.getUID()).push();
@@ -138,7 +134,10 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
                 startActivity(intent);
             }
         });
+    }
 
+    public void goToStartActivity() {
+        startActivity(new Intent(getApplicationContext(), ActualStartActivity.class));
     }
 
     @Override
@@ -147,6 +146,8 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         if (musicAdapter != null) {
             musicAdapter.notifyDataSetChanged();
         }
+        // INITIALIZE firebase realtime listeners for the playlist.
+        aux.initializePlaylistListeners();
     }
 
 
@@ -155,6 +156,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         // VERY IMPORTANT! This must always be called or else you will leak resources
         Log.e("PlaylistActivity", "calling destroy!!");
         Spotify.destroyPlayer(this);
+        aux.detachPlaylistListeners();
         super.onDestroy();
     }
 
@@ -226,6 +228,4 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 
         }
     }
-
-
 }
