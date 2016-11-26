@@ -70,8 +70,14 @@ public class PlayerView extends RelativeLayout {
             @Override
             public void onClick(View v) {
                 player = AuxSingleton.getInstance().getAuxPlayer();
-                if (player != null)
+                if (player != null) {
                     player.skip();
+                    if (AuxSingleton.getInstance().getCurrentPlaylist().getSpotifySongList().size() == 0) {
+                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
+                    } else {
+                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
+                    }
+                }
             }
         });
 
@@ -80,10 +86,16 @@ public class PlayerView extends RelativeLayout {
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                player = AuxSingleton.getInstance().getAuxPlayer();
-                if (player != null)
-                    player.skipBack();
+            player = AuxSingleton.getInstance().getAuxPlayer();
+            if (player != null) {
+                player.skipBack();
+                if (AuxSingleton.getInstance().getCurrentPlaylist().getSpotifySongList().size() == 0) {
+                    mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
+                } else {
+                    mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
 
+                }
+            }
             }
         });
 

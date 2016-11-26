@@ -15,8 +15,8 @@ public interface PlayerInterface {
      * @return  if result is playing music
      */
     boolean togglePlay();
-    int skip();
-    int skipBack();
+    boolean skip();
+    boolean skipBack();
     boolean skipToTrack(int targetTrack);
     void skipToTime(long ms);
 

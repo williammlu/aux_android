@@ -97,28 +97,25 @@ public class AuxSpotifyPlayer implements PlayerInterface{
         return true;
     }
 
-    public int skip() {
+    public boolean skip() {
         int trackIndex = mPlaylist.getCurrentSongIndex();
-        skipToTrack(trackIndex + 1);
+        return skipToTrack(trackIndex + 1);
 
-        return trackIndex + 1;
     }
 
-    public int skipBack() {
+    public boolean skipBack() {
 
         int trackIndex = mPlaylist.getCurrentSongIndex();
 
         // jump back a song if there is a back song, and is more than 1 second into the song
         if (trackIndex != 0 && mPlayer.getPlaybackState().positionMs < 3000) {
             Log.e("AuxSpotifyPlayer", "Going back 1 song: " + mPlayer.getPlaybackState().positionMs);
-            skipToTrack(trackIndex - 1);
-            return trackIndex - 1;
+            return skipToTrack(trackIndex - 1);
         } else {
             // "skip" to current, track, which restarts to the beginning
-            skipToTrack(trackIndex);
             Log.e("AuxSpotifyPlayer", "return to start of song " + mPlayer.getPlaybackState().positionMs);
+            return skipToTrack(trackIndex);
 
-            return trackIndex;
         }
     }
 
