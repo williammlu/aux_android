@@ -22,4 +22,5 @@
     <string name="SongDialogPositive">Confirm</string>
     <string name="SongDialogNegative">Cancel</string>
     <string name="removeSongDialogTitle">Remove Song Confirmation</string>
+    <string name="createPlaylist">Create Playlist</string>
 </resources>

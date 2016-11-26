@@ -169,8 +169,10 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 
                 aux.createPlaylist(partyName, password, mGeoLocation);
 
-                Intent searchSongsIntent = new Intent(getApplicationContext(), SearchSongsActivity.class);
-                startActivity(searchSongsIntent);
+
+                // do spotify auth when trying to create
+                Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
+                startActivity(spotifyAuthIntent);
             }
         });
     }
