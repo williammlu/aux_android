@@ -20,6 +20,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
 
     private Player mPlayer;
     private Playlist mPlaylist;
+    AuxSingleton aux = AuxSingleton.getInstance();
 
     public AuxSpotifyPlayer(Player sp, Playlist p){
         mPlayer = sp;
@@ -65,7 +66,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
                     mPlayer.playUri(null, mPlaylist.getCurrentSongURI(), 0, (int) mPlaylist.getCurrentSongTime());
 
                     // update song on PlaylistActivity
-                    AuxSingleton.getInstance().updateCurrentSongView(mPlaylist.getSpotifySongList().get(mPlaylist.getCurrentSongIndex()));
+                    aux.updateCurrentSongView(aux.getCurrentSong());
                     return true;
                 }
             }
