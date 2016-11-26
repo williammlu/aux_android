@@ -9,7 +9,7 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telecom.Call;
-import android.support.v7.widget.SearchView;
+import android.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -56,13 +56,31 @@ public class ActualStartActivity extends AppCompatActivity {
             public void playlistOnComplete(boolean hasCurrentPlaylist) {
                 if (hasCurrentPlaylist) {
                     Log.d(TAG, "hasplaylist");
-                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
-                    startActivity(playlistIntent);
+                    // jump to spotify auth
+                    if (true ) { // if host, jump to spotify auth, which will redirect to playlist
+                        Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
+                        startActivity(spotifyAuthIntent);
+                    } else { // else go directly to playlist
+                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
+                        startActivity(playlistIntent);
+                    }
+
                 } else {
                     Log.d(TAG, "doesnthaveplaylist");
                     setContentView(R.layout.activity_actual_start);
+
+                    Button createPlaylistButton = (Button) findViewById(R.id.create_playlist_button);
+
+                    createPlaylistButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            Intent intent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
+                            startActivity(intent);
+                        }
+                    });
+
                     testingActivity();
-                    searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchView);
+                    searchView = (SearchView) findViewById(R.id.searchView);
                     setSearchView();
                     setReyclerViewByName();
                     setRecyclerViewNearMe();
@@ -70,6 +88,9 @@ public class ActualStartActivity extends AppCompatActivity {
                 }
             }
         };
+
+
+
         firebaseSignIn();
     }
 

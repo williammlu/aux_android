@@ -45,11 +45,12 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
             Snackbar snackbar = Snackbar
                     .make(parentView, loginErrorMessage, Snackbar.LENGTH_INDEFINITE);
             snackbar.show();
-
-
+        } else if (i.hasExtra(SpotifyAuthTest.LOGIN_TERMINATED)) {
+            String loginTerminatedMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_ERROR);
+            Snackbar snackbar = Snackbar
+                    .make(parentView, loginTerminatedMessage, Snackbar.LENGTH_INDEFINITE);
+            snackbar.show();
         }
-
-
 
         createSpotifyPlayer(AuxSingleton.getInstance().getSpotifyAuthToken());
 

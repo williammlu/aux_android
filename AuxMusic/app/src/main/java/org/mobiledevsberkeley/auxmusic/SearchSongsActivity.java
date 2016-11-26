@@ -6,7 +6,7 @@ import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.SearchView;
+import android.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -59,7 +59,7 @@ public class SearchSongsActivity extends AppCompatActivity {
 
 
 
-        final SearchView searchView = (android.support.v7.widget.SearchView) findViewById(R.id.searchSongView);
+        final SearchView searchView = (SearchView) findViewById(R.id.searchSongView);
         searchView.setIconified(false);
         searchView.setQueryHint(getResources().getString(R.string.songSearchHint));
         searchView.requestFocus();
