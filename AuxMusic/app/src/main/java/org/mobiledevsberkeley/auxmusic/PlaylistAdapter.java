@@ -5,6 +5,7 @@ package org.mobiledevsberkeley.auxmusic;
  */
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +24,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
 
     public PlaylistAdapter(Context applicationContext, ArrayList<Playlist> playlists, int displayType) {
         context = applicationContext;
+        this.displayType = displayType;
         this.playlists = playlists;
     }
 
@@ -76,8 +78,9 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
                         String key = playlist.getPlaylistKey();
                         aux.setCurrentPlaylist(playlist, key);
                         aux.addUserToPlaylist(aux.getCurrentUser());
-                        aux.addPlaylistToPastPlaylists(key);
-                        ((SearchPlaylistsActivity) context).playlistIntent();
+                        aux.addPastPlaylist(playlist);
+                        context.startActivity(new Intent(context, PlaylistActivity.class));
+//                        ((SearchPlaylistsActivity) context).playlistIntent();
                         // ADD PLAYLIST TO PAST PLAYLISTS
                     }
                 });

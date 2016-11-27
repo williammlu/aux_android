@@ -14,8 +14,10 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.ValueEventListener;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
@@ -46,11 +48,12 @@ public class AuxSingleton {
 
     private static Object playerReference;
     public static final String TAG = "debug";
+    public static final String PASTPLAYLISTS = "pastplaylists";
     public static final String USERS_NODE = "users";
     public static final String PLAYLISTS_NODE = "playlists";
     public static final String SPOTIFYSONGID_LIST = "spotifySongIDList";
-//    public static final String SPOTIFYSONG_LIST = "spotifySongList";
     public static final String USERID_LIST = "userDeviceIDList";
+    public static final String PASTPLAYLISTS_LIST = "pastPlaylists";
 
     public static HashMap<String, Song> songCache = new HashMap<>();
 
@@ -78,7 +81,7 @@ public class AuxSingleton {
 //        Map<String, Object> childUpdates = new HashMap<>();
 //        childUpdates.put(key, value);
 //        ref.updateChildren(childUpdates);
-        Log.d(TAG, "we added a " + key + ", at " + ref.getKey() + "yay!");
+//        Log.d(TAG, "we added a " + key + ", at " + ref.getKey() + "yay!");
     }
 
     public static AuxSingleton getInstance() {
@@ -94,23 +97,32 @@ public class AuxSingleton {
         userRef = dbReference.child(USERS_NODE).child(uid);
         this.currentUser = user;
     }
-    public ArrayList<Playlist> getMyPlaylists() { return myPlaylists;}
-    public void getPlaylistByIDForMyPlaylists(String playlistID) {
-        System.out.println(playlistID);
-        DatabaseReference temp = dbReference.child(PLAYLISTS_NODE).child(playlistID);
-        temp.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Playlist playlist = dataSnapshot.getValue(Playlist.class);
-                System.out.println("did i even finish tho");
-                myPlaylists.add(playlist);
-            }
+    public ArrayList<Playlist> getMyPlaylists() {
+        Log.d(PASTPLAYLISTS, "size is " + myPlaylists.size());
+        return myPlaylists;
+    }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
+    public void populateMyPlaylists() {
+        if (currentUser != null) {
+            for (String s: currentUser.getPastPlaylists()) {
+                dbReference.child(PLAYLISTS_NODE).child(s).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                        if (playlist != null) {
+                            Log.d("PASTPLAYLISTS", "we populating with a nonnull playlist called " + playlist.getPlaylistKey());
+                            myPlaylists.add(playlist);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
 
             }
-        });
+        }
     }
 
     public void getUser(final String uid, final SignInCallback callback) {
@@ -142,8 +154,9 @@ public class AuxSingleton {
     public void hasCurrentPlaylist(final SignInCallback callback) {
         //this will set the playlist variable in the global scope, however we only want to ever use the SINGLETON playlist
         final String playlistKey = currentUser.getPlaylistKey();
-        Log.d(TAG, "in hascurrentplaylist singleton, key is: " + playlistKey);
+//        Log.d(TAG, "in hascurrentplaylist singleton, key is: " + playlistKey);
         if (playlistKey == null || playlistKey.equals("")) {
+            populateMyPlaylists();
             callback.playlistOnComplete(false);
         } else {
             dbReference.child(PLAYLISTS_NODE).child(playlistKey).addListenerForSingleValueEvent(new ValueEventListener() {
@@ -171,29 +184,22 @@ public class AuxSingleton {
     }
 
     public void setCurrentPlaylist(Playlist currentPlaylist, String playlistKey) {
-        // TAKE CARE OF STARTING OFF ON AN OLD PLAYLIST
-//        if (playlistListener != null) {
-//            playlistRef.removeEventListener(playlistListener);
-//        }
         this.currentPlaylist = currentPlaylist;
-        if (playlistKey != null) {
+        if (playlistKey != null || playlistRef == null) {
             playlistRef = dbReference.child(PLAYLISTS_NODE).child(playlistKey);
         }
-//        initializePlaylistListener();
         currentUser.setPlaylistKey(playlistKey);
         updateValue(userRef, "playlistKey", playlistKey);
         playlistRef.setValue(currentPlaylist, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if (databaseError != null) {
-                    Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
+//                    Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
                 } else {
-                    Log.d(TAG, "Data saved successfully.");
+//                    Log.d(TAG, "Data saved successfully.");
                 }
             }
         });
-
-//        initializePlaylistListener();
     }
 
     public boolean checkIsHost(String uid) {
@@ -230,6 +236,9 @@ public class AuxSingleton {
                 0, true, 0, mGeoLocation, "", "");
         playlist.setPlaylistKey(key);
         setCurrentPlaylist(playlist, key);
+
+        addPastPlaylist(playlist);
+        // ADD PLAYLIST TO PAST PLAYLISTS FOR THE USER
     }
 
     public void addSong(Song song) {
@@ -239,13 +248,26 @@ public class AuxSingleton {
 //        if (musicAdapter != null) {
 //            musicAdapter.notifyDataSetChanged();
 //        }
-        Log.d(TAG, "we added a song (maybe), yay!");
+//        Log.d(TAG, "we added a song (maybe), yay!");
         // add to database using dbReference with the appropriate hashes, child, etc.
     }
 
     public void removeSong(Song song) {
         currentPlaylist.removeSong(song);
         updateValue(playlistRef, SPOTIFYSONGID_LIST, currentPlaylist.getSpotifySongIDList());
+    }
+
+    public void addPastPlaylist(Playlist playlist) {
+        if (currentUser != null) {
+            currentUser.addToPastPlaylists(playlist.getPlaylistKey());
+            if (myPlaylists != null) {
+                myPlaylists.add(playlist);
+            }
+            if (userRef == null) {
+                userRef = dbReference.child(USERS_NODE).child(currentUser.getUID());
+            }
+            updateValue(userRef, PASTPLAYLISTS_LIST, currentUser.getPastPlaylists());
+        }
     }
 
     public void addUser(User user) {
@@ -274,13 +296,13 @@ public class AuxSingleton {
                     List<String> spotifySongIDList = dataSnapshot.getValue(t); // Causes bug when spotifySongIDList is null
                     if (spotifySongIDList != null) {
                         currentPlaylist.setSpotifySongIDList(spotifySongIDList);
-                        Log.d(TAG, "we set the new spotifiysongidlist with last songid " + currentPlaylist.getSpotifySongIDList().get(spotifySongIDList.size() - 1));
+//                        Log.d(TAG, "we set the new spotifiysongidlist with last songid " + currentPlaylist.getSpotifySongIDList().get(spotifySongIDList.size() - 1));
                         getSongs(spotifySongIDList, new AuxGetSongTask() {
                             @Override
                             public void onFinished(List<Song> songs) {
                                 currentPlaylist.setSpotifySongList(songs);
                                 musicAdapter.notifyDataSetChanged();
-                                Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
+//                                Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
                             }
                         });
                     } else {
@@ -303,7 +325,7 @@ public class AuxSingleton {
         if (spotifySongIDListener != null) {
             playlistRef.child(SPOTIFYSONGID_LIST).removeEventListener(spotifySongIDListener);
             spotifySongIDListener = null;
-            Log.d(TAG, "detach playlist listeners");
+//            Log.d(TAG, "detach playlist listeners");
         }
     }
 

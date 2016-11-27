@@ -3,18 +3,14 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="match_parent" >
+    android:layout_height="wrap_content" >
 
     <ImageView
         android:layout_width="@dimen/search_album_image_side"
         android:layout_height="@dimen/search_album_image_side"
         android:id="@+id/imageView"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="16dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:background="@color/black_overlay"
+        android:background="@color/colorAccent"
         android:layout_margin="@dimen/search_list_margin" />
 
     <TextView
@@ -22,16 +18,15 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/playlistName"
-        android:layout_marginLeft="32dp"
+        android:layout_marginLeft="16dp"
         android:layout_below="@+id/imageView"
-        android:layout_marginTop="4dp"
         />
 
     <TextView
         android:text="Host Name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
+        android:layout_marginLeft="16dp"
         android:layout_below="@+id/playlistName"
         android:layout_marginTop="2dp"
         android:id="@+id/hostName" />

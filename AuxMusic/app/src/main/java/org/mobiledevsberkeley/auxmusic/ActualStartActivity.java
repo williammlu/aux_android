@@ -4,10 +4,10 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 //import android.support.v7.widget.SearchView;
 
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -33,8 +33,10 @@ public class ActualStartActivity extends AppCompatActivity {
     SignInCallback callback;
     SearchView searchView;
     ArrayList<Playlist> searchResults;
-    PlaylistAdapterSearch playlistAdapterSearch;
+    PlaylistAdapter playlistAdapter;
     private Button hostPlaylistButton;
+
+    RecyclerView pastPlaylistsRecyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -120,30 +122,17 @@ public class ActualStartActivity extends AppCompatActivity {
 
 
     private void setRecyclerViewMyPlaylist() {
-//        User user = aux.getCurrentUser();
-//        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
-//        LinearLayoutManager llm = new LinearLayoutManager(this);
-//        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
-//        recyclerView.setLayoutManager(llm);
-//        myPlaylists = new ArrayList<>();
-//        //want less than 3 for near me; if more than gg
-////        ArrayList<String> pastPlaylists = (ArrayList) user.getPastPlaylists();
-//        ArrayList<String> pastPlaylists = new ArrayList<>();
-////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-////        pastPlaylists.add("-KX8bdIBGDGoqdHsX_ky");
-//
-//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-//        pastPlaylists.add("-KX8DP8uS1-tWbimzanN");
-//
-//        int size = pastPlaylists.size() - 1;
-//        for (int i = size; i > -1 && i > size -3 ; i--) {
-//            aux.getPlaylistByIDForMyPlaylists(pastPlaylists.get(i));
-//        }
-//
-//        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, aux.getMyPlaylists());
-//        recyclerView.setAdapter(playlistAdapter);
+        pastPlaylistsRecyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
+        LinearLayoutManager llm = new LinearLayoutManager(this);
+        llm.setOrientation(LinearLayoutManager.HORIZONTAL);
+        pastPlaylistsRecyclerView.setLayoutManager(llm);
+        ArrayList<Playlist> playlists = aux.getMyPlaylists();
+        if (playlists == null) {
+            Log.d(aux.PASTPLAYLISTS, "why is playlists == null?");
+            playlists = new ArrayList<>();
+        }
+        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, playlists, PlaylistAdapter.PASTPLAYLISTS_VIEW);
+        pastPlaylistsRecyclerView.setAdapter(playlistAdapter);
     }
 
     private void setRecyclerViewNearMe() {
@@ -209,4 +198,7 @@ public class ActualStartActivity extends AppCompatActivity {
             mAuth.removeAuthStateListener(mAuthListener);
         }
     }
+
+    // EVENTUALLY OVERRIDE ONBACKPRESSED SO THAT WE DON'T ACCIDENTALLY GO BACK INTO THE PLAYLIST AFTER
+    // THEY LEAVE THE PLAYLIST
 }
