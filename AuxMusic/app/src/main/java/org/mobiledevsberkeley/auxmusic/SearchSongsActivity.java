@@ -140,10 +140,10 @@ public class SearchSongsActivity extends AppCompatActivity {
                     }
 
                     new MaterialDialog.Builder(SearchSongsActivity.this)
-                            .title(R.string.removeSongDialogTitle)
+                            .title(R.string.addSongsDialogTitle)
                             .content(message)
-                            .positiveText(R.string.SongDialogPositive)
-                            .negativeText(R.string.SongDialogNegative)
+                            .positiveText(R.string.addSongDialogPositive)
+                            .negativeText(R.string.addSongDialogNegative)
                             .onPositive(new MaterialDialog.SingleButtonCallback() {
                                 @Override
                                 public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
