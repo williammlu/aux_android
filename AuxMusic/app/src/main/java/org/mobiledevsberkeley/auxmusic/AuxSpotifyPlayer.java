@@ -52,7 +52,7 @@ public class AuxSpotifyPlayer implements PlayerInterface{
             Log.e("AuxSpotifyPlayer", "playback state is null");
             return false;
         }
-        if (!getPlaybackState().isPlaying) {
+        if (!getPlaybackState().isPlaying && mPlaylist.getSpotifySongList().size() != 0) {
             if (mPlaylist.getCurrentSongTime() != 0) {
                 Log.d("AuxSpotifyPlayer", "Resuming at " + mPlaylist.getCurrentSongTime());
                 mPlayer.resume(null);
@@ -98,12 +98,21 @@ public class AuxSpotifyPlayer implements PlayerInterface{
         return true;
     }
 
+    /**
+     * @return if song is playing
+     */
     public boolean skip() {
         int trackIndex = mPlaylist.getCurrentSongIndex();
-        return skipToTrack(trackIndex + 1);
+        if (trackIndex + 1 == mPlaylist.getSpotifySongIDList().size()) {
+            return AuxSingleton.getInstance().getSpotifyPlayer().getPlaybackState().isPlaying;
+        } else {
+            return skipToTrack(trackIndex + 1);
+        }
 
     }
-
+    /**
+    * @return if song is playing
+    */
     public boolean skipBack() {
 
         int trackIndex = mPlaylist.getCurrentSongIndex();
@@ -120,6 +129,9 @@ public class AuxSpotifyPlayer implements PlayerInterface{
         }
     }
 
+    /**
+     * @return if song is playing
+     */
     public boolean skipToTrack(int targetTrack) {
         if (targetTrack >= mPlaylist.getSpotifySongList().size() || targetTrack < 0) {
             Log.e("AuxSpotifyPlayer", "Playlist does not have a " + targetTrack + "th song!");

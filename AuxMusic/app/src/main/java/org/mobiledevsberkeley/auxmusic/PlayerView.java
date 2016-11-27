@@ -29,6 +29,7 @@ public class PlayerView extends RelativeLayout {
     private ImageButton mPlayButton;
     private ImageButton mBackButton;
     private PlayerInterface player;
+    private AuxSingleton aux = AuxSingleton.getInstance();
 
 
     public PlayerView(Context context) {
@@ -58,6 +59,7 @@ public class PlayerView extends RelativeLayout {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         inflater.inflate(R.layout.player_view, this);
+        aux.setPlayerView(this);
     }
 
     @Override
@@ -71,10 +73,8 @@ public class PlayerView extends RelativeLayout {
             public void onClick(View v) {
                 player = AuxSingleton.getInstance().getAuxPlayer();
                 if (player != null) {
-                    player.skip();
-                    if (AuxSingleton.getInstance().isPlaying()) {
-                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
-                    }
+                    boolean isPlaying = player.skip();
+                    setPlayButton(!isPlaying);
                 }
             }
         });
@@ -84,33 +84,24 @@ public class PlayerView extends RelativeLayout {
         mBackButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-            player = AuxSingleton.getInstance().getAuxPlayer();
-            if (player != null) {
-                player.skipBack();
-                if (AuxSingleton.getInstance().isPlaying()) {
-                    mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
+                player = AuxSingleton.getInstance().getAuxPlayer();
+                if (player != null) {
+                    boolean isPlaying = player.skipBack();
+                    setPlayButton(!isPlaying);
                 }
-            }
             }
         });
 
 
         mPlayButton = (ImageButton) this
                 .findViewById(R.id.player_view_play_button);
-
-        if (AuxSingleton.getInstance().isPlaying()) {
-            mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
-        }
-
         mPlayButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 player = AuxSingleton.getInstance().getAuxPlayer();
                 if (player != null) {
-                    player.togglePlay();
-                    if (AuxSingleton.getInstance().isPlaying()) {
-                        mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
-                    }
+                    boolean isPlaying = player.togglePlay();
+                    setPlayButton(!isPlaying);
                 }
 
             }
@@ -135,6 +126,18 @@ public class PlayerView extends RelativeLayout {
             }
         });
 
+        setPlayButton(!AuxSingleton.getInstance().isPlaying());
 
+    }
+
+    public void setPlayButton(boolean showPlaySymbol) {
+        if ( mPlayButton != null) {
+            if (showPlaySymbol) {
+                mPlayButton.setBackground(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
+            } else {
+                mPlayButton.setBackground(getResources().getDrawable(R.drawable.ic_pause_white_48px));
+
+            }
+        }
     }
 }

@@ -10,6 +10,8 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 
@@ -26,13 +28,22 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
     private View parentView;
+    private boolean isHost;
 
     private RecyclerView recyclerView;
     private MusicAdapter musicAdapter;
+    private Menu menu;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_playlist_host);
+        isHost = aux.checkIsHost(aux.getCurrentUser().getUID());
+        if (isHost) {
+            setContentView(R.layout.activity_playlist_host);
+        }
+        else {
+            setContentView(R.layout.activity_playlist_guest);
+        }
+        setTitle(aux.getCurrentPlaylist().getPlaylistName());
         parentView = findViewById(R.id.activity_playlist_layout);
 
 
@@ -67,7 +78,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 getResources().getConfiguration().orientation);
-        dividerItemDecoration.setDrawable(new ColorDrawable(0x979797));
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.horizontal_line));
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
@@ -248,5 +259,30 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
             });
 
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar_menu, menu);
+        this.menu = menu;
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.joinPlaylist:
+                menu.findItem(R.id.leavePlaylist).setVisible(true);
+                item.setVisible(false);
+                //joining logic
+
+
+
+            case R.id.leavePlaylist:
+                menu.findItem(R.id.joinPlaylist).setVisible(true);
+                item.setVisible(false);
+                //leaving logic
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

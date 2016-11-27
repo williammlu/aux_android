@@ -3,6 +3,17 @@
     <color name="colorPrimary">#808080</color>
     <color name="colorPrimaryDark">#000000</color>
     <color name="colorAccent">#FFFFFF</color>
+    <color name="colorBackground">#1D1D1D</color>
 
     <color name="black_overlay">#66000000</color>
+
+
+
+    <color name="textColorActive">#ffffff</color>
+    <color name="textColorInactive">#9c9c9c</color>
+    <color name="textLightButtonText">#2D2D2D</color>
+
+    <color name="dividerColor">#979797</color>
+
+
 </resources>

@@ -19,7 +19,8 @@
     <string name="noPlaylistsFound">No playlists found</string>
     <string name="songSearchHint">Search by song, artist or album name...</string>
     <string name="noSongsFound">No songs found</string>
-    <string name="addSongDialogTitle">Add Song Confirmation</string>
+    <string name="addSongs">Add Songs</string>
+    <string name="addSongsDialogTitle">Add Songs Confirmation</string>
     <string name="addSongDialogPositive">Confirm</string>
     <string name="addSongDialogNegative">Cancel</string>
     <string name="title_activity_playlist_guest">PlaylistActivityGuest</string>
@@ -30,4 +31,14 @@
     <string name="createPlaylist">Create Playlist</string>
     <string name="password_additional_dialog">If you set a password, users will need it to join the playlist.</string>
     <string name="location_additional_dialog">This allows anyone within a certain radius to be able to jon your playlist.</string>
+    <string name="hasCurrentPlaylistDialog">Warning: You have an active playlist</string>
+    <string name="createPlaylistDialogMessage">If you create this playlist, you will leave your current active playlist.</string>
+    <string name="createAnyways">Create Anyways</string>
+    <string name="justView">Just View</string>
+    <string name="dontCreate">Don\'t Create</string>
+    <string name="joinPlaylistDialogMessage">If you join this playlist, you will leave your current active playlist.</string>
+    <string name="joinAnyways">Join Anyways</string>
+    <string name="passwordTitle">Password</string>
+    <string name="passwordText">Enter password here:</string>
+
 </resources>

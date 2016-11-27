@@ -5,10 +5,8 @@
     android:id="@+id/activity_search_songs"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="0dp"
-    android:paddingLeft="0dp"
-    android:paddingRight="0dp"
-    android:paddingTop="@dimen/activity_vertical_margin"
+    android:layout_marginBottom="@dimen/activity_vertical_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
     tools:context="org.mobiledevsberkeley.auxmusic.SearchSongsActivity">
 
     <SearchView
@@ -21,14 +19,6 @@
         app:layout_constraintLeft_toLeftOf="parent"
         android:queryHint="@string/songSearchHint" />
 
-    <android.support.v7.widget.RecyclerView
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:id="@+id/recyclerView"
-        android:layout_below="@+id/searchSongView"
-        android:layout_alignParentStart="true"
-        android:layout_marginTop="@dimen/activity_vertical_margin" />
-
     <TextView
         android:text="@string/noSongsFound"
         android:layout_width="match_parent"
@@ -38,4 +28,22 @@
         android:layout_marginTop="@dimen/no_results_text_top_margin"
         android:visibility="invisible"
         android:id="@+id/noSongsFound" />
+
+    <android.support.v7.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/recyclerView"
+        android:layout_alignParentStart="true"
+        android:layout_above="@+id/add_songs_button"
+        android:layout_below="@+id/searchSongView"
+        android:layout_marginBottom="@dimen/activity_vertical_margin" />
+
+    <Button
+        android:text="Add Songs"
+        android:layout_width="@dimen/add_button_width"
+        android:layout_height="wrap_content"
+        android:id="@+id/add_songs_button"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/textLightButtonText" />
 </RelativeLayout>

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="0dp"
+    android:layout_marginLeft="@dimen/activity_horizontal_margin"
+    android:layout_marginRight="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin">
+
+    <ImageView
+        android:layout_width="@dimen/search_album_image_side"
+        android:layout_height="@dimen/search_album_image_side"
+        android:id="@+id/imageView"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:background="@color/black_overlay"
+        android:layout_marginRight="@dimen/search_list_margin" />
+
+
+    <TextView
+        android:text="Song Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:id="@+id/songName"
+        android:textSize="20sp"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:layout_alignTop="@+id/imageView"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_marginBottom="5dp"
+        android:textColor="@color/textColorActive" />
+
+    <TextView
+        android:text="Artist Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:id="@+id/artistName"
+        android:ellipsize="end"
+        android:layout_below="@+id/songName"
+        android:maxLines="1"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageView"
+        android:layout_marginBottom="5dp"
+        android:textSize="20sp"
+        android:textColor="@color/textColorInactive" />
+
+    <TextView
+        android:text="Album Name"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="16dp"
+        android:id="@+id/albumName"
+        android:ellipsize="end"
+        android:maxLines="1"
+        android:visibility="gone"
+        android:layout_below="@+id/artistName"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/imageView" />
+</RelativeLayout>

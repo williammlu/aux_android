@@ -7,7 +7,8 @@
     android:orientation="vertical"
     android:paddingTop="16dp"
     android:paddingLeft="16dp"
-    android:paddingRight="16dp">
+    android:paddingRight="16dp"
+    android:background="@color/colorPrimary">
 
     <!--<TextView-->
         <!--android:id="@+id/nameOfPlaylist"-->
@@ -24,7 +25,9 @@
         android:layout_marginTop="16dp"
         android:layout_marginLeft="8dp"
         android:inputType="textPersonName"
-        android:hint="Name" />
+        android:hint="Name"
+        android:textColor="@color/colorBackground"
+        android:backgroundTint="@color/colorBackground" />
 
     <CheckBox
         android:text="Password Protected"
@@ -33,7 +36,10 @@
         android:layout_alignLeft="@+id/nameTextView"
         android:layout_below="@+id/nameTextView"
         android:layout_marginTop="4dp"
-        android:id="@+id/passwordProtect" />
+        android:id="@+id/passwordProtect"
+        android:textColorLink="@color/colorBackground"
+        android:textColor="@color/colorBackground"
+        android:buttonTint="@color/colorBackground" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -42,7 +48,9 @@
         android:layout_alignTop="@+id/passwordProtect"
         android:layout_marginTop="2dp"
         android:text="[?]"
-        android:id="@+id/passwordAdditionalInformation"/>
+        android:id="@+id/passwordAdditionalInformation"
+        android:textColor="@color/colorBackground"
+        android:background="@android:color/transparent"  />
     <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
@@ -53,32 +61,32 @@
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:inputType="text|textVisiblePassword"
         android:ems="10"
-        android:visibility="gone"
-        android:text="Password"
+        android:inputType="textPersonName"
+        android:hint="Password"
         android:layout_alignLeft="@+id/passwordProtect"
         android:layout_below="@+id/passwordProtect"
         android:layout_marginTop="4dp"
         android:id="@+id/passwordEditText"
-         />
-    <CheckBox
-        android:text="Search by Location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/passwordEditText"
-        android:layout_below="@+id/passwordEditText"
-        android:layout_marginTop="4dp"
-        android:id="@+id/locationChecker" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/locationChecker"
-        android:layout_marginLeft="4dp"
-        android:layout_alignTop="@+id/locationChecker"
-        android:layout_marginTop="2dp"
-        android:text="[?]"
-        android:id="@+id/locationAdditionalInformation"/>
+        android:textColor="@color/colorBackground"
+        android:backgroundTint="@color/colorBackground" />
+    <!--<CheckBox-->
+        <!--android:text="Search by Location"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignLeft="@+id/passwordEditText"-->
+        <!--android:layout_below="@+id/passwordEditText"-->
+        <!--android:layout_marginTop="4dp"-->
+        <!--android:id="@+id/locationChecker" />-->
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_toRightOf="@+id/locationChecker"-->
+        <!--android:layout_marginLeft="4dp"-->
+        <!--android:layout_alignTop="@+id/locationChecker"-->
+        <!--android:layout_marginTop="2dp"-->
+        <!--android:text="[?]"-->
+        <!--android:id="@+id/locationAdditionalInformation"/>-->
 
     <!--<CheckBox-->
         <!--android:text="Suggestions Require Host Approval"-->
@@ -89,7 +97,7 @@
 
     <Button
         android:text="Create"
-        style="@style/ButtonStyle"
+        style="@style/DarkButtonStyle"
         android:id="@+id/createPlaylistBtn"
         android:enabled="false"
         android:background="@drawable/button_shape"

@@ -1,17 +1,18 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-//import android.support.v7.widget.SearchView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
-import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -31,10 +32,8 @@ public class ActualStartActivity extends AppCompatActivity {
     ArrayList<Playlist> myPlaylists;
     ArrayList<Playlist> nearMe;
     SignInCallback callback;
-    SearchView searchView;
     ArrayList<Playlist> searchResults;
     PlaylistAdapter playlistAdapter;
-    private Button hostPlaylistButton;
 
     RecyclerView pastPlaylistsRecyclerView;
 
@@ -76,9 +75,6 @@ public class ActualStartActivity extends AppCompatActivity {
                             startActivity(intent);
                         }
                     });
-
-//                    testingActivity();
-                    searchView = (SearchView) findViewById(R.id.searchView);
                     setSearchView();
                     setRecyclerViewNearMe();
                     setRecyclerViewMyPlaylist();
@@ -111,7 +107,7 @@ public class ActualStartActivity extends AppCompatActivity {
 
 
     private void setSearchView() {
-        searchView.setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.searchView).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), SearchPlaylistsActivity.class);

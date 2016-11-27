@@ -31,6 +31,7 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_search_playlists);
+        setTitle("Find Playlists");
         searchView();
         setRecyclerViewByName();
         mTextView = (TextView) findViewById(R.id.noPlaylistsFoundText);
