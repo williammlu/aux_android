@@ -133,9 +133,9 @@ public class PlayerView extends RelativeLayout {
     public void setPlayButton(boolean showPlaySymbol) {
         if ( mPlayButton != null) {
             if (showPlaySymbol) {
-                mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
+                mPlayButton.setBackground(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
             } else {
-                mPlayButton.setImageDrawable(getResources().getDrawable(R.drawable.ic_pause_white_48px));
+                mPlayButton.setBackground(getResources().getDrawable(R.drawable.ic_pause_white_48px));
 
             }
         }
