@@ -3,6 +3,7 @@ package org.mobiledevsberkeley.auxmusic;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
@@ -14,8 +15,12 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.geofire.GeoLocation;
 import com.google.android.gms.location.LocationRequest;
+
+import static android.R.id.message;
 
 public class CreatePlaylistActivity extends AppCompatActivity /*implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener*/{
     public static String TAG = "debug";
@@ -47,10 +52,12 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
         super.onCreate(savedInstanceState);
 //        if (mGoogleApiClient == null) createGoogleApiClient();
         setContentView(R.layout.activity_create_playlist);
+        setTitle("Host");
         thisActivity = this;
 
         passwordProtectCheckbox = (CheckBox) findViewById(R.id.passwordProtect);
         passwordEditText = (EditText) findViewById(R.id.passwordEditText);
+        passwordEditText.setVisibility(View.GONE);
         nameText = (EditText) findViewById(R.id.nameTextView);
         createPlaylistBtn = (Button) findViewById(R.id.createPlaylistBtn);
         passwordAdditionalInformation = (TextView) findViewById(R.id.passwordAdditionalInformation);
@@ -96,6 +103,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
                 if (isChecked) {
                     passwordEditText.setVisibility(View.VISIBLE);
                     isPasswordOK = false;
+                    checkCreatePlaylistButtonEnabled();
                     passwordEditText.addTextChangedListener(new TextWatcher() {
                         @Override
                         public void beforeTextChanged(CharSequence s, int start, int count, int after) {
@@ -106,6 +114,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
                         public void onTextChanged(CharSequence s, int start, int before, int count) {
                             if (s.length() == 0) isPasswordOK = false;
                             else isPasswordOK = true;
+                            checkCreatePlaylistButtonEnabled();
                         }
 
                         @Override
@@ -117,8 +126,9 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
                 else {
                     passwordEditText.setVisibility(View.GONE);
                     isPasswordOK = true;
+                    checkCreatePlaylistButtonEnabled();
                 }
-                checkCreatePlaylistButtonEnabled();
+
             }
         });
     }
@@ -156,12 +166,37 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
         createPlaylistBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String partyName = nameText.getText().toString();
-
-                String password = "";
-                if (passwordProtectCheckbox.isChecked()) {
-                    password = passwordEditText.getText().toString();
+                //this is where I check if this potential host already has a playlist
+                if (aux.hasActive) {
+                    new MaterialDialog.Builder(getApplicationContext())
+                            .title(R.string.hasCurrentPlaylistDialog)
+                            .content(R.string.createPlaylistDialogMessage)
+                            .positiveText(R.string.createAnyways)
+                            .negativeText(R.string.dontCreate)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    //leave the old playlist
+                                    //TODO: implement after merging with wilbur
+                                    //create this playlist
+                                    createPlaylist();
+                                }
+                            })
+                            .show();
+                } else {
+                    //create this playlist
+                    createPlaylist();
                 }
+            }
+        });
+    }
+
+    private void createPlaylist() {
+        String partyName = nameText.getText().toString();
+        String password = "";
+        if (passwordProtectCheckbox.isChecked()) {
+            password = passwordEditText.getText().toString();
+        }
 //                boolean locationTrack = ((CheckBox) findViewById(R.id.locationChecker)).isChecked();
 //                boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
 
@@ -169,14 +204,13 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 //                    // do location track stuff, then mGeoLocation != null
 //                }
 
-                aux.createPlaylist(partyName, password, mGeoLocation);
+        aux.createPlaylist(partyName, password, mGeoLocation);
 
 
-                // do spotify auth when trying to create
-                Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
-                startActivity(spotifyAuthIntent);
-            }
-        });
+        // do spotify auth when trying to create
+        Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
+        startActivity(spotifyAuthIntent);
+
     }
 
     private void setAdditionalInformation() {

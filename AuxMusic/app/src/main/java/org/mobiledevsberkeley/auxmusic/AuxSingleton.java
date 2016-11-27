@@ -66,6 +66,12 @@ public class AuxSingleton {
     private ValueEventListener spotifySongIDListener;
 
     private ArrayList<Playlist> myPlaylists = new ArrayList<>();
+    /*This boolean is to check if the current playlist is active for the current user.
+    Ie the playlist itself has to be active (host didnt leave) and the playlist has to be
+    active for this particular user (what this boolean checks)*/
+    public boolean hasActive; //this was set in the ActualStartActivity, it changes whether user will have the dialog box pop up
+    private boolean isCurrentActive;
+    private Playlist activePlaylist;
 
 //    private ValueEventListener userListener;
     // have song playlists and users playlists right here. this is a weird structure, but i'm not sure how to deal with this yet.
@@ -151,12 +157,12 @@ public class AuxSingleton {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Playlist playlist = dataSnapshot.getValue(Playlist.class);
-                    boolean hasCurrent = false;
+                    hasActive = false;
                     if (playlist != null && playlist.getActive()) {
                         setCurrentPlaylist(playlist, playlistKey);
-                        hasCurrent = true;
+                        hasActive = true;
                     }
-                    callback.playlistOnComplete(hasCurrent);
+                    callback.playlistOnComplete(hasActive);
                 }
 
                 @Override
@@ -367,6 +373,11 @@ public class AuxSingleton {
     public void setCoverArtURL(String coverArtURL) {
 //        updateValue(dbReference.child(PLAYLISTS_NODE).child(user.getUID()));
     }
+
+
+
+
+
 
 
     public interface AuxGetSongTask {
