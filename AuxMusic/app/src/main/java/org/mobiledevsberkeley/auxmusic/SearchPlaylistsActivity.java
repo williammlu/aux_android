@@ -25,7 +25,7 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
     RecyclerView mRecyclerView;
     ArrayList<Playlist> searchResults;
     AuxSingleton aux = AuxSingleton.getInstance();
-    PlaylistAdapterSearch playlistAdapterSearch;
+    PlaylistAdapter playlistAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,7 +58,7 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
                             mTextView.setVisibility(View.INVISIBLE);
                             mRecyclerView.setVisibility(View.VISIBLE);
                             searchResults.add(playlist);
-                            playlistAdapterSearch.notifyDataSetChanged();
+                            playlistAdapter.notifyDataSetChanged();
                             Log.d("debug", "found the damn playlist it's called " + playlist.getPlaylistName() + " and key " + playlist.getPlaylistKey());
                         }
                     }
@@ -103,9 +103,9 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
                 getResources().getConfiguration().orientation);
         mRecyclerView.addItemDecoration(dividerItemDecoration);
 
-        playlistAdapterSearch = new PlaylistAdapterSearch(this, searchResults);
+        playlistAdapter = new PlaylistAdapter(this, searchResults, PlaylistAdapter.SEARCH_VIEW);
 
-        mRecyclerView.setAdapter(playlistAdapterSearch);
+        mRecyclerView.setAdapter(playlistAdapter);
     }
 
     public void playlistIntent() {
