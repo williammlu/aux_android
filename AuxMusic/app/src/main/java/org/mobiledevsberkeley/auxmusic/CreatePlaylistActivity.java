@@ -54,7 +54,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
         nameText = (EditText) findViewById(R.id.nameTextView);
         createPlaylistBtn = (Button) findViewById(R.id.createPlaylistBtn);
         passwordAdditionalInformation = (TextView) findViewById(R.id.passwordAdditionalInformation);
-        locationAdditionalInformation = (TextView) findViewById(R.id.locationAdditionalInformation);
+//        locationAdditionalInformation = (TextView) findViewById(R.id.locationAdditionalInformation);
 
         mGeoLocation = null;
 
@@ -162,12 +162,12 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
                 if (passwordProtectCheckbox.isChecked()) {
                     password = passwordEditText.getText().toString();
                 }
-                boolean locationTrack = ((CheckBox) findViewById(R.id.locationChecker)).isChecked();
+//                boolean locationTrack = ((CheckBox) findViewById(R.id.locationChecker)).isChecked();
 //                boolean hostApproval = ((CheckBox) findViewById(R.id.hostApprovalChecker)).isChecked();
 
-                if (locationTrack) {
-                    // do location track stuff, then mGeoLocation != null
-                }
+//                if (locationTrack) {
+//                    // do location track stuff, then mGeoLocation != null
+//                }
 
                 aux.createPlaylist(partyName, password, mGeoLocation);
 
@@ -189,14 +189,14 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
             }
         });
 
-        locationAdditionalInformation.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
-                builder.setMessage(R.string.location_additional_dialog)
-                        .create();
-            }
-        });
+//        locationAdditionalInformation.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
+//                builder.setMessage(R.string.location_additional_dialog)
+//                        .create();
+//            }
+//        });
     }
 
 //    private void testingFirebaseStuff(){

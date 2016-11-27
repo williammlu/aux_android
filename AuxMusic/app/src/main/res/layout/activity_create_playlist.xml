@@ -62,23 +62,23 @@
         android:layout_marginTop="4dp"
         android:id="@+id/passwordEditText"
          />
-    <CheckBox
-        android:text="Search by Location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/passwordEditText"
-        android:layout_below="@+id/passwordEditText"
-        android:layout_marginTop="4dp"
-        android:id="@+id/locationChecker" />
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_toRightOf="@+id/locationChecker"
-        android:layout_marginLeft="4dp"
-        android:layout_alignTop="@+id/locationChecker"
-        android:layout_marginTop="2dp"
-        android:text="[?]"
-        android:id="@+id/locationAdditionalInformation"/>
+    <!--<CheckBox-->
+        <!--android:text="Search by Location"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_alignLeft="@+id/passwordEditText"-->
+        <!--android:layout_below="@+id/passwordEditText"-->
+        <!--android:layout_marginTop="4dp"-->
+        <!--android:id="@+id/locationChecker" />-->
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_toRightOf="@+id/locationChecker"-->
+        <!--android:layout_marginLeft="4dp"-->
+        <!--android:layout_alignTop="@+id/locationChecker"-->
+        <!--android:layout_marginTop="2dp"-->
+        <!--android:text="[?]"-->
+        <!--android:id="@+id/locationAdditionalInformation"/>-->
 
     <!--<CheckBox-->
         <!--android:text="Suggestions Require Host Approval"-->

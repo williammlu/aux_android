@@ -120,6 +120,7 @@ public class ActualStartActivity extends AppCompatActivity {
 
 
     private void setRecyclerViewMyPlaylist() {
+        //if size == 0, display the default text
 //        User user = aux.getCurrentUser();
 //        RecyclerView recyclerView = (RecyclerView) findViewById(R.id.recyclerViewMyPlaylist);
 //        LinearLayoutManager llm = new LinearLayoutManager(this);
