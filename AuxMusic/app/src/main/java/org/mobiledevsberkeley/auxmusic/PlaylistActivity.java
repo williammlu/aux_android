@@ -78,7 +78,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 getResources().getConfiguration().orientation);
-        dividerItemDecoration.setDrawable(new ColorDrawable(0x979797));
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.horizontal_line));
         recyclerView.addItemDecoration(dividerItemDecoration);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 

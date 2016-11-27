@@ -119,7 +119,6 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 
                         @Override
                         public void afterTextChanged(Editable s) {
-
                         }
                     });
                 }
