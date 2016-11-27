@@ -106,16 +106,25 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
                                             aux.getCurrentPlaylist().setCurrentSongIndex(currentSongIndex - 1);
                                         } else if (songIndex == currentSongIndex) {
                                             aux.getCurrentPlaylist().setCurrentSongIndex(Math.max(currentSongIndex, list.size() - 1));
+                                            if (aux.getCurrentPlaylist().getSpotifySongIDList().size() != 0) {
+                                                aux.getAuxPlayer().skipToTrack(aux.getCurrentPlaylist().getCurrentSongIndex());
+                                            } else {
+                                                aux.getSpotifyPlayer().pause(null); // pause playing if no songs there
+                                            }
                                             // HA. GET FUCKED
                                         }
                                         Log.d("MusicAdapter", "Adding a song " + songName);
                                         snackbarRemove.show();
                                         Song targetSong = getSongAtIndex(getLayoutPosition());
                                         //TODO: put this back in once Singleton's addSong method works
-                                        AuxSingleton.getInstance().removeSong(targetSong);
+                                        aux.removeSong(targetSong);
                                         notifyDataSetChanged();
-                                        if (AuxSingleton.getInstance().getCurrentSong() == null) {
-                                            AuxSingleton.getInstance().getCurrentSongView().clearAll();
+
+                                        // reset player state if no songs to play
+                                        if (aux.getCurrentPlaylist().getSpotifySongIDList().size() == 0) {
+                                            aux.getCurrentSongView().clearAll();
+                                            aux.getSpotifyPlayer().pause(null);
+                                            aux.getPlayerView().setPlayButton(true);
                                         }
                                     }
                                 })

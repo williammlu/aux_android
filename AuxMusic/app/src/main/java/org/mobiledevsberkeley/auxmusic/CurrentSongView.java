@@ -85,7 +85,8 @@ public class CurrentSongView extends RelativeLayout {
     }
 
     public void clearAll() {
-        img.setImageResource(0);
+        img.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
+
         songTitle.setText("Currently no song playing");
         artistTitle.setText("");
         albumTitle.setText("");

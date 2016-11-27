@@ -36,6 +36,7 @@ public class AuxSingleton {
 
 
     private static CurrentSongView currentSongView;
+    private static PlayerView playerView;
 
     // TODO: create player interface
     private static Player spotifyPlayer;
@@ -481,6 +482,14 @@ public class AuxSingleton {
         } else {
             return null;
         }
+    }
+
+    public static PlayerView getPlayerView() {
+        return playerView;
+    }
+
+    public static void setPlayerView(PlayerView playerView) {
+        AuxSingleton.playerView = playerView;
     }
 
 
