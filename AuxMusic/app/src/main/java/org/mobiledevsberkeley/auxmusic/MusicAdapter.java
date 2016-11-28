@@ -36,6 +36,7 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
 
     public static final int SEARCH_TO_ADD = 0;
     public static final int DISPLAY_PLAYLIST = 1;
+    public static final int DISPLAY_PLAYLIST_GUEST = 2;
 
     public int displayType;
 

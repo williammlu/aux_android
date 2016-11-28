@@ -84,7 +84,11 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 
         // set musicadapter/recyclerview to take the same list of songs as the current playlist!
         List<Song> playlistSongList = AuxSingleton.getInstance().getCurrentPlaylist().getSpotifySongList();
-        musicAdapter = new MusicAdapter(this, playlistSongList, MusicAdapter.DISPLAY_PLAYLIST, findViewById(R.id.content_playlist));
+        if (isHost) {
+            musicAdapter = new MusicAdapter(this, playlistSongList, MusicAdapter.DISPLAY_PLAYLIST, findViewById(R.id.content_playlist));
+        } else {
+            musicAdapter = new MusicAdapter(this, playlistSongList, MusicAdapter.DISPLAY_PLAYLIST_GUEST, findViewById(R.id.content_playlist));
+        }
         AuxSingleton.getInstance().setMusicAdapter(musicAdapter);
         recyclerView.setAdapter(musicAdapter);
 
@@ -109,54 +113,12 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
          * and playlist to user. BUT IF USER HAD AN ACTIVE PLAYLIST, TELL THEM IT WILL LEAVE THAT PLAYLIST FIRST.
          * If inactive and host, clicking reactivate changes isActive to true, sets currentPlaylist
          * If inactive and not host, cannot do anything*/
-        Button leaveButton = (Button) findViewById(R.id.leavePlaylist);
-        Button activateButton = (Button) findViewById(R.id.activatePlaylist);
-        //singleton playlist should reflect whichever playlist is being DISPLAYED. firebase playlist should reflect whichever is ACTIVE
-
-//        User user = aux.getCurrentUser();
-//        final boolean isHost = aux.checkIsHost(user.getUID());
-        final Context context = this;
-        leaveButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                aux.leavePlaylist(context);
-            }
-        });
-//        //replace all of this once merged
-//        final User user = aux.getCurrentUser();
-//        final DatabaseReference usersRef = aux.getDataBaseReference().child("users").child(user.getUID()).push();
-//        boolean isCurrentPlaylist = user.getPlaylistKey().equals("");
-//        boolean isActive = true;
-//        final boolean isHost = true;
-//
-//        if (isCurrentPlaylist && isActive) {
-//            leaveButton.setVisibility(View.VISIBLE);
-//            leaveButton.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View view) {
-//                    user.setPlaylistKey(null);
-//                    usersRef.setValue(user, new DatabaseReference.CompletionListener() {
-//                    @Override
-//                    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-//                        if (databaseError != null) {
-//                            Log.d(TAG, "Data could not be saved " + databaseError.getMessage());
-//                        } else {
-//                            Log.d(TAG, "Data saved successfully.");
-//                        }
-//                    }
-//                });
-//                    if (isHost) {
-//
-//                    }
-//                }
-//            });
-//
-//        }
+//        Button leaveButton = (Button) findViewById(R.id.leavePlaylist);
+//        Button activateButton = (Button) findViewById(R.id.activatePlaylist);
+//        //singleton playlist should reflect whichever playlist is being DISPLAYED. firebase playlist should reflect whichever is ACTIVE
 
         CurrentSongView currentSongView = (CurrentSongView) findViewById(R.id.currentSongView);
         AuxSingleton.getInstance().setCurrentSongView(currentSongView);
-
-
 
         Button addSongButton = (Button) findViewById(R.id.playlistAddSongButton);
         addSongButton.setOnClickListener(new View.OnClickListener() {
@@ -166,10 +128,6 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
                 startActivity(intent);
             }
         });
-    }
-
-    public void goToStartActivity() {
-        startActivity(new Intent(getApplicationContext(), ActualStartActivity.class));
     }
 
     @Override
@@ -282,7 +240,13 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
                 menu.findItem(R.id.joinPlaylist).setVisible(true);
                 item.setVisible(false);
                 //leaving logic
+                aux.leavePlaylist(this);
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        // do nothing . ha
     }
 }
