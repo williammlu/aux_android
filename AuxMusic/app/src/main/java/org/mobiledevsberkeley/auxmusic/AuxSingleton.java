@@ -269,8 +269,12 @@ public class AuxSingleton {
         return isHost;
     }
 
-    public void leavePlaylist(Context context) {
+    public void leavePlaylist(Context context, boolean isHost) {
         removeUserFromPlaylist(currentUser);
+        if (isHost) {
+//            spotifyPlayer.pause(null);
+            spotifyPlayer.destroy();
+        }
         userRef.child("playlistKey").removeValue();
         if (currentPlaylist.getActive() && checkIsHost(currentUser.getUID())) {
             // change playlist to inactive, remove user, etc.
