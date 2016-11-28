@@ -1,6 +1,7 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
@@ -68,7 +69,7 @@ public class AuxSingleton {
 
     private ValueEventListener spotifySongIDListener;
 
-    private ArrayList<Playlist> myPlaylists = new ArrayList<>();
+    private ArrayList<Playlist> myPlaylists;
     /*This boolean is to check if the current playlist is active for the current user.
     Ie the playlist itself has to be active (host didnt leave) and the playlist has to be
     active for this particular user (what this boolean checks)*/
@@ -85,10 +86,7 @@ public class AuxSingleton {
 
     private void updateValue(DatabaseReference ref, String key, Object value) {
         ref.child(key).setValue(value);
-//        Map<String, Object> childUpdates = new HashMap<>();
-//        childUpdates.put(key, value);
-//        ref.updateChildren(childUpdates);
-//        Log.d(TAG, "we added a " + key + ", at " + ref.getKey() + "yay!");
+        Log.d(TAG, "we added a " + key + ", at " + ref.getKey() + "yay!");
     }
 
     public static AuxSingleton getInstance() {
@@ -105,29 +103,43 @@ public class AuxSingleton {
         this.currentUser = user;
     }
     public ArrayList<Playlist> getMyPlaylists() {
-        Log.d(PASTPLAYLISTS, "size is " + myPlaylists.size());
+        if (myPlaylists != null) {
+            Log.d(PASTPLAYLISTS, "size is " + myPlaylists.size());
+        }
         return myPlaylists;
     }
 
-    public void populateMyPlaylists() {
+    public void populateMyPlaylists(final SignInCallback callback) {
         if (currentUser != null) {
-            for (String s: currentUser.getPastPlaylists()) {
-                dbReference.child(PLAYLISTS_NODE).child(s).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Playlist playlist = dataSnapshot.getValue(Playlist.class);
-                        if (playlist != null) {
-                            Log.d("PASTPLAYLISTS", "we populating with a nonnull playlist called " + playlist.getPlaylistKey());
-                            myPlaylists.add(playlist);
+            if (myPlaylists == null) {
+                myPlaylists = new ArrayList<>();
+                final List<String> past = currentUser.getPastPlaylists();
+                if (past.size() == 0) {
+                    callback.playlistOnComplete(false);
+                }
+                for (String s: past) {
+                    dbReference.child(PLAYLISTS_NODE).child(s).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                            if (playlist != null) {
+                                Log.d("PASTPLAYLISTS", "we populating with a nonnull playlist called " + playlist.getPlaylistKey());
+                                myPlaylists.add(playlist);
+                                if (myPlaylists.size() == past.size()) {
+                                    callback.playlistOnComplete(false);
+                                }
+//                                adapter.notifyDataSetChanged();
+                            }
                         }
-                    }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
-
+                        }
+                    });
+                }
+            } else {
+                callback.playlistOnComplete(false);
             }
         }
     }
@@ -146,6 +158,7 @@ public class AuxSingleton {
                     auxSingleton.addUser(newUser);
 //                    Log.d(TAG, "snapshot was null, we now have user with uid: " + currentUser.getUID() + " and isHost: " + currentUser.isHost());
                 } else {
+                    snapshotUser.setPastPlaylists();
                     auxSingleton.setCurrentUser(snapshotUser);
 //                    Log.d(TAG, "snapshot was not null, we have old user with uid: " + snapshotUser.getUID() + " and isHost: " + snapshotUser.isHost());
                 }
@@ -161,10 +174,10 @@ public class AuxSingleton {
     public void hasCurrentPlaylist(final SignInCallback callback) {
         //this will set the playlist variable in the global scope, however we only want to ever use the SINGLETON playlist
         final String playlistKey = currentUser.getPlaylistKey();
-//        Log.d(TAG, "in hascurrentplaylist singleton, key is: " + playlistKey);
+        Log.d(TAG, "in hascurrentplaylist singleton, key is: " + playlistKey);
         if (playlistKey == null || playlistKey.equals("")) {
-            populateMyPlaylists();
-            callback.playlistOnComplete(false);
+//            callback.playlistOnComplete(false);
+            populateMyPlaylists(callback);
         } else {
             dbReference.child(PLAYLISTS_NODE).child(playlistKey).addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -226,8 +239,7 @@ public class AuxSingleton {
             DatabaseReference currPlaylistRef = dbReference.child(PLAYLISTS_NODE).child(currentPlaylist.getPlaylistKey());
             updateValue(currPlaylistRef, "active", false);
         }
-        //TODO: if switch back to playlsitactivty change this back
-        ((PlaylistActivity)context).goToStartActivity();
+        context.startActivity(new Intent(context, ActualStartActivity.class));
     }
 
     public void createPlaylist(String partyName, String password, GeoLocation mGeoLocation) {
@@ -266,14 +278,17 @@ public class AuxSingleton {
 
     public void addPastPlaylist(Playlist playlist) {
         if (currentUser != null) {
-            currentUser.addToPastPlaylists(playlist.getPlaylistKey());
-            if (myPlaylists != null) {
+            boolean added = currentUser.addToPastPlaylists(playlist.getPlaylistKey());
+            if (added) {
+                if (myPlaylists == null) {
+                    Log.d(TAG, "wtf why is myplaylists null?");
+                }
                 myPlaylists.add(playlist);
+                if (userRef == null) {
+                    userRef = dbReference.child(USERS_NODE).child(currentUser.getUID());
+                }
+                updateValue(userRef, PASTPLAYLISTS_LIST, currentUser.getPastPlaylists());
             }
-            if (userRef == null) {
-                userRef = dbReference.child(USERS_NODE).child(currentUser.getUID());
-            }
-            updateValue(userRef, PASTPLAYLISTS_LIST, currentUser.getPastPlaylists());
         }
     }
 

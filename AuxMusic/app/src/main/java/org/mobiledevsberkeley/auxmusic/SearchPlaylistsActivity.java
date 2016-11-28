@@ -16,6 +16,7 @@ import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 
@@ -45,8 +46,6 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
-                mTextView.setVisibility(View.VISIBLE);
-                mRecyclerView.setVisibility(View.GONE);
                 searchResults.clear();
                 String regexed = s.replaceAll("[^A-Za-z]", "").toLowerCase();
                 DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
@@ -84,7 +83,21 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
 
                     }
                 });
+                // change the "no playlists found" thingy
+                queryRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        if (dataSnapshot.getValue() == null) {
+                            mTextView.setVisibility(View.VISIBLE);
+                            mRecyclerView.setVisibility(View.GONE);
+                        }
+                    }
 
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
                 return true;
             }
 

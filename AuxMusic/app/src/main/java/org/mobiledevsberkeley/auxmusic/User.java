@@ -22,7 +22,7 @@ public class User {
     private String participantName; // Optional, by default this is "Anon"
     private String playlistKey; // Key to the current playlist to check if they're in a playlist right now
 
-    private List<String> pastPlaylists = new ArrayList<>(); // arraylist of either Playlist objects or String (playlistKeys). not sure right now which to use.
+    private List<String> pastPlaylists; // arraylist of either Playlist objects or String (playlistKeys). not sure right now which to use.
 
     @Exclude
     HashSet<String> pastPlaylistsSet = new HashSet<>();
@@ -65,22 +65,42 @@ public class User {
         return UID;
     }
 
-    public List<String> getPastPlaylists() { return pastPlaylists; }
+    public List<String> getPastPlaylists() {
+        // convert hashset -> list
+        pastPlaylists.clear();
+        for (String s: pastPlaylistsSet) {
+            pastPlaylists.add(s);
+        }
+        return pastPlaylists;
+    }
 
-    public void addToPastPlaylists(String playlistKey) {
-        if (!pastPlaylistsSet.contains(playlistKey)) {
-            Log.d("debug", "creating new past playlists");
-            pastPlaylists.add(playlistKey);
-            pastPlaylistsSet.add(playlistKey);
+    public void setPastPlaylists() {
+        // convert list -> hashset
+//        Log.d("pastplaylists", "size of pastplaylists in currentuser is " + pastPlaylists.size());
+        if (pastPlaylists == null) {
+            pastPlaylists = new ArrayList<>();
+        }
+        for (String s : pastPlaylists) {
+            pastPlaylistsSet.add(s);
         }
     }
 
+    public boolean addToPastPlaylists(String playlistKey) {
+        return pastPlaylistsSet.add(playlistKey);
+//        if (!pastPlaylistsSet.contains(playlistKey)) {
+//            Log.d("debug", "creating new past playlists");
+//            pastPlaylists.add(playlistKey);
+//            pastPlaylistsSet.add(playlistKey);
+//        }
+    }
+
     public void removeFromPastPlaylists(String playlistKey) {
-        if (pastPlaylists != null) {
-            pastPlaylists.remove(playlistKey);
-        } else {
-            Log.d("debug", "we have a major error, removing past playlist from empty list");
-        }
+        pastPlaylistsSet.remove(playlistKey);
+//        if (pastPlaylists != null) {
+//            pastPlaylists.remove(playlistKey);
+//        } else {
+//            Log.d("debug", "we have a major error, removing past playlist from empty list");
+//        }
     }
 
 

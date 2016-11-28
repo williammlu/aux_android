@@ -29,10 +29,8 @@ public class ActualStartActivity extends AppCompatActivity {
     private FirebaseAuth.AuthStateListener mAuthListener;
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
-    ArrayList<Playlist> myPlaylists;
-    ArrayList<Playlist> nearMe;
     SignInCallback callback;
-    ArrayList<Playlist> searchResults;
+
     PlaylistAdapter playlistAdapter;
 
     RecyclerView pastPlaylistsRecyclerView;
@@ -81,30 +79,8 @@ public class ActualStartActivity extends AppCompatActivity {
                 }
             }
         };
-
-
-
         firebaseSignIn();
     }
-
-
-
-//    private void testingActivity(){
-//       Button defaultPlaylistButton = (Button) findViewById(R.id.defaultPlaylist);
-//
-//        defaultPlaylistButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                DatabaseReference playlistRef = aux.getDataBaseReference().child(getString(R.string.playlistFirebase)).push();
-//                Playlist currentPlaylist = new Playlist();
-//                currentPlaylist.setPlaylistName("Young's Playlist");
-//                //to test, must access wills search activity first
-////                currentPlaylist.addSong(SearchSongsActivity.youngSongTest);
-//                playlistRef.setValue(currentPlaylist);
-//             }
-//        });
-//    }
-
 
     private void setSearchView() {
         findViewById(R.id.searchView).setOnClickListener(new View.OnClickListener() {
@@ -123,12 +99,16 @@ public class ActualStartActivity extends AppCompatActivity {
         llm.setOrientation(LinearLayoutManager.HORIZONTAL);
         pastPlaylistsRecyclerView.setLayoutManager(llm);
         ArrayList<Playlist> playlists = aux.getMyPlaylists();
-        if (playlists == null) {
-            Log.d(aux.PASTPLAYLISTS, "why is playlists == null?");
-            playlists = new ArrayList<>();
+//        if (playlists == null) {
+//            Log.d(aux.PASTPLAYLISTS, "why is playlists == null?");
+//            playlists = new ArrayList<>();
+//        }
+        if (playlists != null) {
+            Log.d("pastplaylists", "in actualstartactivity: size of auxmyplaylists is " + playlists.size());
         }
-        PlaylistAdapter playlistAdapter = new PlaylistAdapter(this, playlists, PlaylistAdapter.PASTPLAYLISTS_VIEW);
+        playlistAdapter = new PlaylistAdapter(this, playlists, PlaylistAdapter.PASTPLAYLISTS_VIEW);
         pastPlaylistsRecyclerView.setAdapter(playlistAdapter);
+//        aux.populateMyPlaylists(playlistAdapter);
     }
 
     private void setRecyclerViewNearMe() {
@@ -195,6 +175,18 @@ public class ActualStartActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (playlistAdapter != null) {
+            playlistAdapter.notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        // do nothing ha.
+    }
     // EVENTUALLY OVERRIDE ONBACKPRESSED SO THAT WE DON'T ACCIDENTALLY GO BACK INTO THE PLAYLIST AFTER
     // THEY LEAVE THE PLAYLIST
 }
