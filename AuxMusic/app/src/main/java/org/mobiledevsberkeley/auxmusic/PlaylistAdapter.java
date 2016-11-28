@@ -82,39 +82,47 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
             img = (ImageView) v.findViewById(R.id.imageView);
             playlistName = (TextView) v.findViewById(R.id.playlistName);
 //            hostName = (TextView) v.findViewById(R.id.hostName);
-            if (displayType == SEARCH_VIEW) {
-                v.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        final Playlist playlist = playlists.get(getLayoutPosition());
+            v.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    final Playlist playlist = playlists.get(getLayoutPosition());
 //                        if (aux.hasActive) {
 //                            aux.checkIfJoinPlaylist(dialogOutputter, playlist);
 //                        } else {
 //                            viewAndJoinActivity(playlist);
 //                        }
+                    if (displayType == SEARCH_VIEW) {
                         actuallyJoinPlaylist(playlist);
+                    } else if (displayType == PASTPLAYLISTS_VIEW) {
+                        if (!playlist.getActive()) {
+                            outputDialog(playlist);
+                        } else {
+                            actuallyJoinPlaylist(playlist);
+                        }
                     }
-                });
-            }
+                }
+            });
         }
 
         @Override
         public void outputDialog(final Playlist playlist) {
             new MaterialDialog.Builder(context)
-                    .title(R.string.hasCurrentPlaylistDialog)
-                    .content(R.string.joinPlaylistDialogMessage)
+                    .title(R.string.playlistIsNotActive)
+                    .content(R.string.joinPastPlaylistDialogMessage)
                     .positiveText(R.string.joinAnyways)
-                    .negativeText(R.string.justView)
+                    .negativeText(R.string.cancel)
                     .onPositive(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            viewAndJoinActivity(playlist);
+//                            viewAndJoinActivity(playlist);
+                            actuallyJoinPlaylist(playlist);
                         }
                     })
                     .onNegative(new MaterialDialog.SingleButtonCallback() {
                         @Override
                         public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                            viewOnly(playlist);
+//                            viewOnly(playlist);
+                            dialog.cancel();
                         }
                     })
                     .show();
