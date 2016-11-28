@@ -3,6 +3,7 @@ package org.mobiledevsberkeley.auxmusic;
 import android.content.Intent;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
@@ -30,6 +31,7 @@ public class ActualStartActivity extends AppCompatActivity {
     AuxSingleton aux = AuxSingleton.getInstance();
     String TAG = "debug";
     SignInCallback callback;
+    public final static String DO_SKIP_CREATE = "DO_SKIP_CREATE";
 
     PlaylistAdapter playlistAdapter;
 
@@ -52,8 +54,9 @@ public class ActualStartActivity extends AppCompatActivity {
                     Log.d(TAG, "hasplaylist");
                     //might need to change this
                     // jump to spotify auth
-                    if (aux.checkIsHost(aux.getCurrentUser().getUID()) ) { // if host, jump to spotify auth, which will redirect to playlist
+                    if (aux.getCurrentUser().getUID() ==  aux.getCurrentPlaylist().getHostDeviceID()) { // if host, jump to spotify auth, which will redirect to playlist
                         Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
+                        spotifyAuthIntent.putExtra(DO_SKIP_CREATE, true);
                         startActivity(spotifyAuthIntent);
                     } else { // else go directly to playlist
                         Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
@@ -63,15 +66,41 @@ public class ActualStartActivity extends AppCompatActivity {
                 } else {
                     Log.d(TAG, "doesnthaveplaylist");
                     setContentView(R.layout.activity_actual_start);
-                    Button createPlaylistButton = (Button) findViewById(R.id.create_playlist_button);
+                    Button toSpotifyAuthButton = (Button) findViewById(R.id.create_playlist_button);
 
-                    createPlaylistButton.setOnClickListener(new View.OnClickListener() {
+                    toSpotifyAuthButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            Intent intent = new Intent(getApplicationContext(), CreatePlaylistActivity.class);
+                            Intent intent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
                             startActivity(intent);
                         }
                     });
+
+
+                    View parentView = findViewById(R.id.activity_actual_start_layout);
+                    Intent i = getIntent();
+                    if (i.hasExtra(SpotifyAuthTest.LOGIN_ERROR)) {
+                        String loginErrorMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_ERROR);
+                        Snackbar snackbar = Snackbar
+                                .make(parentView, loginErrorMessage, Snackbar.LENGTH_LONG);
+                        snackbar.setAction("Retry", new View.OnClickListener() {
+                            public void onClick(View v) {
+                                startActivity(new Intent(getApplicationContext(), SpotifyAuthTest.class));
+                            }
+                        });
+                        snackbar.show();
+                    } else if (i.hasExtra(SpotifyAuthTest.LOGIN_TERMINATED)) {
+                        String loginTerminatedMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_TERMINATED);
+                        Snackbar snackbar = Snackbar
+                                .make(parentView, loginTerminatedMessage, Snackbar.LENGTH_LONG);
+                        snackbar.setAction("Retry", new View.OnClickListener() {
+                            public void onClick(View v) {
+                                startActivity(new Intent(getApplicationContext(), SpotifyAuthTest.class));
+                            }
+                        });
+                        snackbar.show();
+                    }
+
                     setSearchView();
                     setRecyclerViewNearMe();
                     setRecyclerViewMyPlaylist();

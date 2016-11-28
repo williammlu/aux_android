@@ -47,30 +47,6 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         setTitle(aux.getCurrentPlaylist().getPlaylistName());
         parentView = findViewById(R.id.activity_playlist_layout);
 
-
-        Intent i = getIntent();
-        if (i.hasExtra(SpotifyAuthTest.LOGIN_ERROR)) {
-            String loginErrorMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_ERROR);
-            Snackbar snackbar = Snackbar
-                    .make(parentView, loginErrorMessage, Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("Retry", new View.OnClickListener() {
-                public void onClick(View v) {
-                    startActivity(new Intent(getApplicationContext(), SpotifyAuthTest.class));
-                }
-            });
-            snackbar.show();
-        } else if (i.hasExtra(SpotifyAuthTest.LOGIN_TERMINATED)) {
-            String loginTerminatedMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_TERMINATED);
-            Snackbar snackbar = Snackbar
-                    .make(parentView, loginTerminatedMessage, Snackbar.LENGTH_INDEFINITE);
-            snackbar.setAction("Retry", new View.OnClickListener() {
-                public void onClick(View v) {
-                    startActivity(new Intent(getApplicationContext(), SpotifyAuthTest.class));
-                }
-            });
-            snackbar.show();
-        }
-
         createSpotifyPlayer(AuxSingleton.getInstance().getSpotifyAuthToken());
 
         initializeButtons();

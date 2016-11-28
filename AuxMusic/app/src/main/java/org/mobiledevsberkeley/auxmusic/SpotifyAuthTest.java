@@ -49,7 +49,7 @@ public class SpotifyAuthTest extends Activity
         if (requestCode == REQUEST_CODE) {
 
             AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
-            Intent i = new Intent(this, PlaylistActivity.class);
+            Intent i;
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
@@ -59,13 +59,22 @@ public class SpotifyAuthTest extends Activity
 
                     // TODO: this activity will be opened from the actualstartactivity in the future when pressing the button to auth
                     // if playlist exists, it will redirect, but ensure that it will still work
-                    Log.e("SpotifyAuthTest", "starting actualstartactivity");
+                    Log.e("SpotifyAuthTest", "starting createPlaylistActivity");
+                    Intent startIntent = getIntent();
+                    if (startIntent.hasExtra(ActualStartActivity.DO_SKIP_CREATE)) {
+                        i = new Intent(this, PlaylistActivity.class);
+                    } else {
+                        i = new Intent(this, CreatePlaylistActivity.class);
+                    }
+
+
                     startActivity(i);
                     break;
 
                 // Auth flow returned an error
                 case ERROR:
                     Log.e("onActivityResult", "Auth error: " + response.getError());
+                    i = new Intent(this, ActualStartActivity.class);
                     i.putExtra(LOGIN_ERROR, "Unfortunately, Aux requires Spotify premium to host a playlist. Without it, you will not be able to stream music.");
                     startActivity(i);
 
@@ -75,6 +84,7 @@ public class SpotifyAuthTest extends Activity
                 // Most likely auth flow was cancelled
                 default:
                     Log.e("onActivityResult", "Auth result: " + response.getType());
+                    i = new Intent(this, ActualStartActivity.class);
                     i.putExtra(LOGIN_TERMINATED, "Your authentication with Spotify was cancelled, please try again.");
                     startActivity(i);
             }
