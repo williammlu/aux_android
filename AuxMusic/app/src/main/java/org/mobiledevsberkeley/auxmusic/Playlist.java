@@ -67,7 +67,7 @@ public class Playlist {
         this.userDeviceIDList = userDeviceIDList;
         this.spotifySongIDList = spotifySongIDList;
         if (coverArtURL == null || coverArtURL == "") {
-            setImageUrl();
+            setImageUrl(null);
         } else
         {
             this.coverArtURL = coverArtURL;
@@ -136,6 +136,7 @@ public class Playlist {
     }
 
     public String getCoverArtURL() {
+//        return "http://r.ddmcdn.com/w_830/s_f/o_1/cx_0/cy_220/cw_1255/ch_1255/APL/uploads/2014/11/dog-breed-selector-australian-shepherd.jpg";
         return coverArtURL;
     }
 
@@ -209,14 +210,19 @@ public class Playlist {
         playlistKey = key;
     }
 
-    public void setImageUrl() {
+    public void setImageUrl(final PlaylistImageLoadCallback callback) {
         //TODO: finish once getting a song from ID is finalized
+
+
         if (spotifySongIDList.size() > 0) {
             String firstSongId = spotifySongIDList.get(0);
             AuxSingleton.getSpotifyService().getTrack(firstSongId, new Callback<Track>() {
                 @Override
                 public void success(Track track, Response response) {
                     setCoverArtURL(track.album.images.get(0).url);
+                    if (callback != null) {
+                        callback.urlOnComplete();
+                    }
                 }
 
                 @Override
@@ -226,4 +232,9 @@ public class Playlist {
             });
         }
     }
+
+    public interface PlaylistImageLoadCallback {
+        public void urlOnComplete();
+    }
+
 }

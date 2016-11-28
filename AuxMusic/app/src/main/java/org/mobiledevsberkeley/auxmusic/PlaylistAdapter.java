@@ -51,12 +51,17 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
     }
 
     @Override
-    public void onBindViewHolder(CustomViewHolder holder, int position) {
-        Playlist playlist = playlists.get(position);
+    public void onBindViewHolder(final CustomViewHolder holder, int position) {
+        final Playlist playlist = playlists.get(position);
         holder.playlistName.setText(playlist.getPlaylistName());
 //        holder.hostName.setText(playlist.getHostDeviceID());
+        playlist.setImageUrl(new Playlist.PlaylistImageLoadCallback() {
+            @Override
+            public void urlOnComplete() {
+                new DownloadImageTask(holder.img).execute(playlist.getCoverArtURL());
+            }
+        });
 
-        new DownloadImageTask(holder.img).execute(playlist.getCoverArtURL());
     }
 
     @Override
