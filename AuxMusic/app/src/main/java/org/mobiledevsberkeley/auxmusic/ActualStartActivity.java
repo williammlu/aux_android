@@ -47,21 +47,21 @@ public class ActualStartActivity extends AppCompatActivity {
 
             @Override
             public void playlistOnComplete(boolean hasCurrentPlaylist) {
-//                if (hasCurrentPlaylist) {
-//                    Log.d(TAG, "hasplaylist");
-//                    //might need to change this
-//                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
-//                    startActivity(playlistIntent);
-//                    // jump to spotify auth
-//                    if (true ) { // if host, jump to spotify auth, which will redirect to playlist
-//                        Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
-//                        startActivity(spotifyAuthIntent);
-//                    } else { // else go directly to playlist
-////                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
-//                        startActivity(playlistIntent);
-//                    }
-//
-//                } else {
+                if (hasCurrentPlaylist) {
+                    Log.d(TAG, "hasplaylist");
+                    //might need to change this
+                    Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
+                    startActivity(playlistIntent);
+                    // jump to spotify auth
+                    if (true ) { // if host, jump to spotify auth, which will redirect to playlist
+                        Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
+                        startActivity(spotifyAuthIntent);
+                    } else { // else go directly to playlist
+//                        Intent playlistIntent = new Intent(getApplicationContext(), PlaylistActivity.class);
+                        startActivity(playlistIntent);
+                    }
+
+                } else {
                     Log.d(TAG, "doesnthaveplaylist");
                     setContentView(R.layout.activity_actual_start);
                     Button createPlaylistButton = (Button) findViewById(R.id.create_playlist_button);
@@ -76,7 +76,7 @@ public class ActualStartActivity extends AppCompatActivity {
                     setSearchView();
                     setRecyclerViewNearMe();
                     setRecyclerViewMyPlaylist();
-//                }
+                }
             }
         };
         firebaseSignIn();
@@ -108,7 +108,6 @@ public class ActualStartActivity extends AppCompatActivity {
         }
         playlistAdapter = new PlaylistAdapter(this, playlists, PlaylistAdapter.PASTPLAYLISTS_VIEW);
         pastPlaylistsRecyclerView.setAdapter(playlistAdapter);
-        aux.populateMyPlaylists(playlistAdapter);
     }
 
     private void setRecyclerViewNearMe() {

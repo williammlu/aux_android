@@ -116,7 +116,7 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
         private void viewOnly(Playlist playlist) {
             aux.isCurrentActive = false;
             aux.setCurrentPlaylistViewOnly(playlist);
-            ((SearchPlaylistsActivity) context).playlistIntent();
+            context.startActivity(new Intent(context, PlaylistActivity.class));
         }
         @Override
         public void viewAndJoinActivity(final Playlist playlist) {
@@ -144,7 +144,8 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
                 aux.setCurrentPlaylist(playlist, key);
                 aux.addUserToPlaylist(aux.getCurrentUser());
                 aux.isCurrentActive = true;
-                ((SearchPlaylistsActivity) context).playlistIntent();
+                aux.addPastPlaylist(playlist);
+                context.startActivity(new Intent(context, PlaylistActivity.class));
             }
 
 

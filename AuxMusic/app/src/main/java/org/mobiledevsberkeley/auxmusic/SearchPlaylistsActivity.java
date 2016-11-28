@@ -126,8 +126,4 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
         mRecyclerView.setAdapter(playlistAdapter);
     }
 
-    public void playlistIntent() {
-        Intent playlistIntent = new Intent(this, PlaylistActivity.class);
-        startActivity(playlistIntent);
-    }
 }

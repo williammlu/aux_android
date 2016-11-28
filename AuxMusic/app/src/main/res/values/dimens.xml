@@ -5,7 +5,7 @@
     <dimen name="fab_margin">16dp</dimen>
     <dimen name="search_list_margin">16dp</dimen>
 
-    <dimen name="search_album_image_side">75dp</dimen>
+    <dimen name="search_album_image_side">100dp</dimen>
     <dimen name="search_album_image_side_main_screen">300dp</dimen>
 
     <dimen name="button_horizontal_margin">65dp</dimen>

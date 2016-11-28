@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="wrap_content"
-    android:layout_height="wrap_content" >
+    android:layout_height="wrap_content"
+    android:background="@android:color/transparent">
 
     <ImageView
         android:layout_width="@dimen/search_album_image_side"
@@ -13,22 +14,39 @@
         android:background="@color/colorAccent"
         android:layout_margin="@dimen/search_list_margin" />
 
-    <TextView
-        android:text="Playlist Name"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/playlistName"
-        android:layout_marginLeft="16dp"
-        android:layout_below="@+id/imageView"
-        />
+        android:id="@+id/closeImagePlaylistsView"
+        android:src="@android:drawable/ic_menu_close_clear_cancel"
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/imageView"
+        android:background="@android:color/transparent"/>
 
-    <TextView
-        android:text="Host Name"
-        android:layout_width="wrap_content"
+    <RelativeLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_below="@+id/imageView"
+        android:background="@color/colorPrimary"
         android:layout_marginLeft="16dp"
-        android:layout_below="@+id/playlistName"
-        android:layout_marginTop="2dp"
-        android:id="@+id/hostName" />
+        android:paddingRight="7dp"
+        android:paddingLeft="7dp">
+
+        <TextView
+            android:text="Playlist Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/playlistName"
+            android:background="@color/colorPrimary" />
+
+        <TextView
+            android:text="Host Name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/playlistName"
+            android:layout_marginTop="2dp"
+            android:background="@color/colorPrimary"
+            android:id="@+id/hostName" />
+    </RelativeLayout>
 
 </RelativeLayout>
