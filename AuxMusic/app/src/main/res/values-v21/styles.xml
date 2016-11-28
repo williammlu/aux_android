@@ -30,4 +30,15 @@
         <item name="android:statusBarColor">#24323B</item>
         <item name="android:navigationBarColor">#24323B</item>
     </style>
+
+    <style name="ButtonStyle">
+        <item name="android:layout_width">250dp</item>
+        <item name="android:layout_height">50dp</item>
+        <item name="android:bottomRightRadius">10dp</item>
+        <item name="android:bottomLeftRadius">10dp</item>
+        <item name="android:topLeftRadius">10dp</item>
+        <item name="android:topRightRadius">10dp</item>
+        <item name="android:textColor">@color/colorPrimary</item>
+        <item name="android:colorBackground">@color/colorAccent</item>
+    </style>
 </resources>

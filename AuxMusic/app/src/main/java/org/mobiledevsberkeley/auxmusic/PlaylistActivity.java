@@ -29,6 +29,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     String TAG = "debug";
     private View parentView;
     private boolean isHost;
+    Button addSongButton;
 
     private RecyclerView recyclerView;
     private MusicAdapter musicAdapter;
@@ -103,6 +104,21 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         });
     }
 
+    private void setButtonsEnabledandDisabled() {
+        if (aux.isCurrentActive) {
+            addSongButton.setVisibility(View.VISIBLE);
+            menu.findItem(R.id.joinPlaylist).setVisible(false);
+            menu.findItem(R.id.leavePlaylist).setVisible(true);
+
+        }
+        else {
+            addSongButton.setVisibility(View.GONE);
+            menu.findItem(R.id.joinPlaylist).setVisible(true);
+            menu.findItem(R.id.leavePlaylist).setVisible(false);
+
+        }
+    }
+
     private void initializeButtons() {
         /*1. Check if this current playlist and is active
         * If yes:
@@ -120,7 +136,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         CurrentSongView currentSongView = (CurrentSongView) findViewById(R.id.currentSongView);
         AuxSingleton.getInstance().setCurrentSongView(currentSongView);
 
-        Button addSongButton = (Button) findViewById(R.id.playlistAddSongButton);
+        addSongButton = (Button) findViewById(R.id.playlistAddSongButton);
         addSongButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -223,6 +239,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar_menu, menu);
         this.menu = menu;
+        setButtonsEnabledandDisabled();
         return super.onCreateOptionsMenu(menu);
     }
 
