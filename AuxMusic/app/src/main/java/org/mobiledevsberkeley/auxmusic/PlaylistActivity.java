@@ -252,7 +252,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+//        super.onBackPressed();
 //        startActivity(new Intent(this, ActualStartActivity.class));
         // do nothing . ha
     }
