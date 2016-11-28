@@ -153,8 +153,13 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
             musicAdapter.notifyDataSetChanged();
         }
         // INITIALIZE firebase realtime listeners for the playlist.
+//        aux.initializeCurrentSongListeners();
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         aux.initializePlaylistListeners();
-        aux.initializeCurrentSongListeners();
     }
 
 

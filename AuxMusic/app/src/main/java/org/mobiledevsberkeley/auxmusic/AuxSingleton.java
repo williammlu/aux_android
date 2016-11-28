@@ -364,6 +364,8 @@ public class AuxSingleton {
                             public void onFinished(List<Song> songs) {
                                 currentPlaylist.setSpotifySongList(songs);
                                 musicAdapter.notifyDataSetChanged();
+                                Log.d(TAG, "we in here intialize playlist listeners");
+                                initializeCurrentSongListeners();
 //                                Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
                             }
                         });
@@ -533,6 +535,7 @@ public class AuxSingleton {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int newIndex = dataSnapshot.getValue(Integer.class);
+                    Log.d(TAG, "we settin current view and new index is " + newIndex);
                     List<Song> songs = currentPlaylist.getSpotifySongList();
                     if (newIndex < currentPlaylist.getSpotifySongIDList().size() && newIndex > -1) {
                         updateCurrentSongView(songs.get(newIndex));
