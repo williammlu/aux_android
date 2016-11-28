@@ -533,7 +533,10 @@ public class AuxSingleton {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int newIndex = dataSnapshot.getValue(Integer.class);
-                    updateCurrentSongView(currentPlaylist.getSpotifySongList().get(newIndex));
+                    List<Song> songs = currentPlaylist.getSpotifySongList();
+                    if (songs.size() > 0) {
+                        updateCurrentSongView(songs.get(newIndex));
+                    }
                 }
 
                 @Override
