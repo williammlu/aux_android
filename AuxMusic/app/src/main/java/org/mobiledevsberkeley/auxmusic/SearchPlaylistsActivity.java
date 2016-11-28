@@ -28,6 +28,8 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
     ArrayList<Playlist> searchResults;
     AuxSingleton aux = AuxSingleton.getInstance();
     PlaylistAdapter playlistAdapter;
+    com.google.firebase.database.Query queryRef;
+    ChildEventListener childEventListener;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,23 +44,22 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
     private void searchView() {
         SearchView searchView = (SearchView) findViewById(R.id.searchView);
         searchResults = new ArrayList<>();
-        final HashSet<String> h = new HashSet<>();
         searchView.setIconified(false);
         searchView.requestFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
+                if (queryRef != null) queryRef.removeEventListener(childEventListener);
                 searchResults.clear();
-                h.clear();
                 String regexed = s.replaceAll("[^A-Za-z]", "").toLowerCase();
                 DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
-                com.google.firebase.database.Query queryRef = playlistRef.orderByChild("regexedPlaylistName").equalTo(regexed);
-                queryRef.addChildEventListener(new ChildEventListener() {
+                queryRef = playlistRef.orderByChild("regexedPlaylistName").equalTo(regexed);
+                childEventListener = new ChildEventListener() {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Playlist playlist = dataSnapshot.getValue(Playlist.class);
                         System.out.println(playlist.getPlaylistKey());
-                        if (playlist.getActive() && !h.contains(playlist.getPlaylistKey())) {
+                        if (playlist.getActive()) {
                             mTextView.setVisibility(View.INVISIBLE);
                             mRecyclerView.setVisibility(View.VISIBLE);
                             searchResults.add(playlist);
@@ -86,7 +87,9 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
                     public void onCancelled(DatabaseError databaseError) {
 
                     }
-                });
+                };
+                queryRef.addChildEventListener(childEventListener);
+
                 // change the "no playlists found" thingy
                 queryRef.addValueEventListener(new ValueEventListener() {
                     @Override

@@ -67,7 +67,10 @@ public class User {
 
     public List<String> getPastPlaylists() {
         // convert hashset -> list
-        pastPlaylists.clear();
+        if (pastPlaylists == null) return new ArrayList<>();
+            pastPlaylists.clear();
+
+
         for (String s: pastPlaylistsSet) {
             pastPlaylists.add(s);
         }
