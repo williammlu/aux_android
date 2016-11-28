@@ -32,7 +32,7 @@ import com.google.android.gms.location.LocationListener;
 
 import static android.R.id.message;
 
-public class CreatePlaylistActivity extends AppCompatActivity implements DialogOutputter, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
+public class CreatePlaylistActivity extends AppCompatActivity implements DialogOutputter/*, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener*/{
     public static String TAG = "debug";
 
     private CheckBox passwordProtectCheckbox;
@@ -60,7 +60,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements DialogO
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (mGoogleApiClient == null) createGoogleApiClient();
+//        if (mGoogleApiClient == null) createGoogleApiClient();
         setContentView(R.layout.activity_create_playlist);
         setTitle("Host");
         thisActivity = this;
@@ -150,15 +150,15 @@ public class CreatePlaylistActivity extends AppCompatActivity implements DialogO
     @Override
     protected void onPause() {
         super.onPause();
-        if (mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
+//        if (mGoogleApiClient.isConnected()) {
+//            mGoogleApiClient.disconnect();
+//        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        mGoogleApiClient.connect();
+//        mGoogleApiClient.connect();
 
     }
 
@@ -316,78 +316,78 @@ public class CreatePlaylistActivity extends AppCompatActivity implements DialogO
 //    }
 
 //
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.d("debug", "bitch you're connected");
-                            PackageManager pm = thisActivity.getPackageManager();
-                    int hasPerm = pm.checkPermission(
-                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
-                            thisActivity.getPackageName());
-                    if (hasPerm == PackageManager.PERMISSION_GRANTED) {
-                        getLastLocation();
-                    } else {
-                        ActivityCompat.requestPermissions(thisActivity,
-                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
-                                MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
-                    }
-//        getLastLocation();
-    }
+//    @Override
+//    public void onConnected(@Nullable Bundle bundle) {
+//        Log.d("debug", "bitch you're connected");
+//                            PackageManager pm = thisActivity.getPackageManager();
+//                    int hasPerm = pm.checkPermission(
+//                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+//                            thisActivity.getPackageName());
+//                    if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+//                        getLastLocation();
+//                    } else {
+//                        //will eventually wanna do something else with this permission
+//                        ActivityCompat.requestPermissions(thisActivity,
+//                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+//                                MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+//                    }
+//    }
 
 
 
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d("debug", "connection suspended");
+//    @Override
+//    public void onConnectionSuspended(int i) {
+//        Log.d("debug", "connection suspended");
+//
+//    }
+//
+//    @Override
+//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+//        Log.d("debug", "connection failed :(");
+//
+//    }
 
-    }
+//    public void createGoogleApiClient() {
+//        mGoogleApiClient = new GoogleApiClient.Builder(this)
+//                .addConnectionCallbacks(this)
+//                .addOnConnectionFailedListener(this)
+//                .addApi(LocationServices.API)
+//                .build();
+//        locationRequest = LocationRequest.create();
+//        locationRequest.setInterval(1000);
+//        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+//    }
 
-    @Override
-    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-        Log.d("debug", "connection failed :(");
-
-    }
-
-    public void createGoogleApiClient() {
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)
-                .build();
-        locationRequest = LocationRequest.create();
-        locationRequest.setInterval(1000);
-        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode,
-                                           String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
-                // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode,
+//                                           String permissions[], int[] grantResults) {
+//        switch (requestCode) {
+//            case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
+//                // If request is cancelled, the result arrays are empty.
+//                if (grantResults.length > 0
+//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
 //                    getLastLocation();
+//
+//                } else {
+//                    Toast.makeText(thisActivity, "Unable to track location without permission", Toast.LENGTH_LONG).show();
+//                }
+//            }
+//
+//        }
+//    }
 
-                } else {
+//    public void getLastLocation() throws SecurityException{
+//        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,locationRequest,this);
+//
+//}
 
-                    Toast.makeText(thisActivity, "Unable to track location without permission", Toast.LENGTH_LONG).show();
-                }
-            }
-
-        }
-    }
-
-    public void getLastLocation() throws SecurityException{
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,locationRequest,this);
-
-    }
-
-    @Override
-    public void onLocationChanged(Location location) {
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-        if (location != null) {
-            mGeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
-        }
-
-    }
+//    @Override
+//    public void onLocationChanged(Location location) {
+//        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+//        if (location != null) {
+//            mGeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+//        }
+//
+//
+//    }
 }

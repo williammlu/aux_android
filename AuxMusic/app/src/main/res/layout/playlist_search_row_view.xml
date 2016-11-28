@@ -11,17 +11,17 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentStart="true" />
 
-    <TextView
-        android:text="Host Name"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:id="@+id/hostName"
-        android:ellipsize="end"
-        android:maxLines="1"
-        android:layout_alignBottom="@+id/imageView2"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/imageView2" />
+    <!--<TextView-->
+        <!--android:text="Host Name"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginLeft="16dp"-->
+        <!--android:id="@+id/hostName"-->
+        <!--android:ellipsize="end"-->
+        <!--android:maxLines="1"-->
+        <!--android:layout_alignBottom="@+id/imageView2"-->
+        <!--android:layout_alignParentEnd="true"-->
+        <!--android:layout_toEndOf="@+id/imageView2" />-->
 
     <TextView
         android:text="Playlist Name"

@@ -236,6 +236,10 @@ public class AuxSingleton {
         return currentPlaylist;
     }
 
+    public void setCurrentPlaylistViewOnly(Playlist currentPlaylist) {
+        this.currentPlaylist = currentPlaylist;
+    }
+
     public void setCurrentPlaylist(Playlist currentPlaylist, String playlistKey) {
         this.currentPlaylist = currentPlaylist;
         if (playlistKey != null || playlistRef == null) {

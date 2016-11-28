@@ -19,6 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class SearchPlaylistsActivity extends AppCompatActivity {
     SearchView searchView;
@@ -41,12 +42,14 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
     private void searchView() {
         SearchView searchView = (SearchView) findViewById(R.id.searchView);
         searchResults = new ArrayList<>();
+        final HashSet<String> h = new HashSet<>();
         searchView.setIconified(false);
         searchView.requestFocus();
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 searchResults.clear();
+                h.clear();
                 String regexed = s.replaceAll("[^A-Za-z]", "").toLowerCase();
                 DatabaseReference playlistRef = aux.getDataBaseReference().child("playlists");
                 com.google.firebase.database.Query queryRef = playlistRef.orderByChild("regexedPlaylistName").equalTo(regexed);
@@ -54,7 +57,8 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
                     @Override
                     public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                         Playlist playlist = dataSnapshot.getValue(Playlist.class);
-                        if (playlist.getActive()) {
+                        System.out.println(playlist.getPlaylistKey());
+                        if (playlist.getActive() && !h.contains(playlist.getPlaylistKey())) {
                             mTextView.setVisibility(View.INVISIBLE);
                             mRecyclerView.setVisibility(View.VISIBLE);
                             searchResults.add(playlist);
@@ -120,5 +124,10 @@ public class SearchPlaylistsActivity extends AppCompatActivity {
         playlistAdapter = new PlaylistAdapter(this, searchResults, PlaylistAdapter.SEARCH_VIEW);
 
         mRecyclerView.setAdapter(playlistAdapter);
+    }
+
+    public void playlistIntent() {
+        Intent playlistIntent = new Intent(this, PlaylistActivity.class);
+        startActivity(playlistIntent);
     }
 }
