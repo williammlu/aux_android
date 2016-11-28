@@ -70,10 +70,6 @@
             android:label="@string/title_activity_playlist" />
         <activity android:name=".ActualStartActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
-        <activity
-            android:name=".PlaylistActivityGuest"
-            android:label="@string/title_activity_playlist_guest"
-            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".SearchPlaylistsActivity"></activity>
     </application>
 
