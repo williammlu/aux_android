@@ -5,12 +5,14 @@ import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -22,10 +24,15 @@ import java.util.List;
  * Created by Young on 10/8/2016.
  */
 
-public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHolder>{
+public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHolder> {
     List<Song> list;
+    /**
+     * List of songs that are checked
+     */
+    List<Song> checkedList;
     Context context;
     View view;
+    SparseBooleanArray checkedIndices = new SparseBooleanArray();
 
     public static final int SEARCH_TO_ADD = 0;
     public static final int DISPLAY_PLAYLIST = 1;
@@ -33,11 +40,12 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
     public int displayType;
 
 
-    public MusicAdapter(Context applicationContext, List<Song> list, int type, View view ) {
+    public MusicAdapter(Context applicationContext, List<Song> list, int type, View view) {
         context = applicationContext;
         this.list = list;
         this.displayType = type;
         this.view = view;
+        this.checkedList = new ArrayList<>();
     }
 
     @Override
@@ -47,16 +55,30 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
     }
 
     @Override
-    public void onBindViewHolder(CustomViewHolder holder, int position) {
+    public void onBindViewHolder(final CustomViewHolder holder, int position) {
         Song song = list.get(position);
         holder.songTitle.setText(song.getSongName());
         holder.artistTitle.setText(song.getArtistName());
-        holder.albumTitle.setText(song.getAlbumName());
+//        holder.albumTitle.setText(song.getAlbumName());
         holder.song = list.get(position);
 
+        holder.addSongCheckBox.setChecked(holder.isChecked());
+
+        holder.addSongCheckBox.setOnCheckedChangeListener(null);
+
+        holder.addSongCheckBox.setChecked(checkedIndices.get(position));
+
+        holder.addSongCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                checkedIndices.put(holder.getAdapterPosition(), isChecked);
+            }
+        });
+
+
         // async add album art to each row of recyclerview
-        int sideLengthPx = (int) context.getResources().getDimension(R.dimen.search_album_image_side);
-        new DownloadImageTask(holder.img).execute(song.getImageUrl(sideLengthPx));
+//        int sideLengthPx = (int) context.getResources().getDimension(R.dimen.search_album_image_side);
+//        new DownloadImageTask(holder.img).execute(song.getImageUrl(sideLengthPx));
     }
 
     @Override
@@ -64,24 +86,30 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
         return list.size();
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder{
-        ImageView img;
+    public class CustomViewHolder extends RecyclerView.ViewHolder {
+        //        ImageView img;
         TextView songTitle;
         TextView artistTitle;
-        TextView albumTitle;
+        //        TextView albumTitle;
         Song song;
         ImageView closeImageView;
+        CheckBox addSongCheckBox;
 
 
         public CustomViewHolder(View v) {
             super(v);
 
-            img = (ImageView) v.findViewById(R.id.imageView);
+
+//            img = (ImageView) v.findViewById(R.id.imageView);
             songTitle = (TextView) v.findViewById(R.id.songName);
             artistTitle = (TextView) v.findViewById(R.id.artistName);
-            albumTitle = (TextView) v.findViewById(R.id.albumName);
+//            albumTitle = (TextView) v.findViewById(R.id.albumName);
             closeImageView = (ImageView) v.findViewById(R.id.closeImageView);
+            addSongCheckBox = (CheckBox) v.findViewById(R.id.addSongCheckBox);
+
+
             if (displayType == DISPLAY_PLAYLIST) {
+                closeImageView.setVisibility(View.VISIBLE);
                 closeImageView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -131,46 +159,55 @@ public class MusicAdapter extends RecyclerView.Adapter<MusicAdapter.CustomViewHo
                                 .show();
                     }
                 });
-            } else {
-                closeImageView.setVisibility(View.GONE);
-            }
-            v.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    switch (displayType) {
-                        case SEARCH_TO_ADD:
-                            // dialog to confirm playing
-                            final String songName = getSongAtIndex(getLayoutPosition()).getSongName();
-                            final Snackbar snackbarAdd = Snackbar.make(view, "Adding song: " + songName, Snackbar.LENGTH_SHORT);
-                            String message = "Are you sure you want to add: " +
-                                    songTitle.getText().toString();
-                            new MaterialDialog.Builder(context)
-                                    .title(R.string.addSongDialogTitle)
-                                    .content(message)
-//                                    .icon(img.getDrawable())
-                                    .positiveText(R.string.SongDialogPositive)
-                                    .negativeText(R.string.SongDialogNegative)
-                                    .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                        @Override
-                                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                            Log.d("MusicAdapter", "Adding a song " + songName);
-                                            snackbarAdd.show();
-                                            Song targetSong = getSongAtIndex(getLayoutPosition());
-                                            AuxSingleton.getInstance().addSong(targetSong);
+            } else if (displayType == SEARCH_TO_ADD) {
+                addSongCheckBox.setVisibility(View.VISIBLE);
 
-                                        }
-                                    })
-                                    .show();
-                            break;
-                        case DISPLAY_PLAYLIST:
-                            break;
-                            // what to do when clicked in playlist activity?
-
-
+                // do checkbox when view touched
+                v.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        addSongCheckBox.setChecked(!isChecked());
+                        checkedIndices.append(getLayoutPosition(), addSongCheckBox.isChecked());
+                        Song targetSong = getSongAtIndex(getLayoutPosition());
+                        if (addSongCheckBox.isChecked()) {
+                            checkedList.add(targetSong);
+                        } else {
+                            checkedList.remove(targetSong);
+                        }
+                        Log.d("MusicAdapter", "Touch view Checkbox at position " + getLayoutPosition() + " is now " + addSongCheckBox.isChecked() + " " + checkedList.size());
                     }
-//                    do we want to do anything here
-                }
-            });
+                });
+
+                // do check when checkbox touched
+                addSongCheckBox.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        checkedIndices.append(getLayoutPosition(), addSongCheckBox.isChecked());
+                        Song targetSong = getSongAtIndex(getLayoutPosition());
+                        if (addSongCheckBox.isChecked()) {
+                            checkedList.add(targetSong);
+                        } else {
+                            checkedList.remove(targetSong);
+                        }
+                        Log.d("MusicAdapter", "Checkbox at position " + getLayoutPosition() + " is now " + addSongCheckBox.isChecked() + " " + checkedList.size());
+                    }
+                });
+            }
+        }
+        public boolean isChecked() {
+            return checkedIndices.get(getLayoutPosition());
+        }
+
+    }
+
+    public List<Song> getCheckedSongs() {
+        return checkedList;
+    }
+
+    public void clearCheckedSongs() {
+        if (checkedList != null) {
+            checkedList.clear();
+            checkedIndices.clear();
         }
     }
 

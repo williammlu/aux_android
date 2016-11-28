@@ -129,7 +129,6 @@ public class CreatePlaylistActivity extends AppCompatActivity implements DialogO
 
                         @Override
                         public void afterTextChanged(Editable s) {
-
                         }
                     });
                 }

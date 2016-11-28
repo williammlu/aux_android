@@ -2,17 +2,21 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.content.Intent;
 import android.graphics.drawable.ColorDrawable;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.widget.Button;
 import android.widget.SearchView;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.spotify.sdk.android.player.Error;
 import com.spotify.sdk.android.player.Config;
 import com.spotify.sdk.android.player.ConnectionStateCallback;
@@ -42,6 +46,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 
 public class SearchSongsActivity extends AppCompatActivity {
     ArrayList<Song> list = new ArrayList<>();
+    Button addSongsButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +58,10 @@ public class SearchSongsActivity extends AppCompatActivity {
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         DividerItemDecoration dividerItemDecoration = new DividerItemDecoration(recyclerView.getContext(),
                 getResources().getConfiguration().orientation);
-        dividerItemDecoration.setDrawable(new ColorDrawable(0x979797));
+        dividerItemDecoration.setDrawable(getResources().getDrawable(R.drawable.horizontal_line));
         recyclerView.addItemDecoration(dividerItemDecoration);
+
+
 
         final MusicAdapter musicAdapter = new MusicAdapter(this, list, MusicAdapter.SEARCH_TO_ADD, findViewById(R.id.activity_search_songs));
 
@@ -90,6 +97,7 @@ public class SearchSongsActivity extends AppCompatActivity {
                         }
 
                         musicAdapter.notifyDataSetChanged();
+                        musicAdapter.clearCheckedSongs();
 
                         // hide keyboard when complete
                         if (closeOnComplete) {
@@ -117,6 +125,45 @@ public class SearchSongsActivity extends AppCompatActivity {
                 return false;
             }
         });
+
+        addSongsButton = (Button) findViewById(R.id.add_songs_button);
+        addSongsButton.setOnClickListener( new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final List<Song> checkedSongs = musicAdapter.getCheckedSongs();
+                String message;
+                if (checkedSongs.size() > 0) {
+                    if (checkedSongs.size() == 1) {
+                        message = "Are you sure you'd like to add this one song?";
+                    } else {
+                        message = "Are you sure you'd like to add these " + checkedSongs.size() + " songs?";
+                    }
+
+                    new MaterialDialog.Builder(SearchSongsActivity.this)
+                            .title(R.string.addSongsDialogTitle)
+                            .content(message)
+                            .positiveText(R.string.addSongDialogPositive)
+                            .negativeText(R.string.addSongDialogNegative)
+                            .onPositive(new MaterialDialog.SingleButtonCallback() {
+                                @Override
+                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                    for (Song s: checkedSongs) {
+                                        AuxSingleton.getInstance().addSong(s);
+                                    }
+                                    Intent playlistActivityIntent = new Intent(SearchSongsActivity.this, PlaylistActivity.class);
+                                    startActivity(playlistActivityIntent);
+                                }
+                            })
+                            .show();
+
+
+
+                }
+            }
+        });
+
+
+
     }
 
     @Override

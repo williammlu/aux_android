@@ -19,7 +19,8 @@
     <string name="noPlaylistsFound">No playlists found</string>
     <string name="songSearchHint">Search by song, artist or album name...</string>
     <string name="noSongsFound">No songs found</string>
-    <string name="addSongDialogTitle">Add Song Confirmation</string>
+    <string name="addSongs">Add Songs</string>
+    <string name="addSongsDialogTitle">Add Songs Confirmation</string>
     <string name="addSongDialogPositive">Confirm</string>
     <string name="addSongDialogNegative">Cancel</string>
     <string name="title_activity_playlist_guest">PlaylistActivityGuest</string>

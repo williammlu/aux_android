@@ -21,7 +21,7 @@ public class CurrentSongView extends RelativeLayout {
     private ImageView img;
     private TextView songTitle;
     private TextView artistTitle;
-    private TextView albumTitle;
+//    private TextView albumTitle;
     AuxSingleton aux = AuxSingleton.getInstance();
 
 
@@ -53,12 +53,12 @@ public class CurrentSongView extends RelativeLayout {
     private void initializeViews(Context context) {
         LayoutInflater inflater = (LayoutInflater) context
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        inflater.inflate(R.layout.song_row_view, this);
-        findViewById(R.id.closeImageView).setVisibility(GONE);
+        inflater.inflate(R.layout.current_song_view, this);
+
         img = (ImageView) findViewById(R.id.imageView);
         songTitle = (TextView) findViewById(R.id.songName);
         artistTitle = (TextView) findViewById(R.id.artistName);
-        albumTitle = (TextView) findViewById(R.id.albumName);
+//        albumTitle = (TextView) findViewById(R.id.albumName);
 
         clearAll();
 
@@ -81,14 +81,13 @@ public class CurrentSongView extends RelativeLayout {
         new DownloadImageTask(img).execute(song.getImageUrl(300));
         songTitle.setText(song.getSongName());
         artistTitle.setText(song.getArtistName());
-        albumTitle.setText(song.getAlbumName());
+//        albumTitle.setText(song.getAlbumName());
     }
 
     public void clearAll() {
-        img.setImageDrawable(getResources().getDrawable(R.drawable.ic_play_arrow_white_48px));
-
+        img.setImageDrawable(null);
         songTitle.setText("Currently no song playing");
         artistTitle.setText("");
-        albumTitle.setText("");
+//        albumTitle.setText("");
     }
 }
