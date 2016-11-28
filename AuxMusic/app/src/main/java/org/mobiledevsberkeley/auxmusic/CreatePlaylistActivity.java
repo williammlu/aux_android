@@ -176,12 +176,13 @@ public class CreatePlaylistActivity extends AppCompatActivity implements DialogO
             @Override
             public void onClick(View v) {
                 //this is where I check if this potential host already has a playlist
-                if (aux.hasActive) {
-                    aux.checkIfJoinPlaylist((DialogOutputter) thisActivity, null);
-                } else {
-                    //create this playlist
-                    createPlaylist();
-                }
+//                if (aux.hasActive) {
+//                    aux.checkIfJoinPlaylist((DialogOutputter) thisActivity, null);
+//                } else {
+//                    //create this playlist
+//                    createPlaylist();
+//                }
+                createPlaylist();
             }
         });
     }

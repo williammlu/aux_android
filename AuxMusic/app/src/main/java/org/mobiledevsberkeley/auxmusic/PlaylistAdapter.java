@@ -87,11 +87,12 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
                     @Override
                     public void onClick(View v) {
                         final Playlist playlist = playlists.get(getLayoutPosition());
-                        if (aux.hasActive) {
-                            aux.checkIfJoinPlaylist(dialogOutputter, playlist);
-                        } else {
-                            viewAndJoinActivity(playlist);
-                        }
+//                        if (aux.hasActive) {
+//                            aux.checkIfJoinPlaylist(dialogOutputter, playlist);
+//                        } else {
+//                            viewAndJoinActivity(playlist);
+//                        }
+                        actuallyJoinPlaylist(playlist);
                     }
                 });
             }
@@ -144,14 +145,15 @@ public class PlaylistAdapter extends RecyclerView.Adapter<PlaylistAdapter.Custom
                 actuallyJoinPlaylist(playlist);
             }
         }
-            private void actuallyJoinPlaylist(Playlist playlist) {
-                String key = playlist.getPlaylistKey();
-                aux.setCurrentPlaylist(playlist, key);
-                aux.addUserToPlaylist(aux.getCurrentUser());
-                aux.isCurrentActive = true;
-                aux.addPastPlaylist(playlist);
-                context.startActivity(new Intent(context, PlaylistActivity.class));
-            }
+
+        private void actuallyJoinPlaylist(Playlist playlist) {
+            String key = playlist.getPlaylistKey();
+            aux.setCurrentPlaylist(playlist, key);
+            aux.addUserToPlaylist(aux.getCurrentUser());
+            aux.isCurrentActive = true;
+            aux.addPastPlaylist(playlist);
+            context.startActivity(new Intent(context, PlaylistActivity.class));
+        }
 
 
 //                        Playlist playlist = playlists.get(getLayoutPosition());
