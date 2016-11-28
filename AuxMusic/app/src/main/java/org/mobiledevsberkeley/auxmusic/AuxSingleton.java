@@ -69,9 +69,8 @@ public class AuxSingleton {
     /*This boolean is to check if the current playlist is active for the current user.
     Ie the playlist itself has to be active (host didnt leave) and the playlist has to be
     active for this particular user (what this boolean checks)*/
-    public boolean hasActive; //this was set in the ActualStartActivity, it changes whether user will have the dialog box pop up
-    private boolean isCurrentActive;
-    private Playlist activePlaylist;
+    public boolean hasActive; //this was set in the ActualStartActivity, it checks whether user has a playlistKey and that playlist active
+    public boolean isCurrentActive;
 
 //    private ValueEventListener userListener;
     // have song playlists and users playlists right here. this is a weird structure, but i'm not sure how to deal with this yet.
@@ -171,6 +170,40 @@ public class AuxSingleton {
                 }
             });
         }
+    }
+
+    public void checkIfJoinPlaylist(final DialogOutputter dialogOutputter, final Playlist playlistToJoin) {
+        dbReference.child(PLAYLISTS_NODE).child(currentUser.getPlaylistKey()).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Playlist playlist = dataSnapshot.getValue(Playlist.class);
+                //playlisttoJoin is null if trying to HOST a playlist
+                if (playlistToJoin != null) {
+                    if (playlist != null && playlist.getActive() && !playlist.getPlaylistKey().equals(playlistToJoin.getPlaylistKey())) {
+                        dialogOutputter.outputDialog(playlistToJoin);
+                    } else {
+                        hasActive = false;
+                        dialogOutputter.viewAndJoinActivity(playlistToJoin);
+                    }
+                }
+                else {
+                    if (playlist != null && playlist.getActive()) {
+                        dialogOutputter.outputDialog(null);
+                    } else {
+                        hasActive = false;
+                        dialogOutputter.viewAndJoinActivity(null);
+                    }
+
+                }
+            }
+
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                // ...
+            }
+        });
+
     }
 
     public Playlist getCurrentPlaylist() {

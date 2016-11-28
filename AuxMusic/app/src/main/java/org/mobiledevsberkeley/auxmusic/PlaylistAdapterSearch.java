@@ -5,7 +5,6 @@ package org.mobiledevsberkeley.auxmusic;
  */
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -17,7 +16,6 @@ import android.widget.TextView;
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class PlaylistAdapterSearch extends RecyclerView.Adapter<PlaylistAdapterSearch.CustomViewHolder>{
@@ -48,54 +46,64 @@ public class PlaylistAdapterSearch extends RecyclerView.Adapter<PlaylistAdapterS
         return playlists.size();
     }
 
-    public class CustomViewHolder extends RecyclerView.ViewHolder{
+    public class CustomViewHolder extends RecyclerView.ViewHolder implements DialogOutputter {
         TextView playlistName;
         TextView hostName;
         AuxSingleton aux = AuxSingleton.getInstance();
+        DialogOutputter dialogOutputter;
 
-        public CustomViewHolder(View v) {
+        public CustomViewHolder(View v){
             super(v);
+            dialogOutputter = this;
             playlistName = (TextView) v.findViewById(R.id.playlistName);
             hostName = (TextView) v.findViewById(R.id.hostName);
             v.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    final Playlist playlist = playlists.get(getLayoutPosition());
                     //check that it's active and that it's not the active one
                     if (aux.hasActive) {
-                        new MaterialDialog.Builder(context)
-                                .title(R.string.hasCurrentPlaylistDialog)
-                                .content(R.string.joinPlaylistDialogMessage)
-                                .positiveText(R.string.joinAnyways)
-                                .negativeText(R.string.justView)
-                                .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        //leave the old playlist
-                                        //TODO: implement after merging with wilbur
-                                        //join this playlist
-                                        joinPlaylist();
-                                    }
-                                })
-                                .onNegative(new MaterialDialog.SingleButtonCallback() {
-                                    @Override
-                                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                        //just view this playlist
-                                        //TODO: make sure using the right method with wilbur
-                                    }
-                                })
-                                .show();
-
+                        aux.checkIfJoinPlaylist(dialogOutputter, playlist);
                     }
                     else {
-                        joinPlaylist();
+                        viewAndJoinActivity(playlist);
                     }
-
                 }
             });
         }
 
-        private void joinPlaylist() {
-            final Playlist playlist = playlists.get(getLayoutPosition());
+        @Override
+        public void outputDialog(final Playlist playlist) {
+            new MaterialDialog.Builder(context)
+                    .title(R.string.hasCurrentPlaylistDialog)
+                    .content(R.string.joinPlaylistDialogMessage)
+                    .positiveText(R.string.joinAnyways)
+                    .negativeText(R.string.justView)
+                    .onPositive(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            viewAndJoinActivity(playlist);
+
+                        }
+                    })
+                    .onNegative(new MaterialDialog.SingleButtonCallback() {
+                        @Override
+                        public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                            viewOnly(playlist);
+                        }
+                    })
+                    .show();
+
+        }
+
+        private void viewOnly(Playlist playlist) {
+            aux.isCurrentActive = false;
+            ((SearchPlaylistsActivity) context).playlistIntent();
+
+        }
+
+        @Override
+        public void viewAndJoinActivity(final Playlist playlist) {
             final String password = playlist.getPassword();
             if (password != null && !password.equals("")) {
                 new MaterialDialog.Builder(context)
@@ -116,13 +124,13 @@ public class PlaylistAdapterSearch extends RecyclerView.Adapter<PlaylistAdapterS
             }
 
         }
+
         private void actuallyJoinPlaylist(Playlist playlist) {
             String key = playlist.getPlaylistKey();
             aux.setCurrentPlaylist(playlist, key);
             aux.addUserToPlaylist(aux.getCurrentUser());
+            aux.isCurrentActive = true;
             ((SearchPlaylistsActivity) context).playlistIntent();
         }
-
-
     }
 }

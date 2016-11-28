@@ -1,28 +1,38 @@
 package org.mobiledevsberkeley.auxmusic;
 
 import android.app.Activity;
-import android.app.AlertDialog;
+
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Location;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v13.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.firebase.geofire.GeoLocation;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationListener;
 
 import static android.R.id.message;
 
-public class CreatePlaylistActivity extends AppCompatActivity /*implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener*/{
+public class CreatePlaylistActivity extends AppCompatActivity implements DialogOutputter, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener{
     public static String TAG = "debug";
 
     private CheckBox passwordProtectCheckbox;
@@ -38,7 +48,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 
     private AuxSingleton aux = AuxSingleton.getInstance();
 
-    //    GoogleApiClient mGoogleApiClient;
+    GoogleApiClient mGoogleApiClient;
     GeoLocation mGeoLocation;
     Activity thisActivity;
 
@@ -50,7 +60,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        if (mGoogleApiClient == null) createGoogleApiClient();
+        if (mGoogleApiClient == null) createGoogleApiClient();
         setContentView(R.layout.activity_create_playlist);
         setTitle("Host");
         thisActivity = this;
@@ -141,15 +151,15 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
     @Override
     protected void onPause() {
         super.onPause();
-//        if (mGoogleApiClient.isConnected()) {
-//            mGoogleApiClient.disconnect();
-//        }
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-//        mGoogleApiClient.connect();
+        mGoogleApiClient.connect();
 
     }
 
@@ -168,21 +178,7 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
             public void onClick(View v) {
                 //this is where I check if this potential host already has a playlist
                 if (aux.hasActive) {
-                    new MaterialDialog.Builder(getApplicationContext())
-                            .title(R.string.hasCurrentPlaylistDialog)
-                            .content(R.string.createPlaylistDialogMessage)
-                            .positiveText(R.string.createAnyways)
-                            .negativeText(R.string.dontCreate)
-                            .onPositive(new MaterialDialog.SingleButtonCallback() {
-                                @Override
-                                public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
-                                    //leave the old playlist
-                                    //TODO: implement after merging with wilbur
-                                    //create this playlist
-                                    createPlaylist();
-                                }
-                            })
-                            .show();
+                    aux.checkIfJoinPlaylist((DialogOutputter) thisActivity, null);
                 } else {
                     //create this playlist
                     createPlaylist();
@@ -217,9 +213,9 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
         passwordAdditionalInformation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(thisActivity);
-                builder.setMessage(R.string.password_additional_dialog)
-                .create();
+                new MaterialDialog.Builder(thisActivity)
+                        .content(R.string.password_additional_dialog)
+                        .show();
             }
         });
 
@@ -231,6 +227,28 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 //                        .create();
 //            }
 //        });
+    }
+
+    @Override
+    public void outputDialog(Playlist playlist) {
+        new MaterialDialog.Builder(thisActivity)
+                .title(R.string.hasCurrentPlaylistDialog)
+                .content(R.string.createPlaylistDialogMessage)
+                .positiveText(R.string.createAnyways)
+                .negativeText(R.string.dontCreate)
+                .onPositive(new MaterialDialog.SingleButtonCallback() {
+                    @Override
+                    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                        createPlaylist();
+                    }
+                })
+                .show();
+
+    }
+
+    @Override
+    public void viewAndJoinActivity(Playlist playlist) {
+        createPlaylist();
     }
 
 //    private void testingFirebaseStuff(){
@@ -299,67 +317,78 @@ public class CreatePlaylistActivity extends AppCompatActivity /*implements Googl
 //    }
 
 //
-//    @Override
-//    public void onConnected(@Nullable Bundle bundle) {
-//        Log.d("debug", "bitch you're connected");
-////        getLastLocation();
-//    }
-//
-//
-//
-//    @Override
-//    public void onConnectionSuspended(int i) {
-//        Log.d("debug", "connection suspended");
-//
-//    }
-//
-//    @Override
-//    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
-//        Log.d("debug", "connection failed :(");
-//
-//    }
-//
-//    public void createGoogleApiClient() {
-//        mGoogleApiClient = new GoogleApiClient.Builder(this)
-//                .addConnectionCallbacks(this)
-//                .addOnConnectionFailedListener(this)
-//                .addApi(LocationServices.API)
-//                .build();
-//        locationRequest = LocationRequest.create();
-//        locationRequest.setInterval(1000);
-//        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-//    }
-//
-//    @Override
-//    public void onRequestPermissionsResult(int requestCode,
-//                                           String permissions[], int[] grantResults) {
-//        switch (requestCode) {
-//            case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
-//                // If request is cancelled, the result arrays are empty.
-//                if (grantResults.length > 0
-//                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-////                    getLastLocation();
-//
-//                } else {
-//
-//                    Toast.makeText(thisActivity, "Unable to track location without permission", Toast.LENGTH_LONG).show();
-//                }
-//            }
-//
-//        }
-//    }
-//
-//    public void getLastLocation() throws SecurityException{
-//        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,locationRequest,this);
-//
-//    }
-//
-//    @Override
-//    public void onLocationChanged(Location location) {
-////        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-//        if (location != null) {
-//            mGeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
-//        }
-//
-//    }
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        Log.d("debug", "bitch you're connected");
+                            PackageManager pm = thisActivity.getPackageManager();
+                    int hasPerm = pm.checkPermission(
+                            android.Manifest.permission.ACCESS_COARSE_LOCATION,
+                            thisActivity.getPackageName());
+                    if (hasPerm == PackageManager.PERMISSION_GRANTED) {
+                        getLastLocation();
+                    } else {
+                        ActivityCompat.requestPermissions(thisActivity,
+                                new String[]{android.Manifest.permission.ACCESS_COARSE_LOCATION},
+                                MY_PERMISSIONS_REQUEST_ACCESS_LOCATION);
+                    }
+//        getLastLocation();
+    }
+
+
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        Log.d("debug", "connection suspended");
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        Log.d("debug", "connection failed :(");
+
+    }
+
+    public void createGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+        locationRequest = LocationRequest.create();
+        locationRequest.setInterval(1000);
+        locationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_ACCESS_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+//                    getLastLocation();
+
+                } else {
+
+                    Toast.makeText(thisActivity, "Unable to track location without permission", Toast.LENGTH_LONG).show();
+                }
+            }
+
+        }
+    }
+
+    public void getLastLocation() throws SecurityException{
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient,locationRequest,this);
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        if (location != null) {
+            mGeoLocation = new GeoLocation(location.getLatitude(), location.getLongitude());
+        }
+
+    }
 }
