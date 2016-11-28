@@ -56,7 +56,7 @@ public class AuxSingleton {
     public static final String SPOTIFYSONGID_LIST = "spotifySongIDList";
     public static final String USERID_LIST = "userDeviceIDList";
     public static final String PASTPLAYLISTS_LIST = "pastPlaylists";
-    public static final String CURRENTSONGINDEX = "pastPlaylists";
+    public static final String CURRENTSONGINDEX = "currentSongIndex";
 
     public static HashMap<String, Song> songCache = new HashMap<>();
 
