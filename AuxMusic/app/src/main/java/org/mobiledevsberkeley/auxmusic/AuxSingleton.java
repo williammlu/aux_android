@@ -292,7 +292,7 @@ public class AuxSingleton {
         playlistRef = dbReference.child(PLAYLISTS_NODE).push();
         String key = playlistRef.getKey();
         Playlist playlist = new Playlist(userUIDList, songIdList, partyName, password, currentUser.getUID(),
-                0, true, 0, mGeoLocation, "", "");
+                -1, true, 0, mGeoLocation, "", "");
         playlist.setPlaylistKey(key);
         setCurrentPlaylist(playlist, key);
 
@@ -534,7 +534,7 @@ public class AuxSingleton {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int newIndex = dataSnapshot.getValue(Integer.class);
                     List<Song> songs = currentPlaylist.getSpotifySongList();
-                    if (songs.size() > 0) {
+                    if (currentPlaylist.getCurrentSongIndex() > -1) {
                         updateCurrentSongView(songs.get(newIndex));
                     }
                 }

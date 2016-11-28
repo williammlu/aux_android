@@ -63,10 +63,15 @@ public class AuxSpotifyPlayer implements PlayerInterface{
                     return false;
                 } else {
                     Log.e("AuxSpotifyPlayer", "Playing new song");
+                    int currentIndex = mPlaylist.getCurrentSongIndex();
+                    if (currentIndex < 0) {
+                        mPlaylist.setCurrentSongIndex(0);
+                    }
                     mPlayer.playUri(null, mPlaylist.getCurrentSongURI(), 0, (int) mPlaylist.getCurrentSongTime());
 
                     // update song on PlaylistActivity
-                    aux.updateCurrentSongView(aux.getCurrentSong());
+                    aux.updateCurrentSong(mPlaylist);
+//                    aux.updateCurrentSongView(aux.getCurrentSong());
                     return true;
                 }
             }
