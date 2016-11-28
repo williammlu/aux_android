@@ -249,15 +249,20 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
             case R.id.joinPlaylist:
                 menu.findItem(R.id.leavePlaylist).setVisible(true);
                 item.setVisible(false);
+
                 //joining logic
 
+                aux.isCurrentActive = true;
+                Playlist playlist = aux.getCurrentPlaylist();
+                aux.setCurrentPlaylist(playlist, playlist.getPlaylistKey());
+                aux.addPastPlaylist(playlist);
 
 
             case R.id.leavePlaylist:
                 menu.findItem(R.id.joinPlaylist).setVisible(true);
                 item.setVisible(false);
                 //leaving logic
-                aux.leavePlaylist(this);
+                aux.leavePlaylist(this, isHost);
         }
         return super.onOptionsItemSelected(item);
     }
