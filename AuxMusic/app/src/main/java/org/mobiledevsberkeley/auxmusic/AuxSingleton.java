@@ -534,8 +534,9 @@ public class AuxSingleton {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int newIndex = dataSnapshot.getValue(Integer.class);
                     List<Song> songs = currentPlaylist.getSpotifySongList();
-                    if (newIndex < currentPlaylist.getSpotifySongIDList().size() && currentPlaylist.getCurrentSongIndex() > -1) {
+                    if (newIndex < currentPlaylist.getSpotifySongIDList().size() && newIndex > -1) {
                         updateCurrentSongView(songs.get(newIndex));
+                        currentPlaylist.setCurrentSongIndex(newIndex);
                     }
                 }
 
