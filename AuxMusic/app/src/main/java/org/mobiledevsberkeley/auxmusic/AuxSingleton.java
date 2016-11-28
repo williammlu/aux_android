@@ -277,6 +277,7 @@ public class AuxSingleton {
         if (currentPlaylist.getActive() && checkIsHost(currentUser.getUID())) {
             // change playlist to inactive, remove user, etc.
             currentPlaylist.setActive(false);
+//            spotifyPlayer.pause(null);
             DatabaseReference currPlaylistRef = dbReference.child(PLAYLISTS_NODE).child(currentPlaylist.getPlaylistKey());
             updateValue(currPlaylistRef, "active", false);
         }

@@ -51,9 +51,8 @@ public class ActualStartActivity extends AppCompatActivity {
                     aux.isCurrentActive = true;
                     Log.d(TAG, "hasplaylist");
                     //might need to change this
-
                     // jump to spotify auth
-                    if (aux.checkIsHost(aux.getCurrentUser().getUID())) { // if host, jump to spotify auth, which will redirect to playlist
+                    if (aux.checkIsHost(aux.getCurrentUser().getUID()) ) { // if host, jump to spotify auth, which will redirect to playlist
                         Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
                         startActivity(spotifyAuthIntent);
                     } else { // else go directly to playlist

@@ -176,12 +176,13 @@ public class CreatePlaylistActivity extends AppCompatActivity implements DialogO
             @Override
             public void onClick(View v) {
                 //this is where I check if this potential host already has a playlist
-                if (aux.hasActive) {
-                    aux.checkIfJoinPlaylist((DialogOutputter) thisActivity, null);
-                } else {
-                    //create this playlist
-                    createPlaylist();
-                }
+//                if (aux.hasActive) {
+//                    aux.checkIfJoinPlaylist((DialogOutputter) thisActivity, null);
+//                } else {
+//                    //create this playlist
+//                    createPlaylist();
+//                }
+                createPlaylist();
             }
         });
     }
@@ -203,6 +204,7 @@ public class CreatePlaylistActivity extends AppCompatActivity implements DialogO
 
 
         // do spotify auth when trying to create
+        aux.isCurrentActive = true;
         Intent spotifyAuthIntent = new Intent(getApplicationContext(), SpotifyAuthTest.class);
         startActivity(spotifyAuthIntent);
 
