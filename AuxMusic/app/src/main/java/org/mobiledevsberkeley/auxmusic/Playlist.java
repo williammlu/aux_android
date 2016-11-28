@@ -1,5 +1,7 @@
 package org.mobiledevsberkeley.auxmusic;
 
+import android.util.Log;
+
 import com.firebase.geofire.GeoLocation;
 import com.google.firebase.database.Exclude;
 
@@ -211,25 +213,27 @@ public class Playlist {
     }
 
     public void setImageUrl(final PlaylistImageLoadCallback callback) {
-        //TODO: finish once getting a song from ID is finalized
-
-
         if (spotifySongIDList.size() > 0) {
-            String firstSongId = spotifySongIDList.get(0);
-            AuxSingleton.getSpotifyService().getTrack(firstSongId, new Callback<Track>() {
-                @Override
-                public void success(Track track, Response response) {
-                    setCoverArtURL(track.album.images.get(0).url);
-                    if (callback != null) {
-                        callback.urlOnComplete();
+            if (coverArtURL != null && coverArtURL.length() != 0) {
+                callback.urlOnComplete(); // do callback if already have url
+                Log.d("Playlist.java", "use old image url");
+            } else {
+                String firstSongId = spotifySongIDList.get(0);
+                AuxSingleton.getSpotifyService().getTrack(firstSongId, new Callback<Track>() {
+                    @Override
+                    public void success(Track track, Response response) {
+                        setCoverArtURL(track.album.images.get(0).url);
+                        if (callback != null) {
+                            callback.urlOnComplete();
+                        }
                     }
-                }
 
-                @Override
-                public void failure(RetrofitError error) {
+                    @Override
+                    public void failure(RetrofitError error) {
 
-                }
-            });
+                    }
+                });
+            }
         }
     }
 
