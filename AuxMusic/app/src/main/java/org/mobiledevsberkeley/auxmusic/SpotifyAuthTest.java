@@ -2,6 +2,7 @@ package org.mobiledevsberkeley.auxmusic;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.TypedArray;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -44,7 +45,7 @@ public class SpotifyAuthTest extends Activity
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         Log.e("Spotify Auth", "Results - Request code: " + requestCode + " Result Code: " + resultCode);
-
+        Log.d("auth", "onactivityresult");
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
 
@@ -73,6 +74,7 @@ public class SpotifyAuthTest extends Activity
 
                 // Auth flow returned an error
                 case ERROR:
+                    Log.d("auth", "in error");
                     Log.e("onActivityResult", "Auth error: " + response.getError());
                     i = new Intent(this, ActualStartActivity.class);
                     i.putExtra(LOGIN_ERROR, "Unfortunately, Aux requires Spotify premium to host a playlist. Without it, you will not be able to stream music.");
@@ -83,6 +85,7 @@ public class SpotifyAuthTest extends Activity
 
                 // Most likely auth flow was cancelled
                 default:
+                    Log.d("auth", "in default");
                     Log.e("onActivityResult", "Auth result: " + response.getType());
                     i = new Intent(this, ActualStartActivity.class);
                     i.putExtra(LOGIN_TERMINATED, "Your authentication with Spotify was cancelled, please try again.");

@@ -40,5 +40,8 @@
     <string name="joinAnyways">Join Anyways</string>
     <string name="passwordTitle">Password</string>
     <string name="passwordText">Enter password here:</string>
+    <string name="playlistIsNotActive">Warning: This past playlist is not active anymore</string>
+    <string name="joinPastPlaylistDialogMessage">If you join this playlist, you can only view songs and cannot add songs.</string>
+    <string name="cancel">Cancel</string>
 
 </resources>

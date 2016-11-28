@@ -56,7 +56,7 @@ public class AuxSingleton {
     public static final String SPOTIFYSONGID_LIST = "spotifySongIDList";
     public static final String USERID_LIST = "userDeviceIDList";
     public static final String PASTPLAYLISTS_LIST = "pastPlaylists";
-    public static final String CURRENTSONGINDEX = "pastPlaylists";
+    public static final String CURRENTSONGINDEX = "currentSongIndex";
 
     public static HashMap<String, Song> songCache = new HashMap<>();
 
@@ -296,7 +296,7 @@ public class AuxSingleton {
         playlistRef = dbReference.child(PLAYLISTS_NODE).push();
         String key = playlistRef.getKey();
         Playlist playlist = new Playlist(userUIDList, songIdList, partyName, password, currentUser.getUID(),
-                0, true, 0, mGeoLocation, "", "");
+                -1, true, 0, mGeoLocation, "", "");
         playlist.setPlaylistKey(key);
         setCurrentPlaylist(playlist, key);
 
@@ -368,6 +368,8 @@ public class AuxSingleton {
                             public void onFinished(List<Song> songs) {
                                 currentPlaylist.setSpotifySongList(songs);
                                 musicAdapter.notifyDataSetChanged();
+//                                Log.d(TAG, "we in here initialize playlist listeners");
+                                initializeCurrentSongListeners();
 //                                Log.d(TAG, "Finished getting songs, in playlistlistener and last song is " + songs.get(songs.size() - 1).getSongName());
                             }
                         });
@@ -537,7 +539,12 @@ public class AuxSingleton {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     int newIndex = dataSnapshot.getValue(Integer.class);
-                    updateCurrentSongView(currentPlaylist.getSpotifySongList().get(newIndex));
+//                    Log.d(TAG, "we settin current view and new index is " + newIndex);
+                    List<Song> songs = currentPlaylist.getSpotifySongList();
+                    if (newIndex < currentPlaylist.getSpotifySongIDList().size() && newIndex > -1) {
+                        updateCurrentSongView(songs.get(newIndex));
+                        currentPlaylist.setCurrentSongIndex(newIndex);
+                    }
                 }
 
                 @Override
@@ -601,7 +608,7 @@ public class AuxSingleton {
 
     public Song getCurrentSong() {
         int index = currentPlaylist.getCurrentSongIndex();
-        if (index < currentPlaylist.getSpotifySongList().size()) {
+        if (index >= 0 && index < currentPlaylist.getSpotifySongList().size()) {
             return currentPlaylist.getSpotifySongList().get(index);
         } else {
             return null;

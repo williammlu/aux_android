@@ -77,9 +77,10 @@ public class ActualStartActivity extends AppCompatActivity {
                     });
 
 
-                    View parentView = findViewById(R.id.activity_actual_start_layout);
+                    View parentView = findViewById(R.id.activity_actual_start);
                     Intent i = getIntent();
                     if (i.hasExtra(SpotifyAuthTest.LOGIN_ERROR)) {
+                        Log.d("auth", "extra error");
                         String loginErrorMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_ERROR);
                         Snackbar snackbar = Snackbar
                                 .make(parentView, loginErrorMessage, Snackbar.LENGTH_LONG);
@@ -90,6 +91,7 @@ public class ActualStartActivity extends AppCompatActivity {
                         });
                         snackbar.show();
                     } else if (i.hasExtra(SpotifyAuthTest.LOGIN_TERMINATED)) {
+                        Log.d("auth", "extra terminated");
                         String loginTerminatedMessage = getIntent().getStringExtra(SpotifyAuthTest.LOGIN_TERMINATED);
                         Snackbar snackbar = Snackbar
                                 .make(parentView, loginTerminatedMessage, Snackbar.LENGTH_LONG);
