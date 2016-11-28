@@ -56,6 +56,7 @@ public class AuxSingleton {
     public static final String SPOTIFYSONGID_LIST = "spotifySongIDList";
     public static final String USERID_LIST = "userDeviceIDList";
     public static final String PASTPLAYLISTS_LIST = "pastPlaylists";
+    public static final String CURRENTSONGINDEX = "pastPlaylists";
 
     public static HashMap<String, Song> songCache = new HashMap<>();
 
@@ -68,6 +69,7 @@ public class AuxSingleton {
     private DatabaseReference userRef;
 
     private ValueEventListener spotifySongIDListener;
+    private ValueEventListener currentSongIndexListener;
 
     private ArrayList<Playlist> myPlaylists;
     /*This boolean is to check if the current playlist is active for the current user.
@@ -525,7 +527,39 @@ public class AuxSingleton {
 
     }
 
+    public void initializeCurrentSongListeners() {
+        if (currentSongIndexListener == null) {
+            currentSongIndexListener = new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    int newIndex = dataSnapshot.getValue(Integer.class);
+                    updateCurrentSongView(currentPlaylist.getSpotifySongList().get(newIndex));
+                }
 
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            };
+            playlistRef.child(CURRENTSONGINDEX).addValueEventListener(currentSongIndexListener);
+        }
+    }
+
+    public void detachCurrentSongListeners() {
+        if (currentSongIndexListener != null) {
+            playlistRef.child(CURRENTSONGINDEX).removeEventListener(currentSongIndexListener);
+            currentSongIndexListener = null;
+//            Log.d(TAG, "detach playlist listeners");
+        }
+    }
+
+    public void updateCurrentSong(Playlist mPlaylist) {
+        if (playlistRef != null) {
+            updateValue(playlistRef, CURRENTSONGINDEX, mPlaylist.getCurrentSongIndex());
+        } else {
+            Log.d(TAG, "terrible error");
+        }
+    }
 
     public static Object getPlayerReference() {
         return playerReference;

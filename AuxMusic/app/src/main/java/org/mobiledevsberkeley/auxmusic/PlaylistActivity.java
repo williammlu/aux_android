@@ -154,6 +154,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         }
         // INITIALIZE firebase realtime listeners for the playlist.
         aux.initializePlaylistListeners();
+        aux.initializeCurrentSongListeners();
     }
 
 
@@ -163,6 +164,7 @@ public class PlaylistActivity extends AppCompatActivity implements SpotifyPlayer
         Log.e("PlaylistActivity", "calling destroy!!");
         Spotify.destroyPlayer(this);
         aux.detachPlaylistListeners();
+        aux.detachCurrentSongListeners();
         super.onDestroy();
     }
 

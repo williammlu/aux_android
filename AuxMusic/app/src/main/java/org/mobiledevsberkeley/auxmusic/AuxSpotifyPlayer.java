@@ -139,13 +139,14 @@ public class AuxSpotifyPlayer implements PlayerInterface{
         }
         else {
 //            List<String> songs = mPlaylist.getSpotifySongIDList();
-            List<Song> songs = mPlaylist.getSpotifySongList();
+//            List<Song> songs = mPlaylist.getSpotifySongList();
             mPlaylist.setCurrentSongTime(0);
             mPlaylist.setActive(true);
             mPlaylist.setCurrentSongIndex(targetTrack);
-            mPlaylist.setCurrentSongID(songs.get(targetTrack).getSongURI());
+//            mPlaylist.setCurrentSongID(songs.get(targetTrack).getSongURI());
             // update song on PlaylistActivity
-            AuxSingleton.getInstance().updateCurrentSongView(songs.get(mPlaylist.getCurrentSongIndex()));
+            aux.updateCurrentSong(mPlaylist);
+//            AuxSingleton.getInstance().updateCurrentSongView(songs.get(mPlaylist.getCurrentSongIndex()));
 
             mPlayer.playUri(null, mPlaylist.getCurrentSongURI(), 0, (int) mPlaylist.getCurrentSongTime());
             return true;
